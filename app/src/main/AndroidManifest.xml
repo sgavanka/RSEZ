@@ -9,10 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:title=".MainActivity">
+        <activity android:title=".MainActivity" android:name=".MainActivity">
             <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
                 <action android:title="android.intent.action.MAIN" />
-
                 <category android:title="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
