@@ -73,6 +73,11 @@ public class Event extends ModelBase {
                 .addOnFailureListener(onFailureListener);
     }
 
+    @Override
+    public void write() {
+
+    }
+
     public static void read(String documentId, OnCompleteListener<DocumentSnapshot> onCompleteListener) {
         db.collection(COLLECTION_NAME).document(documentId).get().addOnCompleteListener(onCompleteListener);
     }

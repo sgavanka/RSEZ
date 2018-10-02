@@ -11,9 +11,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 
 import app.rsez.models.ModelBase;
@@ -93,21 +99,45 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                             Intent myIntent = new Intent(RegisterActivity.this,
                                     HomeActivity.class);
                             startActivity(myIntent);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(RegisterActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-//                            Intent myIntent = new Intent(MainActivity.this,
-//                                    MainActivity.class);
-//                            startActivity(myIntent);
-                        }
+                        } else
+                        {
+                            try
+                            {
+                                throw task.getException();
+                            }
+                            // if user enters wrong email.
+                            catch (FirebaseAuthWeakPasswordException weakPassword)
+                            {
+                                Log.d(TAG, "onComplete: weak_password");
+                                Toast.makeText(RegisterActivity.this, "Weak Password",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                            // if user enters wrong password.
+                            catch (FirebaseAuthInvalidCredentialsException malformedEmail)
+                            {
+                                Log.d(TAG, "onComplete: malformed_email");
+                                Toast.makeText(RegisterActivity.this, "Email not valid",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                            catch (FirebaseAuthUserCollisionException existEmail)
+                            {
+                                Log.d(TAG, "onComplete: exist_email");
+                                Toast.makeText(RegisterActivity.this, "Email Exists",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                            catch (Exception e)
+                            {
+                                Log.d(TAG, "onComplete: " + e.getMessage());
+                                Toast.makeText(RegisterActivity.this, "Authentication Failed",
+                                        Toast.LENGTH_SHORT).show();
+                            }
 
                         // [START_EXCLUDE]
                         // [END_EXCLUDE]
                     }
-                });
+                }
         // [END create_user_with_email]
+    });
     }
 
     @Override
@@ -120,6 +150,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
     public void createUser(String id){
         user = new User(id, mEmailField.getText().toString(), mFirstNameField.getText().toString(), mLastNameField.getText().toString());
-        user.create();
+        user.write();
     }
 }

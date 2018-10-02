@@ -23,4 +23,6 @@ public abstract class ModelBase {
     }
 
     public abstract void write(OnSuccessListener<Void> onSuccessListener, OnFailureListener onFailureListener);
+
+    public abstract void write();
 }

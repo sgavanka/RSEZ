@@ -59,6 +59,15 @@ public class User extends ModelBase {
                 .addOnSuccessListener(onSuccessListener)
                 .addOnFailureListener(onFailureListener);
     }
+    @Override
+    public void write(){
+        Map<String, Object> user = new HashMap<>();
+        user.put("email", email);
+        user.put("firstName", firstName);
+        user.put("lastName", lastName);
+
+        db.collection("users").document(getDocumentId()).set(user);
+    }
 
     public static void read(String documentId, OnCompleteListener<DocumentSnapshot> onCompleteListener) {
         db.collection(COLLECTION_NAME).document(documentId).get().addOnCompleteListener(onCompleteListener);
