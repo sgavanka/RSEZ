@@ -4,26 +4,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class User extends ModelBase {
-    private String userId;
-
     private String email;
 
     private String firstName;
     private String lastName;
 
-    public User(String userId, String email, String firstName, String lastName) {
-        this.userId = userId;
+    public User(String documentId, String email, String firstName, String lastName) {
+        super(documentId);
+
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
     }
 
     public String getEmail() {
@@ -52,11 +43,10 @@ public class User extends ModelBase {
 
     public void create() {
         Map<String, Object> user = new HashMap<>();
-        user.put("userId", userId);
         user.put("email", email);
         user.put("firstName", firstName);
         user.put("lastName", lastName);
 
-        db.collection("users").add(user);
+        db.collection("users").document(getDocumentId()).set(user);
     }
 }

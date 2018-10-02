@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Event extends ModelBase {
-    private String eventId;
-
     private String title;
     private String description;
 
@@ -14,20 +12,13 @@ public class Event extends ModelBase {
 
     private String hostUserId;
 
-    public Event(String eventId, String title, String description, Date startDateTime, String hostUserId) {
-        this.eventId = eventId;
+    public Event(String documentId, String title, String description, Date startDateTime, String hostUserId) {
+        super(documentId);
+
         this.title = title;
         this.description = description;
         this.startDateTime = startDateTime;
         this.hostUserId = hostUserId;
-    }
-
-    public String getEventId() {
-        return eventId;
-    }
-
-    public void setEventId(String eventId) {
-        this.eventId = eventId;
     }
 
     public String getTitle() {
@@ -64,12 +55,11 @@ public class Event extends ModelBase {
 
     public void create() {
         Map<String, Object> event = new HashMap<>();
-        event.put("eventId", eventId);
         event.put("title", title);
         event.put("description", description);
         event.put("startDateTime", startDateTime);
         event.put("hostUserId", hostUserId);
 
-        db.collection("events").add(event);
+        db.collection("events").document(getDocumentId()).set(event);
     }
 }
