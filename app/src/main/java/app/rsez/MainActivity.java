@@ -25,6 +25,7 @@ public  class MainActivity extends AppCompatActivity implements View.OnClickList
     private TextView mEmailField;
     private TextView mPasswordField;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +62,7 @@ public  class MainActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    private void createAccount(String email, String password) {
+  /*  private void createAccount(String email, String password) {
         Log.d(TAG, "createAccount:" + email);
         if (!validateForm()) {
             return;
@@ -92,7 +93,7 @@ public  class MainActivity extends AppCompatActivity implements View.OnClickList
                     }
                 });
         // [END create_user_with_email]
-    }
+    } */
 
     private boolean validateForm() {
         boolean valid = true;
@@ -159,7 +160,11 @@ public  class MainActivity extends AppCompatActivity implements View.OnClickList
         public void onClick(View v){
             int i = v.getId();
             if (i == R.id.registerButton) {
-                createAccount(mEmailField.getText().toString(), mPasswordField.getText().toString());
+                Intent myIntent = new Intent(MainActivity.this,
+                        RegisterActivity.class);
+                startActivity(myIntent);
+
+                //createAccount(mEmailField.getText().toString(), mPasswordField.getText().toString());
             } else if (i == R.id.loginButton) {
                 signIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
             }/* else if (i == R.id.signOutButton) {

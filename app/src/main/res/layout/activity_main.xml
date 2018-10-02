@@ -39,7 +39,7 @@
             android:background="@android:color/transparent"
             android:drawablePadding="12dp"
             android:padding="8dp"
-            android:hint="UserName"
+            android:hint="Email"
             android:textColorHint="#fff"
             android:maxLines="1"
             android:drawableLeft="@drawable/baseline_person_white_24dp"
