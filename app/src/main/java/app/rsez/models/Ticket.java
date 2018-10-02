@@ -1,5 +1,6 @@
 package app.rsez.models;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,10 +10,13 @@ public class Ticket extends ModelBase {
     String eventId;
     String userId;
 
-    public Ticket(String ticketId, String eventId, String userId) {
+    Date checkInDateTime;
+
+    public Ticket(String ticketId, String eventId, String userId, Date checkInDateTime) {
         this.ticketId = ticketId;
         this.eventId = eventId;
         this.userId = userId;
+        this.checkInDateTime = checkInDateTime;
     }
 
     public String getTicketId() {
@@ -37,6 +41,14 @@ public class Ticket extends ModelBase {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public Date getCheckInDateTime() {
+        return checkInDateTime;
+    }
+
+    public void setCheckInDateTime(Date checkInDateTime) {
+        this.checkInDateTime = checkInDateTime;
     }
 
     public void create() {
