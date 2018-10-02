@@ -75,6 +75,7 @@
             android:text="Remember me"
             android:padding="8dp"/>
         <Button
+            android:id="@+id/loginButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawable="@drawable/background_login"
@@ -86,6 +87,7 @@
             android:layout_marginTop="5dp"
             />
         <Button
+            android:id="@+id/registerButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawable="@drawable/background_login"
