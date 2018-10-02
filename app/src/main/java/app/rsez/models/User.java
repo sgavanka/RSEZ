@@ -7,15 +7,13 @@ public class User extends ModelBase {
     String userId;
 
     String email;
-    String password;
 
     String firstName;
     String lastName;
 
-    public User(String userId, String email, String password, String firstName, String lastName) {
+    public User(String userId, String email, String firstName, String lastName) {
         this.userId = userId;
         this.email = email;
-        this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
     }
@@ -34,14 +32,6 @@ public class User extends ModelBase {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getFirstName() {
@@ -64,7 +54,6 @@ public class User extends ModelBase {
         Map<String, Object> user = new HashMap<>();
         user.put("userId", userId);
         user.put("email", email);
-        user.put("password", password);
         user.put("firstName", firstName);
         user.put("lastName", lastName);
 
