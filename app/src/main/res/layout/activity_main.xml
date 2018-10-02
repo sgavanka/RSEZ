@@ -31,7 +31,7 @@
         app:srcCompat="@drawable/logonew" />
 
         <EditText
-            android:id="@+id/editText2"
+            android:id="@+id/email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -51,6 +51,7 @@
             android:layout_height="1dp"
             android:background="#f9d7db"/>
          <EditText
+             android:id="@+id/password"
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
              android:inputType="textPassword"
