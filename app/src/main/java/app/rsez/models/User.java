@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class User extends ModelBase {
-    String userId;
+    private String userId;
 
-    String email;
+    private String email;
 
-    String firstName;
-    String lastName;
+    private String firstName;
+    private String lastName;
 
     public User(String userId, String email, String firstName, String lastName) {
         this.userId = userId;

@@ -5,12 +5,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Ticket extends ModelBase {
-    String ticketId;
+    private String ticketId;
 
-    String eventId;
-    String userId;
+    private String eventId;
+    private String userId;
 
-    Date checkInDateTime;
+    private Date checkInDateTime;
 
     public Ticket(String ticketId, String eventId, String userId, Date checkInDateTime) {
         this.ticketId = ticketId;

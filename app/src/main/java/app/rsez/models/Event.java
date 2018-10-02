@@ -5,14 +5,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Event extends ModelBase {
-    String eventId;
+    private String eventId;
 
-    String title;
-    String description;
+    private String title;
+    private String description;
 
-    Date startDateTime;
+    private Date startDateTime;
 
-    String hostUserId;
+    private String hostUserId;
 
     public Event(String eventId, String title, String description, Date startDateTime, String hostUserId) {
         this.eventId = eventId;
