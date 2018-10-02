@@ -1,9 +1,16 @@
 package app.rsez.models;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class User extends ModelBase {
+    private static String COLLECTION_NAME = "users";
+
     private String email;
 
     private String firstName;
@@ -41,12 +48,32 @@ public class User extends ModelBase {
         this.lastName = lastName;
     }
 
-    public void create() {
+    @Override
+    public void write(OnSuccessListener<Void> onSuccessListener, OnFailureListener onFailureListener) {
         Map<String, Object> user = new HashMap<>();
         user.put("email", email);
         user.put("firstName", firstName);
         user.put("lastName", lastName);
 
-        db.collection("users").document(getDocumentId()).set(user);
+        db.collection("users").document(getDocumentId()).set(user)
+                .addOnSuccessListener(onSuccessListener)
+                .addOnFailureListener(onFailureListener);
+    }
+
+    public static void read(String documentId, OnCompleteListener<DocumentSnapshot> onCompleteListener) {
+        db.collection(COLLECTION_NAME).document(documentId).get().addOnCompleteListener(onCompleteListener);
+    }
+
+    public static void delete(String documentId, OnSuccessListener<Void> onSuccessListener, OnFailureListener onFailureListener) {
+        db.collection(COLLECTION_NAME).document(documentId).delete()
+                .addOnSuccessListener(onSuccessListener)
+                .addOnFailureListener(onFailureListener);
+    }
+
+    public static User getUserFromDocumentSnapshot(DocumentSnapshot documentSnapshot) {
+        User user = documentSnapshot.toObject(User.class);
+        user.setDocumentId(documentSnapshot.getId());
+
+        return  user;
     }
 }
