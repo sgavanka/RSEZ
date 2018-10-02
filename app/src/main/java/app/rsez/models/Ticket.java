@@ -1,10 +1,15 @@
 package app.rsez.models;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Ticket extends ModelBase {
+    private static String COLLECTION_NAME = "tickets";
+
     private String eventId;
     private String userId;
 
@@ -42,12 +47,27 @@ public class Ticket extends ModelBase {
         this.checkInDateTime = checkInDateTime;
     }
 
-    public void create() {
-        Map<String, Object> ticket = new HashMap<>();
-        ticket.put("eventId", eventId);
-        ticket.put("userId", userId);
-        ticket.put("checkInDateTime", checkInDateTime);
+    @Override
+    public void write(OnSuccessListener<Void> onSuccessListener, OnFailureListener onFailureListener) {
+        db.collection("tickets").document(getDocumentId()).set(this)
+                .addOnSuccessListener(onSuccessListener)
+                .addOnFailureListener(onFailureListener);
+    }
 
-        db.collection("tickets").document(getDocumentId()).set(ticket);
+    public static void read(String documentId, OnCompleteListener<DocumentSnapshot> onCompleteListener) {
+        db.collection(COLLECTION_NAME).document(documentId).get().addOnCompleteListener(onCompleteListener);
+    }
+
+    public static void delete(String documentId, OnSuccessListener<Void> onSuccessListener, OnFailureListener onFailureListener) {
+        db.collection(COLLECTION_NAME).document(documentId).delete()
+                .addOnSuccessListener(onSuccessListener)
+                .addOnFailureListener(onFailureListener);
+    }
+
+    public static Ticket getTicketFromDocumentSnapshot(DocumentSnapshot documentSnapshot) {
+        Ticket ticket = documentSnapshot.toObject(Ticket.class);
+        ticket.setDocumentId(documentSnapshot.getId());
+
+        return  ticket;
     }
 }

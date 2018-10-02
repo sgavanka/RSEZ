@@ -1,10 +1,17 @@
 package app.rsez.models;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Event extends ModelBase {
+    private static String COLLECTION_NAME = "events";
+
     private String title;
     private String description;
 
@@ -53,13 +60,33 @@ public class Event extends ModelBase {
         this.hostUserId = hostUserId;
     }
 
-    public void create() {
+    @Override
+    public void write(OnSuccessListener<Void> onSuccessListener, OnFailureListener onFailureListener) {
         Map<String, Object> event = new HashMap<>();
         event.put("title", title);
         event.put("description", description);
         event.put("startDateTime", startDateTime);
         event.put("hostUserId", hostUserId);
 
-        db.collection("events").document(getDocumentId()).set(event);
+        db.collection("events").document(getDocumentId()).set(event)
+                .addOnSuccessListener(onSuccessListener)
+                .addOnFailureListener(onFailureListener);
+    }
+
+    public static void read(String documentId, OnCompleteListener<DocumentSnapshot> onCompleteListener) {
+        db.collection(COLLECTION_NAME).document(documentId).get().addOnCompleteListener(onCompleteListener);
+    }
+
+    public static void delete(String documentId, OnSuccessListener<Void> onSuccessListener, OnFailureListener onFailureListener) {
+        db.collection(COLLECTION_NAME).document(documentId).delete()
+                .addOnSuccessListener(onSuccessListener)
+                .addOnFailureListener(onFailureListener);
+    }
+
+    public static Event getEventFromDocumentSnapshot(DocumentSnapshot documentSnapshot) {
+        Event event = documentSnapshot.toObject(Event.class);
+        event.setDocumentId(documentSnapshot.getId());
+
+        return  event;
     }
 }
