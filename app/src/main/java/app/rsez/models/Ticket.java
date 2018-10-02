@@ -1,34 +1,50 @@
-package app.rsez;
+package app.rsez.models;
 
-public class Ticket {
-    User owner;
-    Event event;
-    QRCode qrcode;
+import java.util.HashMap;
+import java.util.Map;
 
-    public Ticket(Event event, QRCode qrcode, User owner){
-        this.event = event;
-        this.qrcode = qrcode;
-        this.owner = owner;
+public class Ticket extends ModelBase {
+    String ticketId;
+
+    String eventId;
+    String userId;
+
+    public Ticket(String ticketId, String eventId, String userId) {
+        this.ticketId = ticketId;
+        this.eventId = eventId;
+        this.userId = userId;
     }
 
-    public Ticket(Event event, QRCode qrcode){
-        this.event = event;
-        this.qrcode = qrcode;
+    public String getTicketId() {
+        return ticketId;
     }
 
-    public User getOwner() {
-        return owner;
+    public void setTicketId(String ticketId) {
+        this.ticketId = ticketId;
     }
 
-    public void setOwner(User owner) {
-        this.owner = owner;
+    public String getEventId() {
+        return eventId;
     }
 
-    public Event getEvent() {
-        return event;
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
     }
 
-    public QRCode getQrcode() {
-        return qrcode;
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public void create() {
+        Map<String, Object> user = new HashMap<>();
+        user.put("ticketId", ticketId);
+        user.put("eventId", eventId);
+        user.put("userId", userId);
+
+        db.collection("tickets").add(user);
     }
 }

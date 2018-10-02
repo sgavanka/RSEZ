@@ -1,4 +1,4 @@
-package app.rsez;
+package app.rsez.models;
 
 public class Friend {
     User user;

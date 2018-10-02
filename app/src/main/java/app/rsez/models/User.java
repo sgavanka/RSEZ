@@ -1,56 +1,31 @@
-package app.rsez;
+package app.rsez.models;
 
-public class User {
-    char id;
-    String username;
-    String password;
-    String nickname;
+import java.util.HashMap;
+import java.util.Map;
+
+public class User extends ModelBase {
+    String userId;
+
     String email;
-    Friend friends;
-    Ticket tickets[];
-    boolean status;
-    Notification notification;
+    String password;
 
-    public User(String username, String password, String nickname, String email){
-        this.username = username;
-        this.password = password;
-        this.nickname = nickname;
+    String firstName;
+    String lastName;
+
+    public User(String userId, String email, String password, String firstName, String lastName) {
+        this.userId = userId;
         this.email = email;
-        this.friends = null;
-        this.tickets = null;
-        this.notification = null;
-    }
-
-    public char getId() {
-        return id;
-    }
-
-    public void setId(char id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
         this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 
-    public String getNickname() {
-        return nickname;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getEmail() {
@@ -61,39 +36,38 @@ public class User {
         this.email = email;
     }
 
-    public Friend getFriends() {
-        return friends;
+    public String getPassword() {
+        return password;
     }
 
-    public void setFriends(Friend friends) {
-        this.friends = friends;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public Ticket[] getTickets() {
-        return tickets;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setTickets(Ticket[] tickets) {
-        this.tickets = tickets;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public boolean isStatus() {
-        return status;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
-    public Notification getNotification() {
-        return notification;
-    }
+    public void create() {
+        Map<String, Object> user = new HashMap<>();
+        user.put("userId", userId);
+        user.put("email", email);
+        user.put("password", password);
+        user.put("firstName", firstName);
+        user.put("lastName", lastName);
 
-    public void setNotification(Notification notification) {
-        this.notification = notification;
-    }
-
-    public void createPDF(Ticket ticket) {
-
+        db.collection("users").add(user);
     }
 }

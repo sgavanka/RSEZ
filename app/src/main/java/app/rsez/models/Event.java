@@ -1,77 +1,33 @@
-package app.rsez;
+package app.rsez.models;
 
-import android.graphics.Bitmap;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-public class Event {
-    QRCode qrcodes[];
-    User hosts[];
-    User ticketHolder[];
-    Ticket tickets[];
-    Bitmap image;
-    String color;
+public class Event extends ModelBase {
+    String eventId;
+
     String title;
-    String time;
-    String date;
     String description;
-    String notification;
-    boolean checkedIn;
-    String extraInfo;
 
-    public Event(String title, String time, String date, String description, Bitmap image, User hosts[]){
+    Date datetime;
+
+    String hostUserId;
+
+    public Event(String eventId, String title, String description, Date datetime, String hostUserId) {
+        this.eventId = eventId;
         this.title = title;
-        this.time = time;
-        this.date = date;
         this.description = description;
-        this.image = image;
-        this.hosts = hosts;
+        this.datetime = datetime;
+        this.hostUserId = hostUserId;
     }
 
-    public QRCode[] getQrcodes() {
-        return qrcodes;
+    public String getEventId() {
+        return eventId;
     }
 
-    public void setQrcodes(QRCode[] qrcodes) {
-        this.qrcodes = qrcodes;
-    }
-
-    public User[] getHosts() {
-        return hosts;
-    }
-
-    public void setHosts(User[] hosts) {
-        this.hosts = hosts;
-    }
-
-    public User[] getTicketHolder() {
-        return ticketHolder;
-    }
-
-    public void setTicketHolder(User[] ticketHolder) {
-        this.ticketHolder = ticketHolder;
-    }
-
-    public Ticket[] getTickets() {
-        return tickets;
-    }
-
-    public void setTickets(Ticket[] tickets) {
-        this.tickets = tickets;
-    }
-
-    public Bitmap getImage() {
-        return image;
-    }
-
-    public void setImage(Bitmap image) {
-        this.image = image;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
     }
 
     public String getTitle() {
@@ -82,22 +38,6 @@ public class Event {
         this.title = title;
     }
 
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -106,27 +46,30 @@ public class Event {
         this.description = description;
     }
 
-    public String getNotification() {
-        return notification;
+    public Date getDatetime() {
+        return datetime;
     }
 
-    public void setNotification(String notification) {
-        this.notification = notification;
+    public void setDatetime(Date datetime) {
+        this.datetime = datetime;
     }
 
-    public boolean isCheckedIn() {
-        return checkedIn;
+    public String getHostUserId() {
+        return hostUserId;
     }
 
-    public void setCheckedIn(boolean checkedIn) {
-        this.checkedIn = checkedIn;
+    public void setHostUserId(String hostUserId) {
+        this.hostUserId = hostUserId;
     }
 
-    public String getExtraInfo() {
-        return extraInfo;
-    }
+    public void create() {
+        Map<String, Object> event = new HashMap<>();
+        event.put("eventId", eventId);
+        event.put("title", title);
+        event.put("description", description);
+        event.put("datetime", datetime);
+        event.put("hostUserId", hostUserId);
 
-    public void setExtraInfo(String extraInfo) {
-        this.extraInfo = extraInfo;
+        db.collection("events").add(event);
     }
 }
