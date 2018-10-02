@@ -10,15 +10,15 @@ public class Event extends ModelBase {
     String title;
     String description;
 
-    Date datetime;
+    Date startDateTime;
 
     String hostUserId;
 
-    public Event(String eventId, String title, String description, Date datetime, String hostUserId) {
+    public Event(String eventId, String title, String description, Date startDateTime, String hostUserId) {
         this.eventId = eventId;
         this.title = title;
         this.description = description;
-        this.datetime = datetime;
+        this.startDateTime = startDateTime;
         this.hostUserId = hostUserId;
     }
 
@@ -46,12 +46,12 @@ public class Event extends ModelBase {
         this.description = description;
     }
 
-    public Date getDatetime() {
-        return datetime;
+    public Date getStartDateTime() {
+        return startDateTime;
     }
 
-    public void setDatetime(Date datetime) {
-        this.datetime = datetime;
+    public void setStartDateTime(Date startDateTime) {
+        this.startDateTime = startDateTime;
     }
 
     public String getHostUserId() {
@@ -67,7 +67,7 @@ public class Event extends ModelBase {
         event.put("eventId", eventId);
         event.put("title", title);
         event.put("description", description);
-        event.put("datetime", datetime);
+        event.put("startDateTime", startDateTime);
         event.put("hostUserId", hostUserId);
 
         db.collection("events").add(event);

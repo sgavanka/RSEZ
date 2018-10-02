@@ -52,11 +52,12 @@ public class Ticket extends ModelBase {
     }
 
     public void create() {
-        Map<String, Object> user = new HashMap<>();
-        user.put("ticketId", ticketId);
-        user.put("eventId", eventId);
-        user.put("userId", userId);
+        Map<String, Object> ticket = new HashMap<>();
+        ticket.put("ticketId", ticketId);
+        ticket.put("eventId", eventId);
+        ticket.put("userId", userId);
+        ticket.put("checkInDateTime", checkInDateTime);
 
-        db.collection("tickets").add(user);
+        db.collection("tickets").add(ticket);
     }
 }
