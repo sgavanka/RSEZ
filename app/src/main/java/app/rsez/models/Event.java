@@ -9,7 +9,7 @@ public class Event {
     Ticket tickets[];
     Bitmap image;
     String color;
-    String name;
+    String title;
     String time;
     String date;
     String description;
@@ -17,8 +17,8 @@ public class Event {
     boolean checkedIn;
     String extraInfo;
 
-    public Event(String name, String time, String date, String description, Bitmap image, User hosts[]){
-        this.name = name;
+    public Event(String title, String time, String date, String description, Bitmap image, User hosts[]){
+        this.title = title;
         this.time = time;
         this.date = date;
         this.description = description;
@@ -74,12 +74,12 @@ public class Event {
         this.color = color;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getTime() {
