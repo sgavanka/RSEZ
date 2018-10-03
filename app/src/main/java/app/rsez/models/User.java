@@ -3,7 +3,9 @@ package app.rsez.models;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Query;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +17,7 @@ public class User extends ModelBase {
 
     private String firstName;
     private String lastName;
+    private String documentId;
 
     public User(String documentId, String email, String firstName, String lastName) {
         super(documentId);
@@ -22,6 +25,7 @@ public class User extends ModelBase {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.documentId = documentId;
     }
 
     public String getEmail() {
@@ -51,11 +55,13 @@ public class User extends ModelBase {
     @Override
     public void write(OnSuccessListener<Void> onSuccessListener, OnFailureListener onFailureListener) {
         Map<String, Object> user = new HashMap<>();
+
         user.put("email", email);
         user.put("firstName", firstName);
         user.put("lastName", lastName);
+        user.put("UserId", documentId);
 
-        db.collection("users").document(getDocumentId()).set(user)
+        db.collection("users").document(email).set(user)
                 .addOnSuccessListener(onSuccessListener)
                 .addOnFailureListener(onFailureListener);
     }
@@ -65,8 +71,9 @@ public class User extends ModelBase {
         user.put("email", email);
         user.put("firstName", firstName);
         user.put("lastName", lastName);
+        user.put("UserId", documentId);
 
-        db.collection("users").document(getDocumentId()).set(user);
+        db.collection("users").document(email).set(user);
     }
 
     public static void read(String documentId, OnCompleteListener<DocumentSnapshot> onCompleteListener) {
@@ -84,5 +91,16 @@ public class User extends ModelBase {
         user.setDocumentId(documentSnapshot.getId());
 
         return  user;
+    }
+    public static User getUserFromEmail(String email){
+        User user = null;
+        DocumentReference docRef = db.collection("users").document(email);
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                User user = documentSnapshot.toObject(User.class);
+            }
+        });
+            return user;
     }
 }

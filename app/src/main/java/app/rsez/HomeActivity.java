@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -74,7 +75,7 @@ public  class HomeActivity extends AppCompatActivity {
     public void selectDrawerItem(MenuItem menuItem) {
         // Create a new fragment and specify the fragment to show based on nav item clicked
         Fragment fragment = null;
-        Class fragmentClass;
+        Class fragmentClass = null;
         switch (menuItem.getItemId()) {
             case R.id.nav_signOut:
                 mAuth.signOut();
@@ -82,8 +83,21 @@ public  class HomeActivity extends AppCompatActivity {
                         MainActivity.class);
                 startActivity(myIntent);
                 break;
+            case R.id.nav_event:
+                fragmentClass = CreateFragment.class;
+                break;
 
         }
+        try {
+            fragment = (Fragment) fragmentClass.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if(fragment!=null)
+        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+
+
 
 
     }

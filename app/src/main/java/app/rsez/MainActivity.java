@@ -140,17 +140,11 @@ public  class MainActivity extends AppCompatActivity implements View.OnClickList
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
                             Toast.makeText(MainActivity.this, "Incorrect Email or Password.",
                                     Toast.LENGTH_SHORT).show();
-                            Intent myIntent = new Intent(MainActivity.this,
+                           /* Intent myIntent = new Intent(MainActivity.this,
                                     MainActivity.class);
-                            startActivity(myIntent);
+                            startActivity(myIntent); */
                         }
 
-                        // [START_EXCLUDE]
-                      /*  if (!task.isSuccessful()) {
-                            mStatusTextView.setText(R.string.auth_failed);
-                        }
-                        // [END_EXCLUDE]
-                    }*/
                     }
                 });
         // [END sign_in_with_email]
