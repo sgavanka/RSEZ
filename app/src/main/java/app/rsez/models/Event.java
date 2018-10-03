@@ -17,14 +17,18 @@ public class Event extends ModelBase {
 
     private Date startDateTime;
 
+    private String startDate;
+    private String startTime;
+
     private String hostUserId;
 
-    public Event(String documentId, String title, String description, Date startDateTime, String hostUserId) {
+    public Event(String documentId, String title, String description, String startDate, String startTime, String hostUserId) {
         super(documentId);
 
         this.title = title;
         this.description = description;
-        this.startDateTime = startDateTime;
+        this.startDate = startDate;
+        this.startTime = startTime;
         this.hostUserId = hostUserId;
     }
 
@@ -65,7 +69,8 @@ public class Event extends ModelBase {
         Map<String, Object> event = new HashMap<>();
         event.put("title", title);
         event.put("description", description);
-        event.put("startDateTime", startDateTime);
+        event.put("startDate", startDate);
+        event.put("startTime", startTime);
         event.put("hostUserId", hostUserId);
 
         db.collection("events").document(getDocumentId()).set(event)

@@ -6,21 +6,124 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".HomeActivity"
-    android:background="@drawable/back4"
     android:paddingLeft="18dp"
     android:paddingRight="18dp"
+    android:background="@android:color/background_light"
     >
-    <include
-        layout="@layout/toolbar"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
     <TextView
         android:id="@+id/master_item_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="master list item 1"/>
+        android:padding="10dp"
+        android:textSize="25dp"
+        android:text="Create An Event"
+        android:textColor="@android:color/black"/>
 
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:boxBackgroundMode="filled"
+                app:hintTextAppearance="@style/MyHintText"
+                >
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Event Name"
+                    android:inputType="textEmailAddress"
+                    android:maxLength="30"
+                    android:maxLines="1"
+                    android:textColorHint="@color/indigo"
+                    android:theme="@style/MyEditText"
+                    app:hintEnabled="true"
+
+                    />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:hintTextAppearance="@style/MyHintText">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:hintEnabled="true"
+                    android:hint="Description"
+                    android:textColorHint="@color/indigo"
+                    android:theme="@style/MyEditText"
+                    android:inputType="textEmailAddress"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="100"
+                    android:maxLines="1"
+                    android:maxLength="100"
+                    />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:hintTextAppearance="@style/MyHintText">
+
+                <EditText
+                    android:id="@+id/date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:hintEnabled="true"
+                    android:hint="Select Date"
+                    android:textColorHint="@color/indigo"
+                    android:theme="@style/MyEditText"
+                    android:inputType="date"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="100"
+                    android:maxLines="1"
+                    android:maxLength="100"
+                    />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:hintTextAppearance="@style/MyHintText">
+
+                <EditText
+                    android:id="@+id/time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:hintEnabled="true"
+                    android:hint="Select Time"
+                    android:textColorHint="@color/indigo"
+                    android:theme="@style/MyEditText"
+                    android:inputType="date"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="100"
+                    android:maxLines="1"
+                    android:maxLength="100"
+                    />
+
+            </android.support.design.widget.TextInputLayout>
+
+
+
+
+</LinearLayout>
+    </ScrollView>
 
 </LinearLayout>
