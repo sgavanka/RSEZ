@@ -61,9 +61,9 @@ public class EventDetailsFragment extends Fragment {
                 DocumentSnapshot doc = task.getResult();
                 //System.out.println(doc);
                 title = doc.getString("title");
-                desc = doc.getString("description");
-                date = doc.getString("startDate");
-                time = doc.getString("startTime");
+                desc = "Description: " + doc.getString("description");
+                date = "Date: " + doc.getString("startDate");
+                time = "Start Time: " + doc.getString("startTime");
                 eventName.setText(title);
                 eventDesc.setText(desc);
                 eventDate.setText(date);
