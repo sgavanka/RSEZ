@@ -129,6 +129,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                             temp.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
+
                                     Toast.makeText(getContext(), id, Toast.LENGTH_SHORT).show();
                                     Fragment fragment;
                                     fragment = EventDetailsFragment.newInstance(id);
@@ -137,6 +138,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
                                         fragmentManager.beginTransaction().replace(R.id.frag_frame, fragment).commit();
                                     }
+
                                 }
                             });
                             //temp.setTag(id);
