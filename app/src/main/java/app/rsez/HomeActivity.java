@@ -49,6 +49,20 @@ public  class HomeActivity extends AppCompatActivity {
                     }
                 });
         setupDrawerContent(navigationView);
+
+        Class fragmentClass = TabsFragment.class;
+        Fragment fragment = null;
+        try {
+            fragment = (Fragment) fragmentClass.newInstance();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        }
+        if(fragment != null)
+        setFragment(fragment);
+
+
     }
 
     @Override
@@ -87,10 +101,17 @@ public  class HomeActivity extends AppCompatActivity {
             case R.id.nav_event:
                 fragmentClass = CreateFragment.class;
                 break;
+
+            case R.id.nav_home:
+                fragmentClass = TabsFragment.class;
+                break;
             case R.id.nav_eventDetails:
                 fragmentClass = EventDetailsFragment.class;
                 args ="jOOG3UrsCqs6hkdD76fq";
                 fragment = EventDetailsFragment.newInstance(args);
+                break;
+            default:
+                fragmentClass = TabsFragment.class;
                 break;
         }
         try {
@@ -107,5 +128,11 @@ public  class HomeActivity extends AppCompatActivity {
 
 
 
+    }
+    public void setFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.content_frame, fragment)
+                .commit();
     }
 }
