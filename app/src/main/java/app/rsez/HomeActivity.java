@@ -135,4 +135,5 @@ public  class HomeActivity extends AppCompatActivity {
                 .replace(R.id.content_frame, fragment)
                 .commit();
     }
+
 }

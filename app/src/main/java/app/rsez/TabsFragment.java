@@ -25,25 +25,27 @@ public class TabsFragment extends Fragment  {
                              @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_tabs, container, false);
-        sectionsPageAdapter = new SectionsPageAdapter(getFragmentManager());
+        sectionsPageAdapter = new SectionsPageAdapter(getChildFragmentManager());
         viewPager = (ViewPager) view.findViewById(R.id.container);
         setupViewPager(viewPager);
         TabLayout tabLayout = view.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
+
         return view;
     }
     private void setupViewPager(final ViewPager viewPager) {
-        final SectionsPageAdapter adapter = new SectionsPageAdapter(getFragmentManager());
+        final SectionsPageAdapter adapter = new SectionsPageAdapter(getChildFragmentManager());
         adapter.addFragment(new TabFragment1(), "Hosting");
         adapter.addFragment(new TabFragment2(), " My Events");
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             public void onPageScrollStateChanged(int state) {}
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
-
+            @Override
             public void onPageSelected(int position) {
                 Fragment frag = adapter.getItem(position);
+                System.out.println("reload");
                 setFragment(frag);
             }
         });
@@ -51,7 +53,7 @@ public class TabsFragment extends Fragment  {
 
 
     public void setFragment(Fragment fragment) {
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        FragmentTransaction ft = getChildFragmentManager().beginTransaction();
         ft.detach(fragment).attach(fragment).commit();
     }
 }
