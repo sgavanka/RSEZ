@@ -90,6 +90,7 @@ public  class HomeActivity extends AppCompatActivity {
         // Create a new fragment and specify the fragment to show based on nav item clicked
         Fragment fragment = null;
         Class fragmentClass = null;
+        String args = "";
         switch (menuItem.getItemId()) {
             case R.id.nav_signOut:
                 mAuth.signOut();
@@ -100,17 +101,23 @@ public  class HomeActivity extends AppCompatActivity {
             case R.id.nav_event:
                 fragmentClass = CreateFragment.class;
                 break;
+
             case R.id.nav_home:
                 fragmentClass = TabsFragment.class;
                 break;
-
+            case R.id.nav_eventDetails:
+                fragmentClass = EventDetailsFragment.class;
+                args ="jOOG3UrsCqs6hkdD76fq";
+                fragment = EventDetailsFragment.newInstance(args);
+                break;
             default:
                 fragmentClass = TabsFragment.class;
                 break;
-
         }
         try {
-            fragment = (Fragment) fragmentClass.newInstance();
+            if (args == ""){
+                fragment = (Fragment) fragmentClass.newInstance();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -22,7 +22,15 @@ public class Event extends ModelBase {
 
     private String hostEmail;
     private String documentId;
+    public Event(String documentId){
+        super(documentId);
 
+        this.title = null;
+        this.description = null;
+        this.startDate = null;
+        this.startTime = null;
+        this.hostUserId = null;
+    }
     public Event(String documentId, String title, String description, String startDate, String startTime, String hostEmail) {
         super(documentId);
 
