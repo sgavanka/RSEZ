@@ -128,6 +128,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                                     Toast.makeText(getContext(), id,
                                             Toast.LENGTH_SHORT).show();
 
+
                                 }
                             });
                             //temp.setTag(id);
