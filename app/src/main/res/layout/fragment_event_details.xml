@@ -65,6 +65,21 @@
                 android:text="Hosts Email"
                 android:textColor="@android:color/black"
                 android:textSize="15dp" />
+
+            <Button
+                android:id="@+id/inviteButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawable="@drawable/background_login"
+                android:text="Invite People"
+                android:textColor="@android:color/holo_blue_dark"
+                android:textAllCaps="false"
+                android:padding="16dp"
+                android:clickable="true"
+                android:layout_marginTop="15dp"
+                android:visibility="invisible"
+                />
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
