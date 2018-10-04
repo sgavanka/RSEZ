@@ -89,7 +89,7 @@ public  class HomeActivity extends AppCompatActivity {
                 break;
             case R.id.nav_eventDetails:
                 fragmentClass = EventDetailsFragment.class;
-                args ="sgavanka@purdue.edu";
+                args ="jOOG3UrsCqs6hkdD76fq";
                 fragment = EventDetailsFragment.newInstance(args);
                 break;
         }

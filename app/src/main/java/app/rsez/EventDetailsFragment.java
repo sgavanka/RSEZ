@@ -35,11 +35,13 @@ public class EventDetailsFragment extends Fragment {
     static String desc;
     static String date;
     static String time;
+    static String email;
     Boolean updated = false;
     TextView eventName;
     TextView eventDesc;
     TextView eventDate;
     TextView eventTime;
+    TextView eventEmail;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -54,6 +56,7 @@ public class EventDetailsFragment extends Fragment {
         eventDesc = (TextView) view.findViewById(R.id.event_description_view);
         eventDate = (TextView) view.findViewById(R.id.event_date_view);
         eventTime = (TextView) view.findViewById(R.id.event_time_view);
+        eventEmail = (TextView) view.findViewById(R.id.event_email_view);
 
         event.read(eventID, new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -64,10 +67,12 @@ public class EventDetailsFragment extends Fragment {
                 desc = "Description: " + doc.getString("description");
                 date = "Date: " + doc.getString("startDate");
                 time = "Start Time: " + doc.getString("startTime");
+                email = "Host's Email: " + doc.getString("hostEmail");
                 eventName.setText(title);
                 eventDesc.setText(desc);
                 eventDate.setText(date);
                 eventTime.setText(time);
+                eventEmail.setText(email);
                 updated = true;
             }
         });
