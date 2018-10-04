@@ -107,7 +107,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                             String time = event.getStartTime();
                             System.out.println(name);
 
-                            String combined = "Name: " + name + "\n" + " Date: " + "     Time: " + time;
+                            String combined = "Name: " + name + "\n" + " Date: " + date + "     Time: " + time;
 
                             temp = new TextView(getView().getContext());
                             temp.setText(combined);

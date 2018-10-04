@@ -125,9 +125,6 @@ public  class HomeActivity extends AppCompatActivity {
         if(fragment!=null)
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
 
-
-
-
     }
     public void setFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
