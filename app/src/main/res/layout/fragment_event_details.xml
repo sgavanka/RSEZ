@@ -10,6 +10,7 @@
     android:paddingLeft="18dp"
     android:paddingRight="18dp"
     android:background="@android:color/background_light"
+    android:id="@+id/event_frame"
     >
     <ScrollView
         android:layout_width="match_parent"
@@ -72,6 +73,20 @@
                 android:layout_height="wrap_content"
                 android:drawable="@drawable/background_login"
                 android:text="Invite People"
+                android:textColor="@android:color/holo_blue_dark"
+                android:textAllCaps="false"
+                android:padding="16dp"
+                android:clickable="true"
+                android:layout_marginTop="15dp"
+                android:visibility="invisible"
+                />
+
+            <Button
+                android:id="@+id/editButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawable="@drawable/background_login"
+                android:text="Edit Event"
                 android:textColor="@android:color/holo_blue_dark"
                 android:textAllCaps="false"
                 android:padding="16dp"

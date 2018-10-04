@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +19,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import app.rsez.models.Event;
 
-public class EventDetailsFragment extends Fragment {
+public class EventDetailsFragment extends Fragment{
     public static EventDetailsFragment newInstance() {
         return new EventDetailsFragment();
     }
@@ -40,6 +42,7 @@ public class EventDetailsFragment extends Fragment {
     TextView eventTime;
     TextView eventEmail;
     Button inviteButton;
+    Button editButton;
     FirebaseAuth mAuth;
     @Nullable
     @Override
@@ -57,6 +60,14 @@ public class EventDetailsFragment extends Fragment {
         eventTime = (TextView) view.findViewById(R.id.event_time_view);
         eventEmail = (TextView) view.findViewById(R.id.event_email_view);
         inviteButton = (Button) view.findViewById(R.id.inviteButton);
+        editButton = (Button) view.findViewById(R.id.editButton);
+        view.findViewById(R.id.editButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("BACK");
+                getActivity().onBackPressed();
+            }
+        });
 
         event.read(eventID, new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -68,8 +79,9 @@ public class EventDetailsFragment extends Fragment {
                 date = "Date: " + doc.getString("startDate");
                 time = "Start Time: " + doc.getString("startTime");
                 email = "Host's Email: " + doc.getString("hostEmail");
-                if (currentUser.getEmail() == doc.getString("hostEmail")) {
+                if (currentUser.getEmail().equals(doc.getString("hostEmail"))) {
                     inviteButton.setVisibility(View.VISIBLE);
+                    editButton.setVisibility(View.VISIBLE);
                 }
                 eventName.setText(title);
                 eventDesc.setText(desc);
@@ -79,7 +91,11 @@ public class EventDetailsFragment extends Fragment {
                 updated = true;
             }
         });
-
         return view;
+    }
+
+    public void setFragment(Fragment fragment) {
+        FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+        ft.detach(fragment).attach(fragment).commit();
     }
 }

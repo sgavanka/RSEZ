@@ -5,12 +5,16 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -125,9 +129,15 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                             temp.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    Toast.makeText(getContext(), id,
-                                            Toast.LENGTH_SHORT).show();
 
+                                    Toast.makeText(getContext(), id, Toast.LENGTH_SHORT).show();
+                                    Fragment fragment;
+                                    fragment = EventDetailsFragment.newInstance(id);
+                                    FragmentManager fragmentManager = getChildFragmentManager();
+                                    if(fragment!=null) {
+
+                                        fragmentManager.beginTransaction().replace(R.id.frag_frame, fragment).commit();
+                                    }
 
                                 }
                             });
@@ -148,7 +158,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        System.out.print("Clicked");
+        //System.out.print("Clicked");
         String tag = (String) v.getTag();
         for(String tags : ids){
             if(tag.equals(tags)) {
