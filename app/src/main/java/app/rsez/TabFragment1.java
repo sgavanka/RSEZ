@@ -39,13 +39,13 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
        View view = inflater.inflate(R.layout.fragment_tab1, container, false);
        System.out.println("FragmentTab");
-        query();
+
 
         List<TextView> text = new ArrayList<>();
         //System.out.println("size " + list.size());
         TextView temp;
         mLinearLayout = view.findViewById(R.id.linear);
-
+        query();
 
         /*for(Event event : q){
             System.out.println("one");
@@ -122,7 +122,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                                             Toast.LENGTH_SHORT).show();
                                 }
                             });
-                            temp.setTag(id);
+                            //temp.setTag(id);
                             ids.add(id);
                             mLinearLayout.addView(temp);
 
