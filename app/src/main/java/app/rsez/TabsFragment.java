@@ -5,13 +5,15 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 
-public class TabsFragment extends Fragment {
+public class TabsFragment extends Fragment  {
    private SectionsPageAdapter sectionsPageAdapter;
    private ViewPager viewPager;
 
@@ -31,11 +33,27 @@ public class TabsFragment extends Fragment {
 
         return view;
     }
-    private void setupViewPager(ViewPager viewPager) {
-        SectionsPageAdapter adapter = new SectionsPageAdapter(getFragmentManager());
+    private void setupViewPager(final ViewPager viewPager) {
+        final SectionsPageAdapter adapter = new SectionsPageAdapter(getFragmentManager());
         adapter.addFragment(new TabFragment1(), "Hosting");
         adapter.addFragment(new TabFragment2(), " My Events");
         viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            public void onPageScrollStateChanged(int state) {}
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+
+            public void onPageSelected(int position) {
+                Fragment frag = adapter.getItem(position);
+                setFragment(frag);
+            }
+        });
+    }
+
+
+    public void setFragment(Fragment fragment) {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.detach(fragment).attach(fragment).commit();
     }
 }
+
 

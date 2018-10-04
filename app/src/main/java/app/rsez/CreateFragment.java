@@ -111,9 +111,12 @@ public class CreateFragment extends Fragment implements View.OnClickListener {
                     public void onTimeSet(TimePicker timePicker, int hourOfDay, int minutes) {
                         if (hourOfDay >= 12) {
                             amPm = "PM";
-                            hourOfDay = hourOfDay - 12;
+
                         } else {
                             amPm = "AM";
+                        }
+                        if (hourOfDay > 12) {
+                            hourOfDay = hourOfDay -12;
                         }
                         chooseTime.setText(String.format("%02d:%02d", hourOfDay, minutes) + amPm);
 
