@@ -24,10 +24,28 @@
         android:id="@+id/master_item_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
+        android:padding="5dp"
         android:textSize="25dp"
         android:text="Create An Event"
-        android:textColor="@android:color/black"/>
+        android:textColor="@color/indigo"
+        android:layout_marginTop="50dp"/>
+
+            <FrameLayout
+                android:id="@+id/content_frame"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/lightGrey"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+                android:bottomRightRadius="5dp"
+                android:bottomLeftRadius="5dp"
+                android:topLeftRadius="5dp"
+                android:topRightRadius="5dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -38,6 +56,7 @@
                 >
 
                 <EditText
+                    android:id="@+id/event"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Event Name"
@@ -47,6 +66,8 @@
                     android:textColorHint="@color/indigo"
                     android:theme="@style/MyEditText"
                     app:hintEnabled="true"
+                    android:drawablePadding="12dp"
+                    android:drawableLeft="@drawable/redcarpet"
 
                     />
 
@@ -59,6 +80,7 @@
                 app:hintTextAppearance="@style/MyHintText">
 
                 <EditText
+                    android:id="@+id/description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:hintEnabled="true"
@@ -68,8 +90,10 @@
                     android:inputType="textEmailAddress"
                     app:counterEnabled="true"
                     app:counterMaxLength="100"
+                    android:drawablePadding="12dp"
                     android:maxLines="1"
                     android:maxLength="100"
+                    android:drawableLeft="@drawable/descriptionicon"
                     />
 
             </android.support.design.widget.TextInputLayout>
@@ -91,8 +115,10 @@
                     android:inputType="date"
                     app:counterEnabled="true"
                     app:counterMaxLength="100"
+                    android:drawablePadding="12dp"
                     android:maxLines="1"
                     android:maxLength="100"
+                    android:drawableLeft="@drawable/calendericon"
                     />
 
             </android.support.design.widget.TextInputLayout>
@@ -112,15 +138,30 @@
                     android:textColorHint="@color/indigo"
                     android:theme="@style/MyEditText"
                     android:inputType="date"
+                    android:drawablePadding="12dp"
                     app:counterEnabled="true"
                     app:counterMaxLength="100"
                     android:maxLines="1"
                     android:maxLength="100"
+                    android:drawableLeft="@drawable/timeicon"
                     />
 
             </android.support.design.widget.TextInputLayout>
 
-
+                </LinearLayout>
+            </FrameLayout>
+            <Button
+                android:id="@+id/createButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawable="@drawable/background_login"
+                android:text="Create"
+                android:textColor="@android:color/holo_blue_dark"
+                android:textAllCaps="false"
+                android:padding="16dp"
+                android:clickable="true"
+                android:layout_marginTop="15dp"
+                />
 
 
 </LinearLayout>

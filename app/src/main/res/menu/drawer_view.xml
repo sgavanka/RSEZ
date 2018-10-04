@@ -9,10 +9,10 @@
             android:id="@+id/nav_event"
             android:icon="@drawable/event"
             android:title="Create Event" />
-        <item
-            android:id="@+id/nav_host"
-            android:icon="@drawable/host"
-            android:title="Hosting" />
+        <!--<item-->
+            <!--android:id="@+id/nav_host"-->
+            <!--android:icon="@drawable/host"-->
+            <!--android:title="Hosting" />-->
         <item
             android:id="@+id/nav_tickets"
             android:icon="@drawable/ticketfilled"

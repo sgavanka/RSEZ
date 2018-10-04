@@ -30,13 +30,14 @@ public  class MainActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mAuth = FirebaseAuth.getInstance();
+
         mEmailField = findViewById(R.id.email);
         mPasswordField = findViewById(R.id.password);
         // Button buttonLogin = (Button) findViewById(R.id.loginButton);
 
         findViewById(R.id.loginButton).setOnClickListener(this);
         findViewById(R.id.registerButton).setOnClickListener(this);
+        mAuth = FirebaseAuth.getInstance();
         // Capture button clicks
        /* buttonLogin.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {

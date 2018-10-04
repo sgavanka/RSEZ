@@ -20,16 +20,18 @@ public class Event extends ModelBase {
     private String startDate;
     private String startTime;
 
-    private String hostUserId;
+    private String hostEmail;
+    private String documentId;
 
-    public Event(String documentId, String title, String description, String startDate, String startTime, String hostUserId) {
+    public Event(String documentId, String title, String description, String startDate, String startTime, String hostEmail) {
         super(documentId);
 
         this.title = title;
         this.description = description;
         this.startDate = startDate;
         this.startTime = startTime;
-        this.hostUserId = hostUserId;
+        this.hostEmail = hostEmail;
+         //document id should always be email
     }
 
     public String getTitle() {
@@ -57,11 +59,11 @@ public class Event extends ModelBase {
     }
 
     public String getHostUserId() {
-        return hostUserId;
+        return hostEmail;
     }
 
     public void setHostUserId(String hostUserId) {
-        this.hostUserId = hostUserId;
+        this.hostEmail = hostUserId;
     }
 
     @Override
@@ -71,7 +73,7 @@ public class Event extends ModelBase {
         event.put("description", description);
         event.put("startDate", startDate);
         event.put("startTime", startTime);
-        event.put("hostUserId", hostUserId);
+        event.put("hostEmail", hostEmail);
 
         db.collection("events").document(getDocumentId()).set(event)
                 .addOnSuccessListener(onSuccessListener)
@@ -80,6 +82,14 @@ public class Event extends ModelBase {
 
     @Override
     public void write() {
+        Map<String, Object> event = new HashMap<>();
+        event.put("title", title);
+        event.put("description", description);
+        event.put("startDate", startDate);
+        event.put("startTime", startTime);
+        event.put("hostEmail", hostEmail);
+
+        db.collection("events").document().set(event);
 
     }
 
