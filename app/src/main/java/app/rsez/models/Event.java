@@ -74,6 +74,14 @@ public class Event extends ModelBase {
         this.hostEmail = hostUserId;
     }
 
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
     @Override
     public void write(OnSuccessListener<Void> onSuccessListener, OnFailureListener onFailureListener) {
         Map<String, Object> event = new HashMap<>();
