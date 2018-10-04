@@ -29,7 +29,7 @@ public class Event extends ModelBase {
         this.description = null;
         this.startDate = null;
         this.startTime = null;
-        this.hostUserId = null;
+        this.hostEmail = null;
     }
     public Event(String documentId, String title, String description, String startDate, String startTime, String hostEmail) {
         super(documentId);
