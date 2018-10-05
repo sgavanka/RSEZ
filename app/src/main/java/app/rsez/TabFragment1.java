@@ -115,13 +115,13 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                             String time = event.getStartTime();
                             System.out.println(name);
 
-                            String combined = "Name: " + name + "\n" + " Date: " + date + "     Time: " + time;
+                            String combined = "Name: " + name + "\n" + "Date: " + date + "     Time: " + time;
 
                             temp = new TextView(context);
                             temp.setText(combined);
                             temp.setTextSize(20);
                             temp.setTextColor(Color.BLACK);
-                            temp.setPadding(0,0,0, 10);
+                            temp.setPadding(10,0,0, 20);
                             temp.setClickable(true);
                             temp.setOnClickListener(new View.OnClickListener() {
                                 @Override
