@@ -106,11 +106,6 @@ public  class HomeActivity extends AppCompatActivity {
             case R.id.nav_home:
                 fragmentClass = TabsFragment.class;
                 break;
-            case R.id.nav_eventDetails:
-                fragmentClass = EventDetailsFragment.class;
-                args ="jOOG3UrsCqs6hkdD76fq";
-                fragment = EventDetailsFragment.newInstance(args);
-                break;
             default:
                 fragmentClass = TabsFragment.class;
                 break;
