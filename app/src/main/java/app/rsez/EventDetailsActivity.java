@@ -49,12 +49,15 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
+        /*
         Toolbar toolbar = findViewById(R.id.toolbar);
+
         setSupportActionBar(toolbar);
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
-        mAuth = FirebaseAuth.getInstance();
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
+        */
+        mAuth = FirebaseAuth.getInstance();
         final FirebaseUser currentUser = mAuth.getCurrentUser();
         eventID = getIntent().getStringExtra("eventID");
         final Event event = new Event(eventID);
@@ -91,6 +94,7 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
                 updated = true;
             }
         });
+        /*
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -110,6 +114,7 @@ public class EventDetailsActivity extends AppCompatActivity implements View.OnCl
                     }
                 });
         setupDrawerContent(navigationView);
+        */
     }
 
     @Override
