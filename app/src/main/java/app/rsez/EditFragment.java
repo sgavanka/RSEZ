@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import android.widget.TimePicker;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.gson.Gson;
 
 import java.util.Calendar;
 
@@ -27,10 +29,7 @@ import app.rsez.models.Event;
 
 import static android.support.constraint.Constraints.TAG;
 
-public class EditFragment extends Fragment implements View.OnClickListener {
-    public static EditFragment newInstance() {
-        return new EditFragment();
-    }
+public class EditFragment extends AppCompatActivity implements View.OnClickListener {
 
     private DatePickerDialog.OnDateSetListener mDateSetListner;
     private static TextView mDisplayDate;
@@ -45,8 +44,99 @@ public class EditFragment extends Fragment implements View.OnClickListener {
     private int currentHour;
     private int currentMinute;
 
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_edit);
+       // Event argsEvent = (Event) getIntent().getSerializableExtra("EventObj");
+      //  System.out.println("THIS IS IT: " + argsEvent.getTitle());
+        Gson gson = new Gson();
+//        String eventString = getIntent().getStringExtra("EventObj");
+//        Event mainEvent = gson.fromJson(eventString, Event.class);
+        System.out.println("We made it to the activyt boi" );
+        mAuth = FirebaseAuth.getInstance();
+        mEventName = findViewById(R.id.eventEdit);
+        mDescription = findViewById(R.id.descriptionEdit);
+        mDisplayDate = (TextView) findViewById(R.id.dateEdit);
 
-    @Nullable
+        mDisplayDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar cal = Calendar.getInstance();
+                int year = cal.get(Calendar.YEAR);
+                int month = cal.get(Calendar.MONTH);
+                int day = cal.get(Calendar.DAY_OF_MONTH);
+
+
+                DatePickerDialog dialog = new DatePickerDialog(EditFragment.this, android.R.style.Theme_Holo_Light, mDateSetListner, year, month, day);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                dialog.getDatePicker().setMinDate(cal.getTimeInMillis());
+                dialog.show();
+                //  mDisplayDate.setText(String.format("%02d/%02d/%02d", month, day, year));
+                dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == DialogInterface.BUTTON_NEGATIVE) {
+                            dialog.dismiss();
+                        }
+                    }
+                });
+
+            }
+        });
+        mDateSetListner = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                month = month + 1;
+                Log.d(TAG, "onDataSet: date:" + month + "/" + dayOfMonth + "/" + year);
+                String date = month + "/" + dayOfMonth + "/" + year;
+                mDisplayDate.setText(date);
+            }
+        };
+
+        mDateSetListner = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                month = month + 1;
+                Log.d(TAG, "onDataSet: date:" + month + "/" + dayOfMonth + "/" + year);
+                String date = month + "/" + dayOfMonth + "/" + year;
+                mDisplayDate.setText(date);
+            }
+        };
+        //pick the time
+        // now do time picker stuff
+        chooseTime = findViewById(R.id.timeEdit);
+        chooseTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Calendar calendar = Calendar.getInstance();
+                currentHour = calendar.get(Calendar.HOUR_OF_DAY);
+                currentMinute = calendar.get(Calendar.MINUTE);
+                TimePickerDialog timePickerDialog = new TimePickerDialog(EditFragment.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int hourOfDay, int minutes) {
+                        if (hourOfDay >= 12) {
+                            amPm = "PM";
+
+                        } else {
+                            amPm = "AM";
+                        }
+                        if (hourOfDay > 12) {
+                            hourOfDay = hourOfDay -12;
+                        }
+                        chooseTime.setText(String.format("%02d:%02d", hourOfDay, minutes) + amPm);
+
+                    }
+                }, currentHour, currentMinute, false);
+                timePickerDialog.show();
+            }
+        });
+
+
+    }
+
+
+/* @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
@@ -124,7 +214,7 @@ public class EditFragment extends Fragment implements View.OnClickListener {
 
         return view;
 
-    }
+    } */
 
     private boolean validateForm() {
         boolean valid = true;
@@ -171,9 +261,9 @@ public class EditFragment extends Fragment implements View.OnClickListener {
             String email = mAuth.getCurrentUser().getEmail();
             event = new Event(email, name, description, date, time, email);
             event.write();
-            Intent myIntent = new Intent(getActivity(),
-                    HomeActivity.class);
-            startActivity(myIntent);
+          //  Intent myIntent = new Intent(getActivity(),
+              //      HomeActivity.class);
+           // startActivity(myIntent);
         }
     }
 
@@ -185,7 +275,7 @@ public class EditFragment extends Fragment implements View.OnClickListener {
             String date = mDisplayDate.getText().toString();
             String time = chooseTime.getText().toString();
             String description = mDescription.getText().toString();
-            eventIn(event, description, date, time);
+          //  eventIn(event, description, date, time);
 
             //load main fragment now
 

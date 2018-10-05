@@ -86,7 +86,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawable="@drawable/background_login"
-                android:text="Edit Event"
+                android:text="Edit Button"
                 android:textColor="@android:color/holo_blue_dark"
                 android:textAllCaps="false"
                 android:padding="16dp"

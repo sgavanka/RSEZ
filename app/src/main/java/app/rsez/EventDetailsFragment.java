@@ -1,5 +1,6 @@
 package app.rsez;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,9 +18,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.gson.Gson;
+
+import java.io.Serializable;
+
 import app.rsez.models.Event;
 
-public class EventDetailsFragment extends Fragment{
+public class EventDetailsFragment extends Fragment {
     public static EventDetailsFragment newInstance() {
         return new EventDetailsFragment();
     }
@@ -43,6 +48,7 @@ public class EventDetailsFragment extends Fragment{
     TextView eventEmail;
     Button inviteButton;
     Button editButton;
+    Event events;
     FirebaseAuth mAuth;
     @Nullable
     @Override
@@ -52,8 +58,8 @@ public class EventDetailsFragment extends Fragment{
         View view = inflater.inflate(R.layout.fragment_event_details, container, false);
         mAuth = FirebaseAuth.getInstance();
         final FirebaseUser currentUser = mAuth.getCurrentUser();
-        String eventID = this.getArguments().getString("id");
-        Event event = new Event(eventID);
+        final String eventID = this.getArguments().getString("id");
+        final Event event = new Event(eventID);
         eventName = (TextView) view.findViewById(R.id.event_name_view);
         eventDesc = (TextView) view.findViewById(R.id.event_description_view);
         eventDate = (TextView) view.findViewById(R.id.event_date_view);
@@ -65,7 +71,13 @@ public class EventDetailsFragment extends Fragment{
             @Override
             public void onClick(View v) {
                 System.out.println("BACK");
-                getActivity().onBackPressed();
+                Intent myIntent = new Intent( getActivity(), EditFragment.class);
+                events = new Event(eventID, title, desc, date, time, email);
+                Gson gson = new Gson();
+                String obj = gson.toJson(events);
+                //myIntent.putExtra("EventObj", obj);
+                startActivity(myIntent);
+
             }
         });
 
