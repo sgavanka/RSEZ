@@ -72,7 +72,14 @@ public class EventDetailsFragment extends Fragment {
 
                 Gson gson = new Gson();
                 String obj = gson.toJson(EventDetailsFragment.this.event);
-                intent.putExtra("EventObj", obj);
+                intent.putExtra("Id", eventID);
+                intent.putExtra("Title", title);
+                intent.putExtra("Description", desc);
+                intent.putExtra("Date", date);
+                intent.putExtra("Time", time);
+                intent.putExtra("Email", email);
+
+
                 getActivity().startActivity(intent);
             }
         });
@@ -83,19 +90,19 @@ public class EventDetailsFragment extends Fragment {
                 DocumentSnapshot doc = task.getResult();
                 //System.out.println(doc);
                 title = doc.getString("title");
-                desc = "Description: " + doc.getString("description");
-                date = "Date: " + doc.getString("startDate");
-                time = "Start Time: " + doc.getString("startTime");
-                email = "Host's Email: " + doc.getString("hostEmail");
+                desc = doc.getString("description");
+                date = doc.getString("startDate");
+                time = doc.getString("startTime");
+                email = doc.getString("hostEmail");
                 if (currentUser.getEmail().equals(doc.getString("hostEmail"))) {
                     inviteButton.setVisibility(View.VISIBLE);
                     editButton.setVisibility(View.VISIBLE);
                 }
                 eventName.setText(title);
-                eventDesc.setText(desc);
-                eventDate.setText(date);
-                eventTime.setText(time);
-                eventEmail.setText(email);
+                eventDesc.setText("Description: " + desc);
+                eventDate.setText("Date: " + date);
+                eventTime.setText("Time: " + time);
+                eventEmail.setText("Host email: " + email);
                 updated = true;
             }
         });
