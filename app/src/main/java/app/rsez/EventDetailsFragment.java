@@ -19,6 +19,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.gson.Gson;
 
+import java.io.Serializable;
+
 import app.rsez.models.Event;
 
 public class EventDetailsFragment extends Fragment implements View.OnClickListener {
@@ -38,6 +40,7 @@ public class EventDetailsFragment extends Fragment implements View.OnClickListen
     static String time;
     static String email;
     String eventID;
+    String eventTitle;
     Boolean updated = false;
     TextView eventName;
     TextView eventDesc;
@@ -100,6 +103,7 @@ public class EventDetailsFragment extends Fragment implements View.OnClickListen
                     inviteButton.setVisibility(View.VISIBLE);
                     editButton.setVisibility(View.VISIBLE);
                 }
+                eventTitle = title;
                 eventName.setText(title);
                 eventDesc.setText("Description: " + desc);
                 eventDate.setText("Date: " + date);
@@ -123,6 +127,7 @@ public class EventDetailsFragment extends Fragment implements View.OnClickListen
             System.out.println("INVITE BUTTON");
             Intent intent = new Intent(getActivity(), InviteActivity.class);
             intent.putExtra("eventID",eventID);
+            intent.putExtra("eventName", eventTitle);
             startActivity(intent);
         }
     }
