@@ -24,7 +24,7 @@ public class Event extends ModelBase  {
     private String startTime;
 
     private String hostEmail;
-    private String documentId;
+
     public Event(String documentId){
         super(documentId);
 
