@@ -1,15 +1,20 @@
 package app.rsez;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +35,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     private static final String TAG = "TabFragment1";
     private static FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private static FirebaseUser user = mAuth.getCurrentUser();
+    private Context context;
     private int numTextViews;
     private List<String> ids = new ArrayList<>();
     protected static FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -66,6 +72,11 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
        return view;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
 
     public List<Event> query() {
         System.out.println("in query");
@@ -107,9 +118,9 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                             String time = event.getStartTime();
                             System.out.println(name);
 
-                            String combined = "Name: " + name + "\n" + " Date: " + "     Time: " + time;
+                            String combined = "Name: " + name + "\n" + " Date: " + date + "     Time: " + time;
 
-                            temp = new TextView(getView().getContext());
+                            temp = new TextView(context);
                             temp.setText(combined);
                             temp.setTextSize(20);
                             temp.setTextColor(Color.BLACK);
@@ -118,8 +129,16 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                             temp.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    Toast.makeText(getContext(), id,
-                                            Toast.LENGTH_SHORT).show();
+
+                                    Toast.makeText(getContext(), id, Toast.LENGTH_SHORT).show();
+                                    Fragment fragment;
+                                    fragment = EventDetailsFragment.newInstance(id);
+                                    FragmentManager fragmentManager = getChildFragmentManager();
+                                    if(fragment!=null) {
+
+                                        fragmentManager.beginTransaction().replace(R.id.frag_frame, fragment).commit();
+                                    }
+
                                 }
                             });
                             //temp.setTag(id);
@@ -139,7 +158,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        System.out.print("Clicked");
+        //System.out.print("Clicked");
         String tag = (String) v.getTag();
         for(String tags : ids){
             if(tag.equals(tags)) {

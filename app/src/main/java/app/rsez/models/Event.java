@@ -1,5 +1,8 @@
 package app.rsez.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -9,7 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Event extends ModelBase {
+public class Event extends ModelBase  {
     private static String COLLECTION_NAME = "events";
 
     private String title;
@@ -21,7 +24,7 @@ public class Event extends ModelBase {
     private String startTime;
 
     private String hostEmail;
-    private String documentId;
+
     public Event(String documentId){
         super(documentId);
 
@@ -41,6 +44,7 @@ public class Event extends ModelBase {
         this.hostEmail = hostEmail;
          //document id should always be email
     }
+
 
     public String getTitle() {
         return title;
@@ -108,6 +112,17 @@ public class Event extends ModelBase {
         db.collection("events").document().set(event);
 
     }
+    public void writeId(String documentId) {
+        Map<String, Object> event = new HashMap<>();
+        event.put("title", title);
+        event.put("description", description);
+        event.put("startDate", startDate);
+        event.put("startTime", startTime);
+        event.put("hostEmail", hostEmail);
+
+        db.collection("events").document(documentId).set(event);
+
+    }
 
     public static void read(String documentId, OnCompleteListener<DocumentSnapshot> onCompleteListener) {
         db.collection(COLLECTION_NAME).document(documentId).get().addOnCompleteListener(onCompleteListener);
@@ -125,4 +140,6 @@ public class Event extends ModelBase {
 
         return  event;
     }
+
+
 }

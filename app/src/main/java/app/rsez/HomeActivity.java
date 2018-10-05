@@ -94,8 +94,9 @@ public  class HomeActivity extends AppCompatActivity {
         switch (menuItem.getItemId()) {
             case R.id.nav_signOut:
                 mAuth.signOut();
-                Intent myIntent = new Intent(HomeActivity.this,
-                        MainActivity.class);
+                finish();
+
+                Intent myIntent = new Intent(HomeActivity.this, MainActivity.class);
                 startActivity(myIntent);
                 break;
             case R.id.nav_event:
@@ -125,9 +126,6 @@ public  class HomeActivity extends AppCompatActivity {
         if(fragment!=null)
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
 
-
-
-
     }
     public void setFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -136,4 +134,9 @@ public  class HomeActivity extends AppCompatActivity {
                 .commit();
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 }
