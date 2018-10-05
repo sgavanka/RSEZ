@@ -289,8 +289,6 @@ public class EditFragment extends AppCompatActivity implements View.OnClickListe
             String time = chooseTime.getText().toString();
             String description = mDescription.getText().toString();
            eventIn(event, description, date, time);
-
-
         }
 
     }

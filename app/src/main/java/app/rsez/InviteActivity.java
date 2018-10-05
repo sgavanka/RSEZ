@@ -17,11 +17,13 @@ import app.rsez.models.QRCode;
 
 public class InviteActivity extends Activity implements View.OnClickListener {
 
+    String eventID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_invite);
         Button invite = findViewById(R.id.inviteButton);
+        eventID = getIntent().getStringExtra("eventID");
         invite.setOnClickListener(this);
 
     }
@@ -36,7 +38,7 @@ public class InviteActivity extends Activity implements View.OnClickListener {
             System.out.println("Generate QRCode");
             //TODO: Generate qr code to email
             try {
-                qrcode = QRCode.generateQRCode(this, email);
+                qrcode = QRCode.generateQRCode(this, eventID + " - " + email);
                 ImageView imageViewQrCode = findViewById(R.id.qrcodeView);
                 imageViewQrCode.setImageBitmap(qrcode);
             } catch (WriterException e) {

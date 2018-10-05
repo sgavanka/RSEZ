@@ -21,7 +21,7 @@ import com.google.gson.Gson;
 
 import app.rsez.models.Event;
 
-public class EventDetailsFragment extends Fragment {
+public class EventDetailsFragment extends Fragment implements View.OnClickListener {
     public static EventDetailsFragment newInstance() {
         return new EventDetailsFragment();
     }
@@ -37,6 +37,7 @@ public class EventDetailsFragment extends Fragment {
     static String date;
     static String time;
     static String email;
+    String eventID;
     Boolean updated = false;
     TextView eventName;
     TextView eventDesc;
@@ -55,7 +56,7 @@ public class EventDetailsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_event_details, container, false);
         mAuth = FirebaseAuth.getInstance();
         final FirebaseUser currentUser = mAuth.getCurrentUser();
-        final String eventID = this.getArguments().getString("id");
+        eventID = this.getArguments().getString("id");
         final Event event = new Event(eventID);
         eventName = (TextView) view.findViewById(R.id.event_name_view);
         eventDesc = (TextView) view.findViewById(R.id.event_description_view);
@@ -64,6 +65,7 @@ public class EventDetailsFragment extends Fragment {
         eventEmail = (TextView) view.findViewById(R.id.event_email_view);
         inviteButton = (Button) view.findViewById(R.id.inviteButton);
         editButton = (Button) view.findViewById(R.id.editButton);
+        inviteButton.setOnClickListener(this);
         view.findViewById(R.id.editButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -112,5 +114,16 @@ public class EventDetailsFragment extends Fragment {
     public void setFragment(Fragment fragment) {
         FragmentTransaction ft = getChildFragmentManager().beginTransaction();
         ft.detach(fragment).attach(fragment).commit();
+    }
+
+    @Override
+    public void onClick(View v) {
+        int i = v.getId();
+        if (i == R.id.inviteButton){
+            System.out.println("INVITE BUTTON");
+            Intent intent = new Intent(getActivity(), InviteActivity.class);
+            intent.putExtra("eventID",eventID);
+            startActivity(intent);
+        }
     }
 }

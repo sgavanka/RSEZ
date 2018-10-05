@@ -27,6 +27,9 @@
         <activity
             android:name=".EditFragment"
             android:label="RSEZ" />
+        <activity
+            android:name=".InviteActivity"
+            android:label="RSEZ" />
     </application>
 
 
