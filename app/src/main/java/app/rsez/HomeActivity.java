@@ -111,6 +111,10 @@ public  class HomeActivity extends AppCompatActivity {
                 args ="jOOG3UrsCqs6hkdD76fq";
                 fragment = EventDetailsFragment.newInstance(args);
                 break;
+            case R.id.nav_scan:
+                Intent myIntent1 = new Intent(HomeActivity.this, QRScanFragment.class);
+                startActivity(myIntent1);
+                break;
             default:
                 fragmentClass = TabsFragment.class;
                 break;
