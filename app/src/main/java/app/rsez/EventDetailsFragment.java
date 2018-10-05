@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,8 +18,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.gson.Gson;
-
-import java.io.Serializable;
 
 import app.rsez.models.Event;
 
@@ -48,7 +45,7 @@ public class EventDetailsFragment extends Fragment {
     TextView eventEmail;
     Button inviteButton;
     Button editButton;
-    Event events;
+    Event event;
     FirebaseAuth mAuth;
     @Nullable
     @Override
@@ -70,14 +67,13 @@ public class EventDetailsFragment extends Fragment {
         view.findViewById(R.id.editButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("BACK");
-                Intent myIntent = new Intent( getActivity(), EditFragment.class);
-                events = new Event(eventID, title, desc, date, time, email);
-                Gson gson = new Gson();
-                String obj = gson.toJson(events);
-                //myIntent.putExtra("EventObj", obj);
-                startActivity(myIntent);
+                Intent intent = new Intent( getActivity(), EditFragment.class);
+                EventDetailsFragment.this.event = new Event(eventID, title, desc, date, time, email);
 
+                Gson gson = new Gson();
+                String obj = gson.toJson(EventDetailsFragment.this.event);
+                intent.putExtra("EventObj", obj);
+                getActivity().startActivity(intent);
             }
         });
 

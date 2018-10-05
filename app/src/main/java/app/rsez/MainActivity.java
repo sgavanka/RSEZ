@@ -57,9 +57,10 @@ public  class MainActivity extends AppCompatActivity implements View.OnClickList
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            Intent myIntent = new Intent(MainActivity.this,
-                    HomeActivity.class);
-            startActivity(myIntent);
+            finish();
+
+            Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+            startActivity(intent);
         }
     }
 
