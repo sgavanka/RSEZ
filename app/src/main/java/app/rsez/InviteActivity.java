@@ -53,26 +53,28 @@ public class InviteActivity extends Activity implements View.OnClickListener {
                 // Store image in Devise database to send image to mail
                 ImageView imageViewQrCode = findViewById(R.id.qrcodeView);
                 imageViewQrCode.setImageBitmap(qrcode);
-                ContextWrapper cw = new ContextWrapper(getApplicationContext());
+//                ContextWrapper cw = new ContextWrapper(getApplicationContext());
                 // path to /data/data/yourapp/app_data/imageDir;
-                File path = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+//                File path = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
                 // Create imageDir
-                File file = new File(path, "temp.png");
-                FileOutputStream fos = new FileOutputStream(file);
+//                File file = new File(path, "temp.png");
+//                FileOutputStream fos = new FileOutputStream(file);
+
+                String url = MediaStore.Images.Media.insertImage(getContentResolver(), qrcode, "qrcode" , "qrcode");
 
                 // Use the compress method on the BitMap object to write image to the OutputStream
-                qrcode.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                fos.close();
+//                qrcode.compress(Bitmap.CompressFormat.PNG, 100, fos);
+//                fos.close();
                 Intent emailIntent = new Intent(Intent.ACTION_SEND);
                 emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{ email});
                 emailIntent.putExtra(Intent.EXTRA_SUBJECT, "You have been invited to " + eventName);
-                Uri uri = Uri.parse(file.getAbsolutePath());
+                Uri uri = Uri.parse(url);
 
                 emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
 
                 //need this to prompts email client only
                 emailIntent.setType("message/rfc822");
-                //startActivity(Intent.createChooser(emailIntent, "Choose an Email client :"));
+                startActivity(Intent.createChooser(emailIntent, "Choose an Email client :"));
             } catch (WriterException e) {
                 e.printStackTrace();
             } catch (IOException e) {
