@@ -1,9 +1,18 @@
 package app.rsez;
 
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -17,7 +26,7 @@ import com.google.gson.Gson;
 
 import app.rsez.models.Event;
 
-public class EventDetailsActivity extends Activity implements View.OnClickListener {
+public class EventDetailsActivity extends AppCompatActivity implements View.OnClickListener {
     static String title;
     static String desc;
     static String date;
@@ -33,13 +42,19 @@ public class EventDetailsActivity extends Activity implements View.OnClickListen
     TextView eventEmail;
     Button inviteButton;
     Button editButton;
+    DrawerLayout mDrawerLayout;
     Event event;
     FirebaseAuth mAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionbar = getSupportActionBar();
+        actionbar.setDisplayHomeAsUpEnabled(true);
         mAuth = FirebaseAuth.getInstance();
+        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
         final FirebaseUser currentUser = mAuth.getCurrentUser();
         eventID = getIntent().getStringExtra("eventID");
         final Event event = new Event(eventID);
@@ -76,6 +91,25 @@ public class EventDetailsActivity extends Activity implements View.OnClickListen
                 updated = true;
             }
         });
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        // set item as selected to persist highlight
+                        menuItem.setChecked(true);
+                        // close drawer when item is tapped
+                        mDrawerLayout.closeDrawers();
+
+                        // Add code here to update the UI based on the item selected
+                        // For example, swap UI fragments here
+
+                        return true;
+                    }
+                });
+        setupDrawerContent(navigationView);
     }
 
     @Override
@@ -103,5 +137,73 @@ public class EventDetailsActivity extends Activity implements View.OnClickListen
 
             startActivity(intent);
         }
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        selectDrawerItem(menuItem);
+                        return true;
+                    }
+                });
+    }
+
+
+    public void selectDrawerItem(MenuItem menuItem) {
+        // Create a new fragment and specify the fragment to show based on nav item clicked
+        Fragment fragment = null;
+        Class fragmentClass = null;
+        String args = "";
+        switch (menuItem.getItemId()) {
+            case R.id.nav_signOut:
+                mAuth.signOut();
+                finish();
+
+                Intent myIntent = new Intent(EventDetailsActivity.this, MainActivity.class);
+                startActivity(myIntent);
+                break;
+            case R.id.nav_event:
+                fragmentClass = CreateFragment.class;
+                break;
+
+            case R.id.nav_home:
+                //fragmentClass = TabsFragment.class;
+                Intent homeIntent = new Intent(this, HomeActivity.class);
+                startActivity(homeIntent);
+                break;
+            default:
+                fragmentClass = TabsFragment.class;
+                break;
+        }
+        try {
+            if (args == ""){
+                fragment = (Fragment) fragmentClass.newInstance();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if(fragment!=null) {
+            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+        }
+
+    }
+    public void setFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.content_frame, fragment)
+                .commit();
     }
 }
