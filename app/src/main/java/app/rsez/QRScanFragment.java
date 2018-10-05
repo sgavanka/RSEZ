@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.google.zxing.Result;
-
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 public class QRScanFragment extends AppCompatActivity implements ZXingScannerView.ResultHandler {
