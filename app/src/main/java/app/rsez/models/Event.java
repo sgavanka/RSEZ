@@ -112,6 +112,17 @@ public class Event extends ModelBase  {
         db.collection("events").document().set(event);
 
     }
+    public void writeId(String documentId) {
+        Map<String, Object> event = new HashMap<>();
+        event.put("title", title);
+        event.put("description", description);
+        event.put("startDate", startDate);
+        event.put("startTime", startTime);
+        event.put("hostEmail", hostEmail);
+
+        db.collection("events").document(documentId).set(event);
+
+    }
 
     public static void read(String documentId, OnCompleteListener<DocumentSnapshot> onCompleteListener) {
         db.collection(COLLECTION_NAME).document(documentId).get().addOnCompleteListener(onCompleteListener);

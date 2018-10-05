@@ -43,6 +43,8 @@ public class EditFragment extends AppCompatActivity implements View.OnClickListe
     private String amPm;
     private int currentHour;
     private int currentMinute;
+    private String docID;
+    private Event mainEvent;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,13 +53,22 @@ public class EditFragment extends AppCompatActivity implements View.OnClickListe
        // Event argsEvent = (Event) getIntent().getSerializableExtra("EventObj");
       //  System.out.println("THIS IS IT: " + argsEvent.getTitle());
         Gson gson = new Gson();
-//        String eventString = getIntent().getStringExtra("EventObj");
-//        Event mainEvent = gson.fromJson(eventString, Event.class);
-        System.out.println("We made it to the activyt boi" );
+      // String eventString = getIntent().getStringExtra("EventObj");
+      // mainEvent = gson.fromJson(eventString, Event.class);
+        // System.out.println("We made it to the activyt boi" + mainEvent.getTitle());
         mAuth = FirebaseAuth.getInstance();
         mEventName = findViewById(R.id.eventEdit);
         mDescription = findViewById(R.id.descriptionEdit);
         mDisplayDate = (TextView) findViewById(R.id.dateEdit);
+        chooseTime = findViewById(R.id.timeEdit);
+        docID = getIntent().getStringExtra("Id");
+        findViewById(R.id.editButton).setOnClickListener(this);
+
+        mEventName.setText(getIntent().getStringExtra("Title"));
+        mDescription.setText(getIntent().getStringExtra("Description"));
+        mDisplayDate.setText(getIntent().getStringExtra("Date"));
+        chooseTime.setText(getIntent().getStringExtra("Time"));
+
 
         mDisplayDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,7 +116,7 @@ public class EditFragment extends AppCompatActivity implements View.OnClickListe
         };
         //pick the time
         // now do time picker stuff
-        chooseTime = findViewById(R.id.timeEdit);
+
         chooseTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -260,24 +271,24 @@ public class EditFragment extends AppCompatActivity implements View.OnClickListe
             FirebaseUser user = mAuth.getCurrentUser();
             String email = mAuth.getCurrentUser().getEmail();
             event = new Event(email, name, description, date, time, email);
-            event.write();
-          //  Intent myIntent = new Intent(getActivity(),
-              //      HomeActivity.class);
-           // startActivity(myIntent);
+            event.writeId(docID);
+           Intent myIntent = new Intent(EditFragment.this,
+                  HomeActivity.class);
+           startActivity(myIntent);
         }
     }
 
     @Override
     public void onClick(View v) {
         int i = v.getId();
+        System.out.println("Edit click");
         if (i == R.id.editButton) {
+            System.out.println("Edit Button click");
             String event = mEventName.getText().toString();
             String date = mDisplayDate.getText().toString();
             String time = chooseTime.getText().toString();
             String description = mDescription.getText().toString();
-          //  eventIn(event, description, date, time);
-
-            //load main fragment now
+           eventIn(event, description, date, time);
 
 
         }
