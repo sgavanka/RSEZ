@@ -1,6 +1,7 @@
 package app.rsez;
 
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -11,15 +12,17 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 public class QRScanFragment extends AppCompatActivity implements ZXingScannerView.ResultHandler {
 
+
     private ZXingScannerView zXingScannerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.camera);
+        qrScan();
     }
 
-    public void qrScan(View view){
+    public void qrScan(){
         zXingScannerView = new ZXingScannerView(getApplicationContext());
         setContentView(zXingScannerView);
         zXingScannerView.setResultHandler(this);
@@ -37,5 +40,6 @@ public class QRScanFragment extends AppCompatActivity implements ZXingScannerVie
         Toast.makeText(getApplicationContext(), result.getText(), Toast.LENGTH_SHORT).show();
         zXingScannerView.resumeCameraPreview(this);
     }
+
 
 }

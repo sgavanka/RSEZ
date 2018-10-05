@@ -35,6 +35,9 @@
         <activity
             android:name=".EventDetailsActivity"
             android:label="RSEZ" />
+        <activity
+            android:name=".QRScanFragment"
+            android:label="RSEZ" />
     </application>
 
 
