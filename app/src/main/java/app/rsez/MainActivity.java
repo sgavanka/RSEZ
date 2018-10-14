@@ -57,6 +57,7 @@ public  class MainActivity extends AppCompatActivity implements View.OnClickList
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
+            System.out.println("START: " + currentUser.getEmail());
             finish();
 
             Intent intent = new Intent(MainActivity.this, HomeActivity.class);
@@ -126,8 +127,7 @@ public  class MainActivity extends AppCompatActivity implements View.OnClickList
         }
 
         // [START sign_in_with_email]
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
