@@ -39,6 +39,7 @@ public class CreateFragment extends Fragment implements View.OnClickListener {
     private TextView mDescription;
     private FirebaseAuth mAuth;
     private Event event;
+    private Calendar cal;
 
     private TimePickerDialog timePickerDialog;
     private String amPm;
@@ -58,10 +59,11 @@ public class CreateFragment extends Fragment implements View.OnClickListener {
         mDescription = view.findViewById(R.id.description);
         view.findViewById(R.id.createButton).setOnClickListener(this);
         mDisplayDate = (TextView) view.findViewById(R.id.date);
+        cal = Calendar.getInstance();
         mDisplayDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Calendar cal = Calendar.getInstance();
+
                 int year = cal.get(Calendar.YEAR);
                 int month = cal.get(Calendar.MONTH);
                 int day = cal.get(Calendar.DAY_OF_MONTH);
