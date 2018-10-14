@@ -22,10 +22,6 @@ public class QRScanFragment extends AppCompatActivity implements ZXingScannerVie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.camera);
-        qrScan();
-    }
-
-    public void qrScan(){
         zXingScannerView = new ZXingScannerView(getApplicationContext());
         setContentView(zXingScannerView);
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -36,21 +32,27 @@ public class QRScanFragment extends AppCompatActivity implements ZXingScannerVie
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, MY_PERMISSIONS_REQUEST_CAMERA);
             } else {
                 // No explanation needed; request the permission
                 ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, MY_PERMISSIONS_REQUEST_CAMERA);
-
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                 // app-defined int constant. The callback method gets the
                 // result of the request.
             }
         } else {
             // Permission has already been granted
-            cameraEnabled = 1;
-        }
-        if (cameraEnabled == 1) {
             zXingScannerView.setResultHandler(this);
             zXingScannerView.startCamera();
+        }
+        //qrScan();
+    }
+
+    public void qrScan(){
+
+
+        if (cameraEnabled == 1) {
+
         }
     }
 
@@ -75,13 +77,15 @@ public class QRScanFragment extends AppCompatActivity implements ZXingScannerVie
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
+                    //zXingScannerView.setResultHandler(this);
+                    //zXingScannerView.startCamera();
+                    cameraEnabled = 1;
                     zXingScannerView.setResultHandler(this);
                     zXingScannerView.startCamera();
-                    cameraEnabled = 1;
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
-                    cameraEnabled = 0;
+                    cameraEnabled = -1;
                 }
                 return;
             }
