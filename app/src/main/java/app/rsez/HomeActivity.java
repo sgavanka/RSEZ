@@ -116,6 +116,10 @@ public  class HomeActivity extends AppCompatActivity {
                 Intent myIntent1 = new Intent(HomeActivity.this, QRScanFragment.class);
                 startActivity(myIntent1);
                 break;
+            case R.id.nav_scan:
+                Intent myIntent1 = new Intent(HomeActivity.this, QRScanFragment.class);
+                startActivity(myIntent1);
+                break;
             default:
                 fragmentClass = TabsFragment.class;
                 break;
