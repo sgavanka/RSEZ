@@ -9,6 +9,7 @@ import com.google.firebase.firestore.Query;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 public class User extends ModelBase {
     private static String COLLECTION_NAME = "users";
@@ -93,14 +94,23 @@ public class User extends ModelBase {
         return  user;
     }
     public static User getUserFromEmail(String email){
-        User user = null;
+        final User[] user = {null};
+        final CountDownLatch done = new CountDownLatch(1);
         DocumentReference docRef = db.collection("users").document(email);
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                User user = documentSnapshot.toObject(User.class);
+                 user[0] = new User(documentSnapshot.getString("UserId"), documentSnapshot.getString("email"),
+                         documentSnapshot.getString("firstName"), documentSnapshot.getString("LastName"));
+                done.countDown();
+                //System.out.println("USER HERE: " +  documentSnapshot.getString("firstName"));
             }
         });
-            return user;
+        try {
+            done.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return user[0];
     }
 }
