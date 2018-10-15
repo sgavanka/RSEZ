@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -21,6 +22,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -101,15 +103,6 @@ public class InviteActivity extends Activity implements View.OnClickListener {
                 user[0] = new User(documentSnapshot.getString("UserId"), documentSnapshot.getString("email"),
                         documentSnapshot.getString("firstName"), documentSnapshot.getString("LastName"));
 
-                if(user[0] == null) {
-                    System.out.println("User not found");
-                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setMessage("User does not exist would you like to send an Email?").setPositiveButton("Yes", dialogClickListener)
-                            .setNegativeButton("No", dialogClickListener).show();
-
-                }
-                else {
-
                     try {
                         System.out.println("user found");
                         Bitmap qrcode = QRCode.generateQRCode(context, eventID + " - " + email);
@@ -133,9 +126,20 @@ public class InviteActivity extends Activity implements View.OnClickListener {
                         e.printStackTrace();
                     }
 
-                }
+
+            }
+
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                    System.out.println("User not found");
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setMessage("User does not exist would you like to send an Email?").setPositiveButton("Yes", dialogClickListener)
+                            .setNegativeButton("No", dialogClickListener).show();
+
             }
         });
+
 
     }
 }
