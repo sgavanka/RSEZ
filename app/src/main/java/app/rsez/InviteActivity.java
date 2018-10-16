@@ -39,6 +39,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import app.rsez.models.Event;
 import app.rsez.models.QRCode;
@@ -49,8 +51,10 @@ import static android.support.constraint.Constraints.TAG;
 
 public class InviteActivity extends Activity implements View.OnClickListener {
     protected static FirebaseFirestore db = FirebaseFirestore.getInstance();
-    String eventID;
-    String eventName;
+    private String eventID;
+    private String eventName;
+    private String email;
+    private Context context;
     private User user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +63,7 @@ public class InviteActivity extends Activity implements View.OnClickListener {
         Button invite = findViewById(R.id.inviteButton);
         eventID = getIntent().getStringExtra("eventID");
         eventName = getIntent().getStringExtra("eventName");
+        context = this;
         invite.setOnClickListener(this);
     }
 
@@ -72,10 +77,13 @@ public class InviteActivity extends Activity implements View.OnClickListener {
             System.out.println("Generate QRCode");
             //TODO: Generate qr code to email
             //user = User.getUserFromEmail(email);
-            getUserFromEmail(email, this, qrcode);
-
-
-
+            this.email = email;
+            if(isEmailValid(email)) {
+                getUserFromEmail(email, this, qrcode);
+            }
+            else {
+                 emailText.setError("Malformed Email");
+            }
 
 
         }
@@ -85,7 +93,7 @@ public class InviteActivity extends Activity implements View.OnClickListener {
         public void onClick(DialogInterface dialog, int which) {
             switch (which){
                 case DialogInterface.BUTTON_POSITIVE:
-                    //Yes button clicked
+                    sendEmail(context, email);
                     break;
 
                 case DialogInterface.BUTTON_NEGATIVE:
@@ -102,29 +110,17 @@ public class InviteActivity extends Activity implements View.OnClickListener {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 user[0] = new User(documentSnapshot.getString("UserId"), documentSnapshot.getString("email"),
                         documentSnapshot.getString("firstName"), documentSnapshot.getString("LastName"));
+                  System.out.println("USER[0]: " + documentSnapshot.getString("firstName"));
+                   if(documentSnapshot.getString("firstName") != null) {
+                       sendEmail(context, email);
+                   }
+                   else {
+                       System.out.println("User not found");
+                       AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                       builder.setMessage("User does not exist would you like to send an Email?").setPositiveButton("Yes", dialogClickListener)
+                               .setNegativeButton("No", dialogClickListener).show();
 
-                    try {
-                        System.out.println("user found");
-                        Bitmap qrcode = QRCode.generateQRCode(context, eventID + " - " + email);
-                        // Store image in Devise database to send image to mail
-                        ImageView imageViewQrCode = findViewById(R.id.qrcodeView);
-                        imageViewQrCode.setImageBitmap(qrcode);
-                        String url = MediaStore.Images.Media.insertImage(getContentResolver(), qrcode, "qrcode", "qrcode");
-                        Intent emailIntent = new Intent(Intent.ACTION_SEND);
-                        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
-                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "You have been invited to " + eventName);
-                        Uri uri = Uri.parse(url);
-
-                        emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
-
-                        //need this to prompts email client only
-                        emailIntent.setType("message/rfc822");
-                        startActivity(Intent.createChooser(emailIntent, "Choose an Email client :"));
-                    } catch (WriterException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                   }
 
 
             }
@@ -140,6 +136,38 @@ public class InviteActivity extends Activity implements View.OnClickListener {
             }
         });
 
+
+    }
+    public static boolean isEmailValid(String email) {
+        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
+    public void sendEmail(Context context, String email) {
+
+        try {
+            System.out.println("user found");
+            Bitmap qrcode = QRCode.generateQRCode(context, eventID + " - " + email);
+            // Store image in Devise database to send image to mail
+            ImageView imageViewQrCode = findViewById(R.id.qrcodeView);
+            imageViewQrCode.setImageBitmap(qrcode);
+            String url = MediaStore.Images.Media.insertImage(getContentResolver(), qrcode, "qrcode", "qrcode");
+            Intent emailIntent = new Intent(Intent.ACTION_SEND);
+            emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "You have been invited to " + eventName);
+            Uri uri = Uri.parse(url);
+
+            emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+
+            //need this to prompts email client only
+            emailIntent.setType("message/rfc822");
+            startActivity(Intent.createChooser(emailIntent, "Choose an Email client :"));
+        } catch (WriterException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 }
