@@ -17,10 +17,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -112,6 +114,10 @@ public class InviteActivity extends Activity implements View.OnClickListener {
                         documentSnapshot.getString("firstName"), documentSnapshot.getString("LastName"));
                   System.out.println("USER[0]: " + documentSnapshot.getString("firstName"));
                    if(documentSnapshot.getString("firstName") != null) {
+                       Toast toast= Toast.makeText(getApplicationContext(),
+                               "Invite Sent, Make sure to send an Email too", Toast.LENGTH_LONG);
+                       toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 50);
+                       toast.show();
                        sendEmail(context, email);
                    }
                    else {

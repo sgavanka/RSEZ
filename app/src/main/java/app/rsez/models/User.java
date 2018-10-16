@@ -7,7 +7,9 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
@@ -19,6 +21,7 @@ public class User extends ModelBase {
     private String firstName;
     private String lastName;
     private String documentId;
+    private ArrayList<String> eventList = new ArrayList<>();
 
     public User(String documentId, String email, String firstName, String lastName) {
         super(documentId);
@@ -53,6 +56,16 @@ public class User extends ModelBase {
         this.lastName = lastName;
     }
 
+    public void addEvent(String eventID) { eventList.add(eventID);}
+
+    public void removeEvent(String eventID) { eventList.add(eventID);}
+
+    public List<String> getEventList() {
+        //only returns a copy  you can't modify this
+        List<String> list = new ArrayList<>(eventList);
+        return list;
+    }
+
     @Override
     public void write(OnSuccessListener<Void> onSuccessListener, OnFailureListener onFailureListener) {
         Map<String, Object> user = new HashMap<>();
@@ -73,6 +86,7 @@ public class User extends ModelBase {
         user.put("firstName", firstName);
         user.put("lastName", lastName);
         user.put("UserId", documentId);
+        user.put("EventList", eventList);
 
         db.collection("users").document(email).set(user);
     }
