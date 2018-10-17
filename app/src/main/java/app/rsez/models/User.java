@@ -74,6 +74,7 @@ public class User extends ModelBase {
         user.put("firstName", firstName);
         user.put("lastName", lastName);
         user.put("UserId", documentId);
+        user.put("EventList", eventList);
 
         db.collection("users").document(email).set(user)
                 .addOnSuccessListener(onSuccessListener)
