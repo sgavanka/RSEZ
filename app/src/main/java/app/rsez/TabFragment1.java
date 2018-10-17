@@ -30,8 +30,8 @@ import app.rsez.models.Event;
 
 public class TabFragment1 extends Fragment implements View.OnClickListener {
     private static final String TAG = "TabFragment1";
-    private static FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private static FirebaseUser user = mAuth.getCurrentUser();
+    private static FirebaseAuth mAuth;
+    private static FirebaseUser user;
     private Context context;
     private int numTextViews;
     private List<String> ids = new ArrayList<>();
@@ -41,7 +41,9 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
        View view = inflater.inflate(R.layout.fragment_tab1, container, false);
-       System.out.println("FragmentTab");
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        System.out.println("FragmentTab: " + user.getEmail());
 
 
         List<TextView> text = new ArrayList<>();
@@ -49,22 +51,6 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         TextView temp;
         mLinearLayout = view.findViewById(R.id.linear);
         query();
-
-        /*for(Event event : q){
-            System.out.println("one");
-            String name = event.getTitle();
-            String description = event.getDescription();
-            String date = event.getStartDate();
-            String time = event.getStartTime();
-            System.out.println(name);
-
-            String combined = "Name: " + name + " Date: " + " Time: " + time;
-
-            temp = new TextView(view.getContext());
-            temp.setText(combined);
-            mLinearLayout.addView(temp);
-
-        }*/
 
        return view;
     }
