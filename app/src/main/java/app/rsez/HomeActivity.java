@@ -21,6 +21,8 @@ public  class HomeActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
     private FirebaseAuth mAuth;
+    final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
+    final int MY_PERMISSIONS_REQUEST_STORAGE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +36,7 @@ public  class HomeActivity extends AppCompatActivity {
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
+
         String[] PERMISSIONS = {
                 android.Manifest.permission.READ_EXTERNAL_STORAGE,
                 android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -42,6 +45,7 @@ public  class HomeActivity extends AppCompatActivity {
         if(!checkPermissions(this, PERMISSIONS)){
             ActivityCompat.requestPermissions(this, PERMISSIONS, 1);
         }
+
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
@@ -116,6 +120,16 @@ public  class HomeActivity extends AppCompatActivity {
             case R.id.nav_home:
                 fragmentClass = TabsFragment.class;
                 break;
+//            case R.id.nav_eventDetails:
+////                Intent myIntent1 = new Intent(HomeActivity.this, EventDetailsActivity.class);
+////                startActivity(myIntent1);
+////                args ="jOOG3UrsCqs6hkdD76fq";
+////                fragment = EventDetailsFragment.newInstance(args);
+//                break;
+            case R.id.nav_scan:
+                Intent myIntent1 = new Intent(HomeActivity.this, QRScanFragment.class);
+                startActivity(myIntent1);
+                break;
             default:
                 fragmentClass = TabsFragment.class;
                 break;
@@ -137,6 +151,17 @@ public  class HomeActivity extends AppCompatActivity {
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, fragment)
                 .commit();
+    }
+
+    public boolean checkPermissions(Context context, String... permissions){
+        if (context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     @Override

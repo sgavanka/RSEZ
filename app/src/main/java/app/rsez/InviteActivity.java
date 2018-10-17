@@ -1,23 +1,24 @@
 package app.rsez;
 
 import android.app.Activity;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Parcelable;
 import android.provider.MediaStore;
+
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,8 +36,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.zxing.WriterException;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,6 +75,7 @@ public class InviteActivity extends Activity implements View.OnClickListener {
         if (i == R.id.inviteButton){
             EditText emailText = findViewById(R.id.emailEditText);
             String email = emailText.getText().toString();
+
             System.out.println("Generate QRCode");
             //TODO: Generate qr code to email
             //user = User.getUserFromEmail(email);
@@ -140,6 +140,7 @@ public class InviteActivity extends Activity implements View.OnClickListener {
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setMessage("User does not exist would you like to send an Email?").setPositiveButton("Yes", dialogClickListener)
                             .setNegativeButton("No", dialogClickListener).show();
+
 
             }
         });

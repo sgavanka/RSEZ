@@ -8,23 +8,18 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-import org.w3c.dom.Text;
 
 import java.util.Calendar;
 
@@ -44,6 +39,7 @@ public class CreateFragment extends Fragment implements View.OnClickListener {
     private TextView mDescription;
     private FirebaseAuth mAuth;
     private Event event;
+    private Calendar cal;
 
     private TimePickerDialog timePickerDialog;
     private String amPm;
@@ -63,10 +59,11 @@ public class CreateFragment extends Fragment implements View.OnClickListener {
         mDescription = view.findViewById(R.id.description);
         view.findViewById(R.id.createButton).setOnClickListener(this);
         mDisplayDate = (TextView) view.findViewById(R.id.date);
+        cal = Calendar.getInstance();
         mDisplayDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Calendar cal = Calendar.getInstance();
+
                 int year = cal.get(Calendar.YEAR);
                 int month = cal.get(Calendar.MONTH);
                 int day = cal.get(Calendar.DAY_OF_MONTH);

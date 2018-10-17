@@ -41,9 +41,11 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
        View view = inflater.inflate(R.layout.fragment_tab1, container, false);
+
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         System.out.println("FragmentTab: " + user.getEmail());
+
 
 
         List<TextView> text = new ArrayList<>();
@@ -62,7 +64,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     }
 
     public List<Event> query() {
-        System.out.println("in query");
+        //System.out.println("in query");
        final List<Event> list = new ArrayList<>();
         db.collection("events")
                 .whereEqualTo("hostEmail", user.getEmail())
@@ -72,7 +74,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                                         @Nullable FirebaseFirestoreException e) {
                         if (e != null) {
                             Log.w(TAG, "Listen failed.", e);
-                            System.out.println("query failed");
+                            //System.out.println("query failed");
                             return;
                         }
 
@@ -84,22 +86,22 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                                         doc.getString("startDate"),
                                         doc.getString("startTime"),
                                         doc.getString("hostEmail"));
-                                System.out.println(doc.getString("hostEmail"));
+                                //System.out.println(doc.getString("hostEmail"));
                                 //System.out.println("size " + list.size());
                                 list.add(ev);
-                                System.out.println(" added size " + list.size());
+                                //System.out.println(" added size " + list.size());
                             }
                         }
                         TextView temp;
 
                         for(Event event : list){
-                            System.out.println("one");
+                            //System.out.println("one");
                             final String id = event.getDocumentId();
                             String name = event.getTitle();
                             String description = event.getDescription();
                             String date = event.getStartDate();
                             String time = event.getStartTime();
-                            System.out.println(name);
+                            //System.out.println(name);
 
                             String combined = "Name: " + name + "\n" + "Date: " + date + "     Time: " + time;
 

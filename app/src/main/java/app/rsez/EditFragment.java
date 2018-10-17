@@ -8,13 +8,10 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -281,9 +278,9 @@ public class EditFragment extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         int i = v.getId();
-        System.out.println("Edit click");
+        //System.out.println("Edit click");
         if (i == R.id.editButton) {
-            System.out.println("Edit Button click");
+            //System.out.println("Edit Button click");
             String event = mEventName.getText().toString();
             String date = mDisplayDate.getText().toString();
             String time = chooseTime.getText().toString();

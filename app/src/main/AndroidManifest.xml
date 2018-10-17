@@ -3,6 +3,7 @@
     package="app.rsez">
 
     <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
@@ -34,6 +35,9 @@
             android:label="RSEZ" />
         <activity
             android:name=".EventDetailsActivity"
+            android:label="RSEZ" />
+        <activity
+            android:name=".QRScanFragment"
             android:label="RSEZ" />
     </application>
 
