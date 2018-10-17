@@ -15,26 +15,29 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:title=".MainActivity" android:name=".MainActivity">
+        <activity android:title=".MainActivity" android:name=".features.login.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
-            android:name=".HomeActivity"
+            android:name=".features.home.HomeActivity"
             android:label="@string/app_name" />
         <activity
-            android:name=".RegisterActivity"
+            android:name=".features.events.EventCreateActivity"
+            android:label="Create Event" />
+        <activity
+            android:name=".features.login.RegisterActivity"
             android:label="@string/app_name" />
         <activity
-            android:name=".EditFragment"
+            android:name=".features.events.EventEditFragment"
             android:label="RSEZ" />
         <activity
-            android:name=".InviteActivity"
+            android:name=".features.events.InviteActivity"
             android:label="RSEZ" />
         <activity
-            android:name=".EventDetailsActivity"
+            android:name=".features.events.EventDetailsActivity"
             android:label="RSEZ" />
         <activity
             android:name=".QRScanFragment"

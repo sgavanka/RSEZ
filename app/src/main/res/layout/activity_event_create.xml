@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Use DrawerLayout as root container for activity -->
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true" >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            app:title="Create Event"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            app:titleTextColor="#ffff" />
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".features.home.HomeActivity"
+            android:paddingLeft="18dp"
+            android:paddingRight="18dp"
+            android:background="@android:color/background_light" >
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical" >
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical" >
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            app:boxBackgroundMode="filled"
+                            app:hintTextAppearance="@style/MyHintText" >
+                            <EditText
+                                android:id="@+id/event"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="Event Name"
+                                android:inputType="textEmailAddress"
+                                android:maxLength="30"
+                                android:maxLines="1"
+                                android:textColorHint="@color/indigo"
+                                android:theme="@style/MyEditText"
+                                app:hintEnabled="true"
+                                android:drawablePadding="12dp"
+                                android:drawableLeft="@drawable/redcarpet" />
+                        </android.support.design.widget.TextInputLayout>
+
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            app:hintTextAppearance="@style/MyHintText">
+                            <EditText
+                                android:id="@+id/description"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:hintEnabled="true"
+                                android:hint="Description"
+                                android:textColorHint="@color/indigo"
+                                android:theme="@style/MyEditText"
+                                android:inputType="textMultiLine"
+                                app:counterEnabled="true"
+                                app:counterMaxLength="100"
+                                android:drawablePadding="12dp"
+                                android:maxLines="5"
+                                android:maxLength="100"
+                                android:drawableLeft="@drawable/descriptionicon" />
+                        </android.support.design.widget.TextInputLayout>
+
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            app:hintTextAppearance="@style/MyHintText">
+                            <EditText
+                                android:id="@+id/date"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="Select Date"
+                                android:textColorHint="@color/indigo"
+                                android:theme="@style/MyEditText"
+                                android:drawablePadding="12dp"
+                                android:focusable="false"
+                                android:drawableLeft="@drawable/calendericon" />
+
+                        </android.support.design.widget.TextInputLayout>
+
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            app:hintTextAppearance="@style/MyHintText">
+                            <EditText
+                                android:id="@+id/time"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:hintEnabled="true"
+                                android:hint="Select Time"
+                                android:textColorHint="@color/indigo"
+                                android:theme="@style/MyEditText"
+                                android:inputType="date"
+                                android:focusable="false"
+                                android:drawablePadding="12dp"
+                                app:counterEnabled="true"
+                                app:counterMaxLength="100"
+                                android:maxLines="1"
+                                android:maxLength="100"
+                                android:drawableLeft="@drawable/timeicon" />
+                        </android.support.design.widget.TextInputLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </ScrollView>
+        </LinearLayout>
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

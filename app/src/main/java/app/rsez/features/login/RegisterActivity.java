@@ -1,4 +1,4 @@
-package app.rsez;
+package app.rsez.features.login;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,6 +19,8 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 
+import app.rsez.R;
+import app.rsez.features.home.HomeActivity;
 import app.rsez.models.User;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {

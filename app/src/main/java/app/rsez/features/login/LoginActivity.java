@@ -1,4 +1,4 @@
-package app.rsez;
+package app.rsez.features.login;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,8 +17,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import app.rsez.features.home.HomeActivity;
+import app.rsez.R;
 
-public  class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+public  class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     private FirebaseAuth mAuth;
     private static final String TAG = "MyActivity";
     private TextView mEmailField;
@@ -28,7 +31,7 @@ public  class MainActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
 
         mEmailField = findViewById(R.id.email);
         mPasswordField = findViewById(R.id.password);
@@ -42,7 +45,7 @@ public  class MainActivity extends AppCompatActivity implements View.OnClickList
             public void onClick(View arg0) {
 
                 // Start NewActivity.class
-                Intent myIntent = new Intent(MainActivity.this,
+                Intent myIntent = new Intent(LoginActivity.this,
                         HomeActivity.class);
                 startActivity(myIntent);
 
@@ -59,7 +62,7 @@ public  class MainActivity extends AppCompatActivity implements View.OnClickList
             //System.out.println("START: " + currentUser.getEmail());
             finish();
 
-            Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
             startActivity(intent);
         }
     }
@@ -101,18 +104,18 @@ public  class MainActivity extends AppCompatActivity implements View.OnClickList
                             // Sign in success, write UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            Intent myIntent = new Intent(MainActivity.this,
+                            Intent myIntent = new Intent(LoginActivity.this,
                                     HomeActivity.class);
                             startActivity(myIntent);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            Toast toast = Toast.makeText(MainActivity.this, "Incorrect Email or Password.",
+                            Toast toast = Toast.makeText(LoginActivity.this, "Incorrect Email or Password.",
                                     Toast.LENGTH_SHORT);
                             toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 50);
                             toast.show();
-                           /* Intent myIntent = new Intent(MainActivity.this,
-                                    MainActivity.class);
+                           /* Intent myIntent = new Intent(LoginActivity.this,
+                                    LoginActivity.class);
                             startActivity(myIntent); */
                         }
 
@@ -125,7 +128,7 @@ public  class MainActivity extends AppCompatActivity implements View.OnClickList
         public void onClick(View v){
             int i = v.getId();
             if (i == R.id.registerButton) {
-                Intent myIntent = new Intent(MainActivity.this,
+                Intent myIntent = new Intent(LoginActivity.this,
                         RegisterActivity.class);
                 startActivity(myIntent);
 

@@ -26,6 +26,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+import app.rsez.features.events.EventDetailsActivity;
 import app.rsez.models.Event;
 
 public class TabFragment1 extends Fragment implements View.OnClickListener {

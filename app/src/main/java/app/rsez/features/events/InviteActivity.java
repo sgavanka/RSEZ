@@ -1,4 +1,4 @@
-package app.rsez;
+package app.rsez.features.events;
 
 import android.app.Activity;
 
@@ -43,6 +43,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import app.rsez.R;
 import app.rsez.models.Event;
 import app.rsez.models.QRCode;
 import app.rsez.models.User;
