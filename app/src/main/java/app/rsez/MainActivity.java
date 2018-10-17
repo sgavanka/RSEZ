@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,38 +64,6 @@ public  class MainActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-  /*  private void createAccount(String email, String password) {
-        Log.d(TAG, "createAccount:" + email);
-        if (!validateForm()) {
-            return;
-        }
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, write UI with the signed-in user's information
-                            Log.d(TAG, "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            Intent myIntent = new Intent(MainActivity.this,
-                                    HomeActivity.class);
-                            startActivity(myIntent);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(MainActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-//                            Intent myIntent = new Intent(MainActivity.this,
-//                                    MainActivity.class);
-//                            startActivity(myIntent);
-                        }
-
-                        // [START_EXCLUDE]
-                        // [END_EXCLUDE]
-                    }
-                });
-        // [END create_user_with_email]
-    } */
 
     private boolean validateForm() {
         boolean valid = true;
@@ -138,8 +107,10 @@ public  class MainActivity extends AppCompatActivity implements View.OnClickList
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            Toast.makeText(MainActivity.this, "Incorrect Email or Password.",
-                                    Toast.LENGTH_SHORT).show();
+                            Toast toast = Toast.makeText(MainActivity.this, "Incorrect Email or Password.",
+                                    Toast.LENGTH_SHORT);
+                            toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 50);
+                            toast.show();
                            /* Intent myIntent = new Intent(MainActivity.this,
                                     MainActivity.class);
                             startActivity(myIntent); */

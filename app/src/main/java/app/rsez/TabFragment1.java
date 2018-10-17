@@ -41,9 +41,11 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
        View view = inflater.inflate(R.layout.fragment_tab1, container, false);
-       mAuth = FirebaseAuth.getInstance();
-       user = mAuth.getCurrentUser();
-       //System.out.println("FragmentTab: " + user.getEmail());
+
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        System.out.println("FragmentTab: " + user.getEmail());
+
 
 
         List<TextView> text = new ArrayList<>();
@@ -51,22 +53,6 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         TextView temp;
         mLinearLayout = view.findViewById(R.id.linear);
         query();
-
-        /*for(Event event : q){
-            System.out.println("one");
-            String name = event.getTitle();
-            String description = event.getDescription();
-            String date = event.getStartDate();
-            String time = event.getStartTime();
-            System.out.println(name);
-
-            String combined = "Name: " + name + " Date: " + " Time: " + time;
-
-            temp = new TextView(view.getContext());
-            temp.setText(combined);
-            mLinearLayout.addView(temp);
-
-        }*/
 
        return view;
     }
