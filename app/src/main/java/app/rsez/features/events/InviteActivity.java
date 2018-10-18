@@ -50,7 +50,9 @@ import java.util.regex.Pattern;
 
 import app.rsez.R;
 import app.rsez.models.QRCode;
+import app.rsez.models.Ticket;
 import app.rsez.models.User;
+import app.rsez.utils.FirebaseUtils;
 
 
 public class InviteActivity extends Activity implements View.OnClickListener {
@@ -167,6 +169,8 @@ public class InviteActivity extends Activity implements View.OnClickListener {
                         documentSnapshot.getString("firstName"), documentSnapshot.getString("lastName"));
                   System.out.println("USER[0]: " + documentSnapshot.getString("firstName"));
                    if(documentSnapshot.getString("firstName") != null) {
+                       Ticket ticket = new Ticket(FirebaseUtils.generateDocumentId(),eventID, user[0].getEmail() , null );
+                       ticket.write();
                        Toast toast= Toast.makeText(getApplicationContext(),
                                "Invite Sent, Make sure to send an Email too", Toast.LENGTH_LONG);
                        toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 50);
