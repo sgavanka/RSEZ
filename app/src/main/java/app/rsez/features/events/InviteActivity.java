@@ -175,8 +175,8 @@ public class InviteActivity extends Activity implements View.OnClickListener {
                                "Invite Sent, Make sure to send an Email too", Toast.LENGTH_LONG);
                        toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 50);
                        toast.show();
-                       user[0].addEvent(eventID);
-                       user[0].write();
+                      // user[0].addEvent(eventID);
+                     //  user[0].write();
                        sendEmail(context, email);
                    }
                    else {
