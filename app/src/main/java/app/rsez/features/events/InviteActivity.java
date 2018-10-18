@@ -34,6 +34,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.api.Distribution;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -53,6 +55,8 @@ import app.rsez.models.User;
 
 public class InviteActivity extends Activity implements View.OnClickListener {
     protected static FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseAuth mAuth;
+    private FirebaseUser mUser;
     private String eventID;
     private String eventName;
     private String email;
@@ -68,6 +72,8 @@ public class InviteActivity extends Activity implements View.OnClickListener {
         eventID = getIntent().getStringExtra("eventID");
         eventName = getIntent().getStringExtra("eventName");
         context = this;
+        mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
         invite.setOnClickListener(this);
         getUserList();
     }
@@ -119,28 +125,30 @@ public class InviteActivity extends Activity implements View.OnClickListener {
                     for (int i = 0; i < users.size(); i++){
                         DocumentSnapshot docSnap = users.get(i);
                         //System.out.println("User " + i + ": " + docSnap.get("firstName"));
-                        final User user = new User(docSnap.getString("UserId"), docSnap.getString("email"), docSnap.getString("firstName"), docSnap.getString("lastName"));
+                        if (!mUser.getEmail().equals(docSnap.getString("email"))) {
+                            final User user = new User(docSnap.getString("UserId"), docSnap.getString("email"), docSnap.getString("firstName"), docSnap.getString("lastName"));
 
-                        TextView tempText = new TextView(context);
-                        String Username = user.getFirstName() + " " + user.getLastName() + "\n" + user.getEmail();
-                        tempText.setText(Username);
-                        tempText.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                        tempText.setTextSize(17);
-                        tempText.setBackground(ContextCompat.getDrawable(context, R.drawable.customborder2));
-                        tempText.setTextColor(Color.BLACK);
-                        tempText.setPadding(10,10,0, 20);
-                        tempText.setClickable(true);
-                        tempText.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                System.out.println("User clicked: " + user.getEmail());
-                                getUserFromEmail(user.getEmail(), context, null);
-                            }
-                        });
-                        mLinearLayout.addView(tempText);
-                        Space tempSpace = new Space(context);
-                        tempSpace.setMinimumHeight(5);
-                        mLinearLayout.addView(tempSpace);
+                            TextView tempText = new TextView(context);
+                            String Username = user.getFirstName() + " " + user.getLastName() + "\n" + user.getEmail();
+                            tempText.setText(Username);
+                            tempText.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                            tempText.setTextSize(17);
+                            tempText.setBackground(ContextCompat.getDrawable(context, R.drawable.customborder2));
+                            tempText.setTextColor(Color.BLACK);
+                            tempText.setPadding(10, 10, 0, 20);
+                            tempText.setClickable(true);
+                            tempText.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    System.out.println("User clicked: " + user.getEmail());
+                                    getUserFromEmail(user.getEmail(), context, null);
+                                }
+                            });
+                            mLinearLayout.addView(tempText);
+                            Space tempSpace = new Space(context);
+                            tempSpace.setMinimumHeight(5);
+                            mLinearLayout.addView(tempSpace);
+                        }
                     }
                 }
             }
