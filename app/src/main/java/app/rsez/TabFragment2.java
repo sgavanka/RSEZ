@@ -73,44 +73,44 @@ public class TabFragment2 extends Fragment implements View.OnClickListener  {
     }
 
     public void queryForEvents (List<String> events) {
-//        for(int i = 0; i < events.size(); i++) {
-//            final DocumentReference docRef = db.collection("events").document(events.get(i));
-            //docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-//                @Override
-//                public void onSuccess(DocumentSnapshot documentSnapshot) {
-//                   Event event = new Event(documentSnapshot.getId(), documentSnapshot.getString("title"),
-//                           documentSnapshot.getString("description"), documentSnapshot.getString("startDate"),
-//                           documentSnapshot.getString("startTime"), documentSnapshot.getString("hostEmail"));
-//
-//                    final String id = event.getDocumentId();
-//                    String name = event.getTitle();
-//                    String description = event.getDescription();
-//                    String date = event.getStartDate();
-//                    String time = event.getStartTime();
-//                    System.out.println(name);
-//
-//                    String combined = "Name: " + name + "\n" + "Date: " + date + "     Time: " + time;
-//                    TextView temp;
-//                    temp = new TextView(context);
-//                    temp.setText(combined);
-//                    temp.setTextSize(20);
-//                    temp.setTextColor(Color.BLACK);
-//                    temp.setPadding(10,0,0, 20);
-//                    temp.setClickable(true);
-//                    temp.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
-//                            intent.putExtra("eventID", id);
-//                            startActivity(intent);
-//                        }
-//                    });
-//
-//                    ids.add(id);
-//                    mLinearLayout.addView(temp);
-//                }
-//            });
-//        }
+        for(int i = 0; i < events.size(); i++) {
+            final DocumentReference docRef = db.collection("events").document(events.get(i));
+            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                   Event event = new Event(documentSnapshot.getId(), documentSnapshot.getString("title"),
+                           documentSnapshot.getString("description"), documentSnapshot.getString("startDate"),
+                           documentSnapshot.getString("startTime"), documentSnapshot.getString("hostEmail"));
+
+                    final String id = event.getDocumentId();
+                    String name = event.getTitle();
+                    String description = event.getDescription();
+                    String date = event.getStartDate();
+                    String time = event.getStartTime();
+                    System.out.println(name);
+
+                    String combined = "Name: " + name + "\n" + "Date: " + date + "     Time: " + time;
+                    TextView temp;
+                    temp = new TextView(context);
+                    temp.setText(combined);
+                    temp.setTextSize(20);
+                    temp.setTextColor(Color.BLACK);
+                    temp.setPadding(10,0,0, 20);
+                    temp.setClickable(true);
+                    temp.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
+                            intent.putExtra("eventID", id);
+                            startActivity(intent);
+                        }
+                    });
+
+                    ids.add(id);
+                    mLinearLayout.addView(temp);
+                }
+            });
+        }
     }
 
     @Override
