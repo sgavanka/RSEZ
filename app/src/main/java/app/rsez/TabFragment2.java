@@ -77,7 +77,8 @@ public class TabFragment2 extends Fragment implements View.OnClickListener  {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 List<String> list = (List<String>) documentSnapshot.get("EventList");
                 System.out.println("LIST SIZE: " + list.size());
-                System.out.println("LIST CONTENTS " + list.get(0));
+                //System.out.println("LIST CONTENTS " + list.get(0));
+                if(list.size() != 0)
                 queryForEvents(list);
             }
         });
