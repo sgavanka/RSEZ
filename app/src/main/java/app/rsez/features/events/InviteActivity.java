@@ -4,51 +4,51 @@ import android.app.Activity;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.DialogInterface;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
 
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.Space;
+import android.widget.TableRow;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.api.Distribution;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.zxing.WriterException;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import app.rsez.R;
-import app.rsez.models.Event;
 import app.rsez.models.QRCode;
 import app.rsez.models.User;
-
-import static android.support.constraint.Constraints.TAG;
 
 
 public class InviteActivity extends Activity implements View.OnClickListener {
@@ -57,16 +57,19 @@ public class InviteActivity extends Activity implements View.OnClickListener {
     private String eventName;
     private String email;
     private Context context;
+    private LinearLayout mLinearLayout;
     private User user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_invite);
         Button invite = findViewById(R.id.inviteButton);
+        mLinearLayout = findViewById(R.id.usersList);
         eventID = getIntent().getStringExtra("eventID");
         eventName = getIntent().getStringExtra("eventName");
         context = this;
         invite.setOnClickListener(this);
+        getUserList();
     }
 
     @Override
@@ -76,7 +79,6 @@ public class InviteActivity extends Activity implements View.OnClickListener {
         if (i == R.id.inviteButton){
             EditText emailText = findViewById(R.id.emailEditText);
             String email = emailText.getText().toString();
-
             System.out.println("Generate QRCode");
             //TODO: Generate qr code to email
             //user = User.getUserFromEmail(email);
@@ -105,6 +107,48 @@ public class InviteActivity extends Activity implements View.OnClickListener {
             }
         }
     };
+
+
+    public void getUserList() {
+        CollectionReference colRef = db.collection("users");
+        colRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()){
+                    List<DocumentSnapshot> users = task.getResult().getDocuments();
+                    for (int i = 0; i < users.size(); i++){
+                        DocumentSnapshot docSnap = users.get(i);
+                        //System.out.println("User " + i + ": " + docSnap.get("firstName"));
+                        final User user = new User(docSnap.getString("UserId"), docSnap.getString("email"), docSnap.getString("firstName"), docSnap.getString("lastName"));
+
+                        TextView tempText = new TextView(context);
+                        String Username = user.getFirstName() + " " + user.getLastName() + "\n" + user.getEmail();
+                        tempText.setText(Username);
+                        tempText.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                        tempText.setTextSize(17);
+                        tempText.setBackground(ContextCompat.getDrawable(context, R.drawable.customborder2));
+                        tempText.setTextColor(Color.BLACK);
+                        tempText.setPadding(10,10,0, 20);
+                        tempText.setClickable(true);
+                        tempText.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                System.out.println("User clicked: " + user.getEmail());
+                                getUserFromEmail(user.getEmail(), context, null);
+                            }
+                        });
+                        mLinearLayout.addView(tempText);
+                        Space tempSpace = new Space(context);
+                        tempSpace.setMinimumHeight(5);
+                        mLinearLayout.addView(tempSpace);
+                    }
+                }
+            }
+        });
+
+    }
+
+    //
     public void getUserFromEmail(final String email , final Context context, Bitmap qrcode){
         final User[] user = {null};
         DocumentReference docRef = db.collection("users").document(email);
@@ -112,7 +156,7 @@ public class InviteActivity extends Activity implements View.OnClickListener {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 user[0] = new User(documentSnapshot.getString("UserId"), documentSnapshot.getString("email"),
-                        documentSnapshot.getString("firstName"), documentSnapshot.getString("LastName"));
+                        documentSnapshot.getString("firstName"), documentSnapshot.getString("lastName"));
                   System.out.println("USER[0]: " + documentSnapshot.getString("firstName"));
                    if(documentSnapshot.getString("firstName") != null) {
                        Toast toast= Toast.makeText(getApplicationContext(),
@@ -160,8 +204,6 @@ public class InviteActivity extends Activity implements View.OnClickListener {
             System.out.println("user found");
             Bitmap qrcode = QRCode.generateQRCode(context, eventID + " - " + email);
             // Store image in Devise database to send image to mail
-            ImageView imageViewQrCode = findViewById(R.id.qrcodeView);
-            imageViewQrCode.setImageBitmap(qrcode);
             String url = MediaStore.Images.Media.insertImage(getContentResolver(), qrcode, "qrcode", "qrcode");
             Intent emailIntent = new Intent(Intent.ACTION_SEND);
             emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});

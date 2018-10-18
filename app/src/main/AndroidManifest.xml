@@ -35,7 +35,8 @@
             android:label="RSEZ" />
         <activity
             android:name=".features.events.InviteActivity"
-            android:label="RSEZ" />
+            android:label="RSEZ"
+            android:windowSoftInputMode="stateHidden"/>
         <activity
             android:name=".features.events.EventDetailsActivity"
             android:label="RSEZ" />
