@@ -27,7 +27,6 @@ public  class LoginActivity extends AppCompatActivity implements View.OnClickLis
     private TextView mEmailField;
     private TextView mPasswordField;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,22 +34,11 @@ public  class LoginActivity extends AppCompatActivity implements View.OnClickLis
 
         mEmailField = findViewById(R.id.email);
         mPasswordField = findViewById(R.id.password);
-        // Button buttonLogin = (Button) findViewById(R.id.loginButton);
 
         findViewById(R.id.loginButton).setOnClickListener(this);
-        findViewById(R.id.registerButton).setOnClickListener(this);
+        findViewById(R.id.register_tv).setOnClickListener(this);
+
         mAuth = FirebaseAuth.getInstance();
-        // Capture button clicks
-       /* buttonLogin.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
-
-                // Start NewActivity.class
-                Intent myIntent = new Intent(LoginActivity.this,
-                        HomeActivity.class);
-                startActivity(myIntent);
-
-            }
-        });*/
     }
 
     @Override
@@ -59,14 +47,12 @@ public  class LoginActivity extends AppCompatActivity implements View.OnClickLis
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            //System.out.println("START: " + currentUser.getEmail());
             finish();
 
             Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
             startActivity(intent);
         }
     }
-
 
     private boolean validateForm() {
         boolean valid = true;
@@ -96,7 +82,6 @@ public  class LoginActivity extends AppCompatActivity implements View.OnClickLis
             return;
         }
 
-        // [START sign_in_with_email]
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -104,57 +89,28 @@ public  class LoginActivity extends AppCompatActivity implements View.OnClickLis
                             // Sign in success, write UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            Intent myIntent = new Intent(LoginActivity.this,
-                                    HomeActivity.class);
+                            Intent myIntent = new Intent(LoginActivity.this, HomeActivity.class);
                             startActivity(myIntent);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            Toast toast = Toast.makeText(LoginActivity.this, "Incorrect Email or Password.",
-                                    Toast.LENGTH_SHORT);
+                            Toast toast = Toast.makeText(LoginActivity.this, "Incorrect Email or Password.", Toast.LENGTH_SHORT);
                             toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 50);
                             toast.show();
-                           /* Intent myIntent = new Intent(LoginActivity.this,
-                                    LoginActivity.class);
-                            startActivity(myIntent); */
                         }
 
                     }
                 });
-        // [END sign_in_with_email]
     }
 
-        @Override
-        public void onClick(View v){
-            int i = v.getId();
-            if (i == R.id.registerButton) {
-                Intent myIntent = new Intent(LoginActivity.this,
-                        RegisterActivity.class);
-                startActivity(myIntent);
-
-                //createAccount(mEmailField.getText().toString(), mPasswordField.getText().toString());
-            } else if (i == R.id.loginButton) {
-                signIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
-            }/* else if (i == R.id.signOutButton) {
-                            signOut();
-                        } else if (i == R.id.verifyEmailButton) {
-                            sendEmailVerification();
-                        }*/
+    @Override
+    public void onClick(View v){
+        int i = v.getId();
+        if (i == R.id.register_tv) {
+            Intent myIntent = new Intent(LoginActivity.this, RegisterActivity.class);
+            startActivity(myIntent);
+        } else if (i == R.id.loginButton) {
+            signIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-
- */
+}
