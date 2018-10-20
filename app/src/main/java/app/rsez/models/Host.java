@@ -5,6 +5,9 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Host extends ModelBase {
     private static String COLLECTION_NAME = "hosts";
 
@@ -36,7 +39,11 @@ public class Host extends ModelBase {
 
     @Override
     public void write(OnSuccessListener<Void> onSuccessListener, OnFailureListener onFailureListener) {
-        db.collection(COLLECTION_NAME).document(getDocumentId()).set(this)
+        Map<String, Object> event = new HashMap<>();
+        event.put("userId", userId);
+        event.put("eventId", eventId);
+
+        db.collection(COLLECTION_NAME).document(getDocumentId()).set(event)
                 .addOnSuccessListener(onSuccessListener)
                 .addOnFailureListener(onFailureListener);
     }

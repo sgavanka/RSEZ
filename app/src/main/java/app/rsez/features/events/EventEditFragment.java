@@ -208,7 +208,8 @@ public class EventEditFragment extends AppCompatActivity implements View.OnClick
             eventIn(event, description, date, time);
         } else if (v.getId() == R.id.addHostButton) {
             String host = mEmail.getText().toString();
-            Host newHost = new Host(FirebaseUtils.generateDocumentId(), host, getIntent().getStringExtra("Id"));
+
+            Host newHost = new Host(getIntent().getStringExtra("Id"), host, getIntent().getStringExtra("Id"));
             newHost.write(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
