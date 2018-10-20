@@ -197,7 +197,8 @@ public class EventCreateActivity extends AppCompatActivity {
         Log.d(TAG, "Event:" + name);
         if (validateForm()) {
             String email = mAuth.getCurrentUser().getEmail();
-            event = new Event(email, name, description, date, time, email);
+            String id = FirebaseUtils.generateDocumentId();
+            event = new Event(id, name, description, date, time, email);
             event.write(new OnSuccessListener<Void>() {
             @Override
                 public void onSuccess(Void aVoid) {

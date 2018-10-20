@@ -71,7 +71,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
     public void query() {
         //System.out.println("in query");
-       final List<Event> list = new ArrayList<>();
+        final List<Event> list = new ArrayList<>();
         db.collection("hosts").whereEqualTo("userId", user.getEmail()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
@@ -136,15 +136,6 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         });
         return;
 
-    }
-
-    private void addViews(List<Event> list){
-
-        System.out.println("LIST SIZE: " + list.size());
-        for(Event event : list) {
-            //System.out.println("one");
-
-        }
     }
 
     @Override
