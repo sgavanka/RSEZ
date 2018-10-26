@@ -25,6 +25,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -72,7 +73,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     public void query() {
         //System.out.println("in query");
         final List<Event> list = new ArrayList<>();
-        db.collection("hosts").whereEqualTo("userId", user.getEmail()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        db.collection("hosts").whereEqualTo("userId", user.getEmail()).orderBy("documentID", Query.Direction.ASCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
                 if (e != null) {
@@ -80,7 +81,6 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                     //System.out.println("query failed");
                     return;
                 }
-
                 for (QueryDocumentSnapshot doc : value) {
                     if (doc.get("eventId") != null) {
                         //System.out.println("ID: |" + doc.get("eventId").toString() + "|");

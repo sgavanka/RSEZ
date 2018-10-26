@@ -17,6 +17,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 
+import app.rsez.QRScanFragment;
 import app.rsez.R;
 import app.rsez.models.Event;
 
@@ -61,6 +62,8 @@ public class EventDetailsActivity extends AppCompatActivity {
                 date = doc.getString("startDate");
                 time = doc.getString("startTime");
                 email = doc.getString("hostEmail");
+
+                //TODO: update to query host objects
                 if (mAuth.getCurrentUser().getEmail().equals(doc.getString("hostEmail"))) {
                     userIsEventOwner = true;
                     invalidateOptionsMenu();
@@ -107,6 +110,11 @@ public class EventDetailsActivity extends AppCompatActivity {
                 inviteIntent.putExtra("eventName", title);
 
                 startActivity(inviteIntent);
+                break;
+            case R.id.checkIn_button:
+                Intent checkInIntent = new Intent(this, QRScanFragment.class);
+                checkInIntent.putExtra("eventId", eventID);
+                startActivity(checkInIntent);
                 break;
         }
 
