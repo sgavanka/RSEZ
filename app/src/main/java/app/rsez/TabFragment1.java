@@ -73,7 +73,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     public void query() {
         //System.out.println("in query");
         final List<Event> list = new ArrayList<>();
-        db.collection("hosts").whereEqualTo("userId", user.getEmail()).orderBy("documentID", Query.Direction.ASCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        db.collection("hosts").whereEqualTo("userId", user.getEmail()).orderBy("eventId", Query.Direction.ASCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
                 if (e != null) {

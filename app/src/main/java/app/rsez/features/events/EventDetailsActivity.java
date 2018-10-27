@@ -116,6 +116,11 @@ public class EventDetailsActivity extends AppCompatActivity {
                 checkInIntent.putExtra("eventId", eventID);
                 startActivity(checkInIntent);
                 break;
+            case R.id.checkIn_list_button:
+                Intent checkInListIntent = new Intent(this, CheckInListActivity.class);
+                checkInListIntent.putExtra("eventId", eventID);
+                startActivity(checkInListIntent);
+                break;
         }
 
         return super.onOptionsItemSelected(item);
