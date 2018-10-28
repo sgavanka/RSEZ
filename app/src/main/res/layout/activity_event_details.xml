@@ -14,7 +14,9 @@
         app:title="Event Details"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:titleTextColor="#ffff" />
+
     <LinearLayout
+        android:id="@+id/linear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -53,5 +55,24 @@
             tools:text="July 4, 2018 at 6:30 PM"
             android:textColor="@android:color/black"
             android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/event_email_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="Hosts Email"
+            android:textColor="@android:color/black"
+            android:textSize="15dp" />
+
+        <TextView
+            android:id="@+id/userListHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="User List"
+            android:gravity="center_horizontal"
+            android:textColor="@android:color/black"
+            android:textSize="15dp" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
