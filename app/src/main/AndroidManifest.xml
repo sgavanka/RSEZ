@@ -43,6 +43,9 @@
         <activity
             android:name=".QRScanFragment"
             android:label="RSEZ" />
+        <activity
+            android:name=".features.events.CheckInListActivity"
+            android:label="RSEZ" />
     </application>
 
 

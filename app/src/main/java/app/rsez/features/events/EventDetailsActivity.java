@@ -14,17 +14,20 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import app.rsez.QRScanFragment;
 import app.rsez.R;
 import app.rsez.models.Event;
 
 public class EventDetailsActivity extends AppCompatActivity {
     private boolean userIsEventOwner = false;
+    protected static FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private String eventID;
     private String title;
@@ -32,7 +35,8 @@ public class EventDetailsActivity extends AppCompatActivity {
     private String date;
     private String time;
     private String email;
-    
+    private boolean isHost;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +52,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         final FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
         eventID = getIntent().getStringExtra("eventID");
+        isHost = getIntent().getBooleanExtra("isHost", false);
 
         Event.read(eventID, new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -72,8 +77,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                     e1.printStackTrace();
                 }
 
-                if (mAuth.getCurrentUser().getEmail().equals(document.getString("hostEmail"))) {
-                    userIsEventOwner = true;
+                if (isHost) {
                     invalidateOptionsMenu();
                 }
 
@@ -87,7 +91,7 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (userIsEventOwner) {
+        if (isHost) {
             getMenuInflater().inflate(R.menu.event_details_menu, menu);
         }
 
@@ -117,6 +121,16 @@ public class EventDetailsActivity extends AppCompatActivity {
                 inviteIntent.putExtra("eventName", title);
 
                 startActivity(inviteIntent);
+                break;
+            case R.id.checkIn_button:
+                Intent checkInIntent = new Intent(this, QRScanFragment.class);
+                checkInIntent.putExtra("eventId", eventID);
+                startActivity(checkInIntent);
+                break;
+            case R.id.checkIn_list_button:
+                Intent checkInListIntent = new Intent(this, CheckInListActivity.class);
+                checkInListIntent.putExtra("eventId", eventID);
+                startActivity(checkInListIntent);
                 break;
         }
 
