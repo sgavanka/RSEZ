@@ -6,6 +6,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Ticket extends ModelBase {
     private static String COLLECTION_NAME = "tickets";
@@ -56,6 +58,13 @@ public class Ticket extends ModelBase {
 
     @Override
     public void write() {
+
+        Map<String, Object> ticket = new HashMap<>();
+        ticket.put("eventId", eventId);
+        ticket.put("userId", userId);
+        ticket.put("checkInDateTime", checkInDateTime);
+
+        db.collection("tickets").document(getDocumentId()).set(ticket);
 
     }
 

@@ -15,8 +15,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -64,77 +69,72 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         this.context = context;
     }
 
-    public List<Event> query() {
+    public void query() {
         //System.out.println("in query");
-       final List<Event> list = new ArrayList<>();
-        db.collection("events")
-                .whereEqualTo("hostEmail", user.getEmail())
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value,
-                                        @Nullable FirebaseFirestoreException e) {
-                        if (e != null) {
-                            Log.w(TAG, "Listen failed.", e);
-                            //System.out.println("query failed");
-                            return;
-                        }
+        final List<Event> list = new ArrayList<>();
+        db.collection("hosts").whereEqualTo("userId", user.getEmail()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w(TAG, "Listen failed.", e);
+                    //System.out.println("query failed");
+                    return;
+                }
+
+                for (QueryDocumentSnapshot doc : value) {
+                    if (doc.get("eventId") != null) {
+                        //System.out.println("ID: |" + doc.get("eventId").toString() + "|");
+                        //Create reference to specific event
+                        DocumentReference docRef = db.collection("events").document(doc.get("eventId").toString());
+                        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot docSnap = task.getResult();
+                                    Event ev = new Event(docSnap.getId(), docSnap.getString("title"), docSnap.getString("description"), docSnap.getString("startDate"), docSnap.getString("startTime"), docSnap.getString("hostEmail"));
+                                    System.out.println("Found hosted event: " + docSnap.getId() + " " + docSnap.getString("title"));
+                                    list.add(ev);
 
 
-                        for (QueryDocumentSnapshot doc : value) {
-                            if (doc.get("title") != null) {
-                                Event ev = new Event(doc.getId(), doc.getString("title")
-                                        ,doc.getString("description"),
-                                        doc.getString("startDate"),
-                                        doc.getString("startTime"),
-                                        doc.getString("hostEmail"));
-                                //System.out.println(doc.getString("hostEmail"));
-                                //System.out.println("size " + list.size());
-                                list.add(ev);
-                                //System.out.println(" added size " + list.size());
-                            }
-                        }
-                        TextView temp;
+                                    TextView temp;
+                                    final String id = ev.getDocumentId();
+                                    String name = ev.getTitle();
+                                    String description = ev.getDescription();
+                                    String date = ev.getStartDate();
+                                    String time = ev.getStartTime();
+                                    //System.out.println(name);
 
-                        for(Event event : list){
-                            //System.out.println("one");
-                            final String id = event.getDocumentId();
-                            String name = event.getTitle();
-                            String description = event.getDescription();
-                            String date = event.getStartDate();
-                            String time = event.getStartTime();
-                            //System.out.println(name);
+                                    String combined = "Name: " + name + "\n" + "Date: " + date + "     Time: " + time;
 
-                            String combined = "Name: " + name + "\n" + "Date: " + date + "     Time: " + time;
+                                    temp = new TextView(context);
+                                    temp.setText(combined);
+                                    temp.setTextSize(20);
+                                    temp.setTextColor(Color.BLACK);
+                                    temp.setPadding(10, 0, 0, 20);
+                                    temp.setClickable(true);
+                                    temp.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
 
-                            temp = new TextView(context);
-                            temp.setText(combined);
-                            temp.setTextSize(20);
-                            temp.setTextColor(Color.BLACK);
-                            temp.setPadding(10,0,0, 20);
-                            temp.setClickable(true);
-                            temp.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
+                                            //Toast.makeText(getContext(), id, Toast.LENGTH_SHORT).show();
+                                            Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
+                                            intent.putExtra("eventID", id);
+                                            startActivity(intent);
 
-                                    //Toast.makeText(getContext(), id, Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
-                                    intent.putExtra("eventID", id);
-                                    startActivity(intent);
-
+                                        }
+                                    });
+                                    //temp.setTag(id);
+                                    ids.add(id);
+                                    mLinearLayout.addView(temp);
                                 }
-                            });
-                            //temp.setTag(id);
-                            ids.add(id);
-                            mLinearLayout.addView(temp);
-
-                        }
-
-                        Log.d(TAG, "Your Events: " + list);
-
+                            }
+                        });
                     }
-                });
+                }
 
-        return list;
+            }
+        });
+        return;
 
     }
 
