@@ -60,7 +60,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
-        mLinearLayout = this.findViewById(R.id.linear);
+        mLinearLayout = this.findViewById(R.id.guests_container);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -167,25 +167,27 @@ public class EventDetailsActivity extends AppCompatActivity {
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
                         if (e != null) {
                             Log.w(TAG, "Listen failed.", e);
-                            //System.out.println("query failed");
                             return;
                         }
-                        for(QueryDocumentSnapshot doc : value) {
+
+                        for (QueryDocumentSnapshot doc : value) {
                             if(doc.getString("eventId") != null) {
-                                String userName = doc.getString("userId");
-                                final TextView temp = new TextView(context);
-                                temp.setText(userName);
-                                temp.setTextSize(15);
-                                temp.setTextColor(Color.BLACK);
-                                temp.setPadding(10,0,0, 20);
-                                temp.setClickable(true);
-                                mLinearLayout.addView(temp);
-                                temp.setOnClickListener(new View.OnClickListener() {
+                                String email = doc.getString("userId");
+
+                                final TextView guestTextView = new TextView(context);
+
+                                guestTextView.setText(email);
+                                guestTextView.setTextSize(16);
+                                guestTextView.setTextColor(Color.BLACK);
+                                guestTextView.setClickable(true);
+                                guestTextView.setPadding(0, 2, 0, 2);
+
+                                guestTextView.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        if(userIsEventOwner == true) {
-                                            selected = temp.getText().toString();
-                                            user = temp.getText().toString();
+                                        if(isHost) {
+                                            selected = guestTextView.getText().toString();
+                                            user = guestTextView.getText().toString();
                                             tempView = v;
                                             AlertDialog.Builder builder = new AlertDialog.Builder(context);
                                             builder.setMessage("Remove User?").setPositiveButton("Yes", dialogClickListener)
@@ -193,6 +195,8 @@ public class EventDetailsActivity extends AppCompatActivity {
                                         }
                                     }
                                 });
+
+                                mLinearLayout.addView(guestTextView);
                             }
                         }
 

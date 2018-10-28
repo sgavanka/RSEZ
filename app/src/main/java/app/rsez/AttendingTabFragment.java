@@ -56,7 +56,7 @@ public class AttendingTabFragment extends Fragment implements View.OnClickListen
         user = mAuth.getCurrentUser();
         System.out.println("FragmentTab: " + user.getEmail());
 
-        mLinearLayout = view.findViewById(R.id.linear);
+        mLinearLayout = view.findViewById(R.id.guests_container);
 
         final SwipeRefreshLayout pullToRefresh = view.findViewById(R.id.swipe_refresh_layout);
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

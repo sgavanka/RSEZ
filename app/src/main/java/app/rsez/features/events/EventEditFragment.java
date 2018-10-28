@@ -61,7 +61,7 @@ public class EventEditFragment extends AppCompatActivity implements View.OnClick
         mAuth = FirebaseAuth.getInstance();
         mEventName = findViewById(R.id.eventEdit);
         mDescription = findViewById(R.id.descriptionEdit);
-        mDisplayDate = (TextView) findViewById(R.id.dateEdit);
+        mDisplayDate = findViewById(R.id.dateEdit);
         chooseTime = findViewById(R.id.timeEdit);
         docID = getIntent().getStringExtra("Id");
         findViewById(R.id.editButton).setOnClickListener(this);
@@ -82,8 +82,7 @@ public class EventEditFragment extends AppCompatActivity implements View.OnClick
                 int month = cal.get(Calendar.MONTH);
                 int day = cal.get(Calendar.DAY_OF_MONTH);
 
-                DatePickerDialog dialog = new DatePickerDialog(EventEditFragment.this, android.R.style.Theme_Holo_Light, mDateSetListner, year, month, day);
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                DatePickerDialog dialog = new DatePickerDialog(EventEditFragment.this, mDateSetListner, year, month, day);
 
                 dialog.getDatePicker().setMinDate(cal.getTimeInMillis());
                 dialog.show();

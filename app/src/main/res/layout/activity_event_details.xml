@@ -16,7 +16,6 @@
         app:titleTextColor="#ffff" />
 
     <LinearLayout
-        android:id="@+id/linear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -28,7 +27,8 @@
             android:layout_height="wrap_content"
             tools:text="4th of July Party"
             android:textColor="@android:color/black"
-            android:textSize="24dp" />
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/description"
@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             tools:text="Come celebrate the land of the free and the home of the brave with us!"
             android:textColor="@android:color/black"
-            android:textSize="16dp"
+            android:textSize="16sp"
             android:layout_marginBottom="18dp"/>
 
         <TextView
@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             tools:text="Hosted by mpalin@purdue.edu"
             android:textColor="@android:color/black"
-            android:textSize="16dp"
+            android:textSize="16sp"
             android:layout_marginBottom="18dp" />
 
         <TextView
@@ -54,25 +54,21 @@
             android:layout_height="wrap_content"
             tools:text="July 4, 2018 at 6:30 PM"
             android:textColor="@android:color/black"
-            android:textSize="20dp" />
+            android:textSize="20sp"
+            android:layout_marginBottom="24dp" />
 
         <TextView
-            android:id="@+id/event_email_view"
+            android:id="@+id/guests"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:text="Hosts Email"
+            android:text="Guests"
             android:textColor="@android:color/black"
-            android:textSize="15dp" />
+            android:textSize="22sp" />
 
-        <TextView
-            android:id="@+id/userListHeader"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:text="User List"
-            android:gravity="center_horizontal"
-            android:textColor="@android:color/black"
-            android:textSize="15dp" />
+            android:orientation="vertical"
+            android:id="@+id/guests_container" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

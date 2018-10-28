@@ -78,7 +78,6 @@ public class EventCreateActivity extends AppCompatActivity {
                 int day = cal.get(Calendar.DAY_OF_MONTH);
 
                 DatePickerDialog dialog = new DatePickerDialog(EventCreateActivity.this, mDateSetListner, year, month, day);
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
                 dialog.getDatePicker().setMinDate(cal.getTimeInMillis());
                 dialog.show();

@@ -15,7 +15,7 @@
             tools:context=".HostingTabFragment"
             android:orientation="vertical"
             android:tag="frag1"
-            android:id="@+id/linear" />
+            android:id="@+id/guests_container" />
     </ScrollView>
 </android.support.v4.widget.SwipeRefreshLayout>
 

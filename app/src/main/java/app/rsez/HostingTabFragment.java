@@ -24,7 +24,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -55,7 +54,7 @@ public class HostingTabFragment extends Fragment implements View.OnClickListener
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
 
-        mLinearLayout = view.findViewById(R.id.linear);
+        mLinearLayout = view.findViewById(R.id.guests_container);
 
         final SwipeRefreshLayout pullToRefresh = view.findViewById(R.id.swipe_refresh_layout);
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
