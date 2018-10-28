@@ -40,10 +40,12 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.zxing.WriterException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -65,6 +67,7 @@ public class InviteActivity extends Activity implements View.OnClickListener {
     private Context context;
     private LinearLayout mLinearLayout;
     private User user;
+    private ArrayList<String> hostIds;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,11 +76,13 @@ public class InviteActivity extends Activity implements View.OnClickListener {
         mLinearLayout = findViewById(R.id.usersList);
         eventID = getIntent().getStringExtra("eventID");
         eventName = getIntent().getStringExtra("eventName");
+        hostIds = new ArrayList<String>();
         context = this;
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
         invite.setOnClickListener(this);
-        getUserList();
+        //Calls getHostList to ensure we have a list of hosts for event before we populate the user list
+        getHostList();
     }
 
     @Override
@@ -88,7 +93,6 @@ public class InviteActivity extends Activity implements View.OnClickListener {
             EditText emailText = findViewById(R.id.emailEditText);
             String email = emailText.getText().toString();
             System.out.println("Generate QRCode");
-            //TODO: Generate qr code to email
             //user = User.getUserFromEmail(email);
             this.email = email;
             if(isEmailValid(email)) {
@@ -117,6 +121,24 @@ public class InviteActivity extends Activity implements View.OnClickListener {
     };
 
 
+    public void getHostList() {
+        Query query = db.collection("hosts").whereEqualTo("eventId", eventID);
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()){
+                    List<DocumentSnapshot> docSnap = task.getResult().getDocuments();
+                    for (DocumentSnapshot doc: docSnap) {
+                        hostIds.add(doc.getString("userId"));
+                    }
+                } else {
+                    System.out.println("Hosts task failed");
+                }
+                getUserList();
+            }
+        });
+    }
+
     public void getUserList() {
         CollectionReference colRef = db.collection("users");
         colRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -127,7 +149,15 @@ public class InviteActivity extends Activity implements View.OnClickListener {
                     for (int i = 0; i < users.size(); i++){
                         DocumentSnapshot docSnap = users.get(i);
                         //System.out.println("User " + i + ": " + docSnap.get("firstName"));
-                        if (!mUser.getEmail().equals(docSnap.getString("email"))) {
+                        boolean isHost = false;
+                        for (String id: hostIds) {
+                            if (docSnap.getString("email").equals(id)){
+                                isHost = true;
+                                break;
+                            }
+                        }
+
+                        if (!isHost) {
                             final User user = new User(docSnap.getString("UserId"), docSnap.getString("email"), docSnap.getString("firstName"), docSnap.getString("lastName"));
 
                             TextView tempText = new TextView(context);

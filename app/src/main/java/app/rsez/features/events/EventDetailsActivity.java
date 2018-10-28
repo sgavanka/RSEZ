@@ -15,7 +15,11 @@ import android.widget.TextView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import app.rsez.QRScanFragment;
 import app.rsez.R;
@@ -23,6 +27,7 @@ import app.rsez.models.Event;
 
 public class EventDetailsActivity extends AppCompatActivity {
     private boolean userIsEventOwner = false;
+    protected static FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private String eventID;
     private String title;
@@ -30,6 +35,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     private String date;
     private String time;
     private String email;
+    private boolean isHost;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +52,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         final FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
         eventID = getIntent().getStringExtra("eventID");
+        isHost = getIntent().getBooleanExtra("isHost", false);
 
         Event.read(eventID, new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -63,9 +70,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                 time = doc.getString("startTime");
                 email = doc.getString("hostEmail");
 
-                //TODO: update to query host objects
-                if (mAuth.getCurrentUser().getEmail().equals(doc.getString("hostEmail"))) {
-                    userIsEventOwner = true;
+                if (isHost) {
                     invalidateOptionsMenu();
                 }
 
@@ -80,7 +85,7 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (userIsEventOwner) {
+        if (isHost) {
             getMenuInflater().inflate(R.menu.event_details_menu, menu);
         }
 
