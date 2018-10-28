@@ -1,6 +1,8 @@
 package app.rsez.features.events;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -44,6 +46,9 @@ public class EventDetailsActivity extends AppCompatActivity {
     private String email;
 
     protected static FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private String selected = null;
+    private String user = null;
+    private View tempView = null;
 
     private LinearLayout mLinearLayout;
     
@@ -146,7 +151,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                         for(QueryDocumentSnapshot doc : value) {
                             if(doc.getString("eventId") != null) {
                                 String userName = doc.getString("userId");
-                                TextView temp = temp = new TextView(context);
+                                final TextView temp = new TextView(context);
                                 temp.setText(userName);
                                 temp.setTextSize(15);
                                 temp.setTextColor(Color.BLACK);
@@ -157,7 +162,12 @@ public class EventDetailsActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(View v) {
                                         if(userIsEventOwner == true) {
-
+                                            selected = temp.getText().toString();
+                                            user = temp.getText().toString();
+                                            tempView = v;
+                                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                                            builder.setMessage("Remove User?").setPositiveButton("Yes", dialogClickListener)
+                                                    .setNegativeButton("No", dialogClickListener).show();
                                         }
                                     }
                                 });
@@ -167,5 +177,33 @@ public class EventDetailsActivity extends AppCompatActivity {
                     }
                 });
 
+    }
+    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which){
+                case DialogInterface.BUTTON_POSITIVE:
+                    if(selected != null) {
+                        removeGuest(eventID, user, tempView);
+                    }
+                    break;
+
+                case DialogInterface.BUTTON_NEGATIVE:
+                    //No button clicked
+                    break;
+            }
+        }
+    };
+    public void removeGuest(String eventId, String user, final View view) {
+        db.collection("tickets").whereEqualTo("eventId", eventId).whereEqualTo("userId", user)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
+                        for (QueryDocumentSnapshot doc : value) {
+                            doc.getReference().delete();
+                            mLinearLayout.removeView(view);
+                        }
+                    }
+                });
     }
 }
