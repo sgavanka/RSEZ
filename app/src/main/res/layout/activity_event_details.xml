@@ -1,74 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Use DrawerLayout as root container for activity -->
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:fitsSystemWindows="true"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:title="Event Details"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:titleTextColor="#ffff" />
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical" >
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?android:attr/actionBarSize"
-            android:background="@color/colorPrimary"
-            app:title="Event Details"
-            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            app:titleTextColor="#ffff" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        android:padding="10dp">
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="4th of July Party"
+            android:textColor="@android:color/black"
+            android:textSize="24dp" />
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/event_name_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="30dp"
-                android:text="Event Name"
-                android:textColor="@android:color/black"
-                android:textSize="25dp" />
+            tools:text="Come celebrate the land of the free and the home of the brave with us!"
+            android:textColor="@android:color/black"
+            android:textSize="16dp"
+            android:layout_marginBottom="18dp"/>
 
-            <TextView
-                android:id="@+id/event_description_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:text="Event Description"
-                android:textColor="@android:color/black"
-                android:textSize="15dp" />
+        <TextView
+            android:id="@+id/host_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Hosted by mpalin@purdue.edu"
+            android:textColor="@android:color/black"
+            android:textSize="16dp"
+            android:layout_marginBottom="18dp" />
 
-            <TextView
-                android:id="@+id/event_date_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:text="Event Date"
-                android:textColor="@android:color/black"
-                android:textSize="15dp" />
-
-            <TextView
-                android:id="@+id/event_time_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:text="Event Time"
-                android:textColor="@android:color/black"
-                android:textSize="15dp" />
-
-            <TextView
-                android:id="@+id/event_email_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:text="Hosts Email"
-                android:textColor="@android:color/black"
-                android:textSize="15dp" />
-
-        </LinearLayout>
+        <TextView
+            android:id="@+id/date_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="July 4, 2018 at 6:30 PM"
+            android:textColor="@android:color/black"
+            android:textSize="20dp" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

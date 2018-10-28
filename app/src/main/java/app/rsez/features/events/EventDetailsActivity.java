@@ -8,14 +8,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import app.rsez.R;
 import app.rsez.models.Event;
@@ -25,7 +28,7 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     private String eventID;
     private String title;
-    private String desc;
+    private String description;
     private String date;
     private String time;
     private String email;
@@ -49,28 +52,35 @@ public class EventDetailsActivity extends AppCompatActivity {
         Event.read(eventID, new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                TextView eventName = findViewById(R.id.event_name_view);
-                TextView eventDesc = findViewById(R.id.event_description_view);
-                TextView eventDate = findViewById(R.id.event_date_view);
-                TextView eventTime = findViewById(R.id.event_time_view);
-                TextView eventEmail = findViewById(R.id.event_email_view);
+                TextView titleTextView = findViewById(R.id.title);
+                TextView descriptionTextView = findViewById(R.id.description);
+                TextView dateTimeTextView = findViewById(R.id.date_time);
+                TextView hostEmailTextView = findViewById(R.id.host_email);
 
-                DocumentSnapshot doc = task.getResult();
-                title = doc.getString("title");
-                desc = doc.getString("description");
-                date = doc.getString("startDate");
-                time = doc.getString("startTime");
-                email = doc.getString("hostEmail");
-                if (mAuth.getCurrentUser().getEmail().equals(doc.getString("hostEmail"))) {
+                DocumentSnapshot document = task.getResult();
+
+                title = document.getString("title");
+                description = document.getString("description");
+                date = document.getString("startDate");
+                time = document.getString("startTime");
+                email = document.getString("hostEmail");
+
+                try {
+                    DateFormat readFormat = new SimpleDateFormat("MM/dd/yy");
+                    date = new SimpleDateFormat("MMMM d, YYYY", Locale.ENGLISH).format(readFormat.parse(date));
+                } catch (ParseException e1) {
+                    e1.printStackTrace();
+                }
+
+                if (mAuth.getCurrentUser().getEmail().equals(document.getString("hostEmail"))) {
                     userIsEventOwner = true;
                     invalidateOptionsMenu();
                 }
 
-                eventName.setText(title);
-                eventDesc.setText("Description: " + desc);
-                eventDate.setText("Date: " + date);
-                eventTime.setText("Time: " + time);
-                eventEmail.setText("Host email: " + email);
+                titleTextView.setText(title);
+                descriptionTextView.setText(description);
+                dateTimeTextView.setText(date + " at " + time);
+                hostEmailTextView.setText("Hosted by " + email);
             }
         });
     }
@@ -94,7 +104,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                 Intent editIntent = new Intent( this, EventEditFragment.class);
                 editIntent.putExtra("Id", eventID);
                 editIntent.putExtra("Title", title);
-                editIntent.putExtra("Description", desc);
+                editIntent.putExtra("Description", description);
                 editIntent.putExtra("Date", date);
                 editIntent.putExtra("Time", time);
                 editIntent.putExtra("Email", email);
