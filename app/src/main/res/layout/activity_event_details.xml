@@ -63,12 +63,20 @@
             android:layout_height="wrap_content"
             android:text="Guests"
             android:textColor="@android:color/black"
-            android:textSize="22sp" />
+            android:textSize="22sp"
+            android:visibility="invisible"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:id="@+id/guests_container" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/qrcodeView"
+            android:visibility="invisible"/>
+
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

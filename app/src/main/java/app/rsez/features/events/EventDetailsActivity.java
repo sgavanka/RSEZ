@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,12 +16,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -31,14 +34,19 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
-import javax.annotation.Nullable;
+//import javax.annotation.Nullable;
 
 
 import app.rsez.QRScanFragment;
 import app.rsez.R;
 import app.rsez.models.Event;
+import app.rsez.models.QRCode;
 
 public class EventDetailsActivity extends AppCompatActivity {
     private static final String TAG = "EventDetails";
@@ -51,11 +59,16 @@ public class EventDetailsActivity extends AppCompatActivity {
     private String time;
     private String email;
     private boolean isHost;
+    private Context context;
 
     protected static FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseAuth mAuth;
+    private FirebaseUser mUser;
     private String selected = null;
     private String user = null;
     private View tempView = null;
+    private TextView guests;
+    private ImageView qrcodeView;
 
     private LinearLayout mLinearLayout;
 
@@ -68,14 +81,20 @@ public class EventDetailsActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
+
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_back);
 
         final FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
+        context = this;
         eventID = getIntent().getStringExtra("eventID");
         isHost = getIntent().getBooleanExtra("isHost", false);
+        guests = findViewById(R.id.guests);
+        qrcodeView = findViewById(R.id.qrcodeView);
 
         Event.read(eventID, new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -101,7 +120,20 @@ public class EventDetailsActivity extends AppCompatActivity {
                 }
 
                 if (isHost) {
+                    guests.setVisibility(View.VISIBLE);
+                    ticketQuery(eventID, context);
                     invalidateOptionsMenu();
+                } else {
+                    //Show QR Code
+
+                    try{
+                        Bitmap qrcode = QRCode.generateQRCode(context, eventID + " - " + mUser.getEmail());
+                        qrcodeView.setImageBitmap(qrcode);
+                        qrcodeView.setVisibility(View.VISIBLE);
+                        qrcodeView.setVisibility(View.VISIBLE);
+                    } catch (Exception e){
+
+                    }
                 }
 
                 titleTextView.setText(title);
@@ -110,7 +142,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                 hostEmailTextView.setText("Hosted by " + email);
             }
         });
-        ticketQuery(eventID, this);
+
 
 
     }
