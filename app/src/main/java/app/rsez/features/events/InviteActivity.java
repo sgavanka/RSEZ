@@ -199,7 +199,36 @@ public class InviteActivity extends Activity implements View.OnClickListener {
                         documentSnapshot.getString("firstName"), documentSnapshot.getString("lastName"));
                   System.out.println("USER[0]: " + documentSnapshot.getString("firstName"));
                    if(documentSnapshot.getString("firstName") != null) {
-                       Ticket ticket = new Ticket(FirebaseUtils.generateDocumentId(),eventID, user[0].getEmail() , null );
+                       CollectionReference colRef = db.collection("tickets");
+                       Query query = colRef.whereEqualTo("userId", email).whereEqualTo("eventId", eventID);
+                       query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                           @Override
+                           public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                               if(task.isSuccessful()) {
+                                   List<DocumentSnapshot> users = task.getResult().getDocuments();
+                                   if(users.size() == 0){
+                                       Ticket ticket = new Ticket(FirebaseUtils.generateDocumentId(),eventID, user[0].getEmail() , null );
+                                       ticket.write();
+                                       Toast toast= Toast.makeText(getApplicationContext(),
+                                               "Invite Sent, Make sure to send an Email too", Toast.LENGTH_LONG);
+                                       toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 50);
+                                       toast.show();
+                                       // user[0].addEvent(eventID);
+                                       //  user[0].write();
+                                       sendEmail(context, email);
+                                   }
+                                   else {
+                                       Toast toast= Toast.makeText(getApplicationContext(),
+                                               "User has already been invited", Toast.LENGTH_LONG);
+                                       toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 50);
+                                       toast.show();
+                                   }
+                               }
+                           }
+                       });
+
+
+                      /* Ticket ticket = new Ticket(FirebaseUtils.generateDocumentId(),eventID, user[0].getEmail() , null );
                        ticket.write();
                        Toast toast= Toast.makeText(getApplicationContext(),
                                "Invite Sent, Make sure to send an Email too", Toast.LENGTH_LONG);
@@ -207,7 +236,7 @@ public class InviteActivity extends Activity implements View.OnClickListener {
                        toast.show();
                       // user[0].addEvent(eventID);
                      //  user[0].write();
-                       sendEmail(context, email);
+                       sendEmail(context, email); */
                    }
                    else {
                        System.out.println("User not found");
