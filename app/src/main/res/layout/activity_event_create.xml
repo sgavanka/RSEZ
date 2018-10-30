@@ -98,7 +98,6 @@
                                 android:drawablePadding="12dp"
                                 android:focusable="false"
                                 android:drawableLeft="@drawable/calendericon" />
-
                         </android.support.design.widget.TextInputLayout>
 
                         <android.support.design.widget.TextInputLayout

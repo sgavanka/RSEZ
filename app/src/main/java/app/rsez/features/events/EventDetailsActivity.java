@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -14,8 +15,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -31,10 +30,13 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+
 import java.util.List;
 
 import javax.annotation.Nullable;
 
+
+import app.rsez.QRScanFragment;
 import app.rsez.R;
 import app.rsez.models.Event;
 
@@ -44,10 +46,11 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     private String eventID;
     private String title;
-    private String desc;
+    private String description;
     private String date;
     private String time;
     private String email;
+    private boolean isHost;
 
     protected static FirebaseFirestore db = FirebaseFirestore.getInstance();
     private String selected = null;
@@ -55,12 +58,12 @@ public class EventDetailsActivity extends AppCompatActivity {
     private View tempView = null;
 
     private LinearLayout mLinearLayout;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
-        mLinearLayout = this.findViewById(R.id.linear);
+        mLinearLayout = this.findViewById(R.id.guests_container);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -72,32 +75,39 @@ public class EventDetailsActivity extends AppCompatActivity {
         final FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
         eventID = getIntent().getStringExtra("eventID");
+        isHost = getIntent().getBooleanExtra("isHost", false);
 
         Event.read(eventID, new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                TextView eventName = findViewById(R.id.event_name_view);
-                TextView eventDesc = findViewById(R.id.event_description_view);
-                TextView eventDate = findViewById(R.id.event_date_view);
-                TextView eventTime = findViewById(R.id.event_time_view);
-                TextView eventEmail = findViewById(R.id.event_email_view);
+                TextView titleTextView = findViewById(R.id.title);
+                TextView descriptionTextView = findViewById(R.id.description);
+                TextView dateTimeTextView = findViewById(R.id.date_time);
+                TextView hostEmailTextView = findViewById(R.id.host_email);
 
-                DocumentSnapshot doc = task.getResult();
-                title = doc.getString("title");
-                desc = doc.getString("description");
-                date = doc.getString("startDate");
-                time = doc.getString("startTime");
-                email = doc.getString("hostEmail");
-                if (mAuth.getCurrentUser().getEmail().equals(doc.getString("hostEmail"))) {
-                    userIsEventOwner = true;
+                DocumentSnapshot document = task.getResult();
+
+                title = document.getString("title");
+                description = document.getString("description");
+                date = document.getString("startDate");
+                time = document.getString("startTime");
+                email = document.getString("hostEmail");
+
+                try {
+                    DateFormat readFormat = new SimpleDateFormat("MM/dd/yy");
+                    date = new SimpleDateFormat("MMMM d, YYYY", Locale.ENGLISH).format(readFormat.parse(date));
+                } catch (ParseException e1) {
+                    e1.printStackTrace();
+                }
+
+                if (isHost) {
                     invalidateOptionsMenu();
                 }
 
-                eventName.setText(title);
-                eventDesc.setText("Description: " + desc);
-                eventDate.setText("Date: " + date);
-                eventTime.setText("Time: " + time);
-                eventEmail.setText("Host email: " + email);
+                titleTextView.setText(title);
+                descriptionTextView.setText(description);
+                dateTimeTextView.setText(date + " at " + time);
+                hostEmailTextView.setText("Hosted by " + email);
             }
         });
         ticketQuery(eventID, this);
@@ -107,7 +117,7 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (userIsEventOwner) {
+        if (isHost) {
             getMenuInflater().inflate(R.menu.event_details_menu, menu);
         }
 
@@ -124,7 +134,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                 Intent editIntent = new Intent( this, EventEditFragment.class);
                 editIntent.putExtra("Id", eventID);
                 editIntent.putExtra("Title", title);
-                editIntent.putExtra("Description", desc);
+                editIntent.putExtra("Description", description);
                 editIntent.putExtra("Date", date);
                 editIntent.putExtra("Time", time);
                 editIntent.putExtra("Email", email);
@@ -138,10 +148,21 @@ public class EventDetailsActivity extends AppCompatActivity {
 
                 startActivity(inviteIntent);
                 break;
+            case R.id.checkIn_button:
+                Intent checkInIntent = new Intent(this, QRScanFragment.class);
+                checkInIntent.putExtra("eventId", eventID);
+                startActivity(checkInIntent);
+                break;
+            case R.id.checkIn_list_button:
+                Intent checkInListIntent = new Intent(this, CheckInListActivity.class);
+                checkInListIntent.putExtra("eventId", eventID);
+                startActivity(checkInListIntent);
+                break;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
     public void ticketQuery(String eventID, final Context context) {
         CollectionReference colRef = db.collection("tickets");
         Query query = colRef.whereEqualTo("eventId", eventID);
@@ -185,25 +206,27 @@ public class EventDetailsActivity extends AppCompatActivity {
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
                         if (e != null) {
                             Log.w(TAG, "Listen failed.", e);
-                            //System.out.println("query failed");
                             return;
                         }
-                        for(QueryDocumentSnapshot doc : value) {
+
+                        for (QueryDocumentSnapshot doc : value) {
                             if(doc.getString("eventId") != null) {
-                                String userName = doc.getString("userId");
-                                final TextView temp = new TextView(context);
-                                temp.setText(userName);
-                                temp.setTextSize(15);
-                                temp.setTextColor(Color.BLACK);
-                                temp.setPadding(10,0,0, 20);
-                                temp.setClickable(true);
-                                mLinearLayout.addView(temp);
-                                temp.setOnClickListener(new View.OnClickListener() {
+                                String email = doc.getString("userId");
+
+                                final TextView guestTextView = new TextView(context);
+
+                                guestTextView.setText(email);
+                                guestTextView.setTextSize(16);
+                                guestTextView.setTextColor(Color.BLACK);
+                                guestTextView.setClickable(true);
+                                guestTextView.setPadding(0, 2, 0, 2);
+
+                                guestTextView.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        if(userIsEventOwner == true) {
-                                            selected = temp.getText().toString();
-                                            user = temp.getText().toString();
+                                        if(isHost) {
+                                            selected = guestTextView.getText().toString();
+                                            user = guestTextView.getText().toString();
                                             tempView = v;
                                             AlertDialog.Builder builder = new AlertDialog.Builder(context);
                                             builder.setMessage("Remove User?").setPositiveButton("Yes", dialogClickListener)
@@ -211,6 +234,8 @@ public class EventDetailsActivity extends AppCompatActivity {
                                         }
                                     }
                                 });
+
+                                mLinearLayout.addView(guestTextView);
                             }
                         }
 
@@ -218,6 +243,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                 });*/
 
     }
+
     DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
@@ -226,14 +252,15 @@ public class EventDetailsActivity extends AppCompatActivity {
                     if(selected != null) {
                         removeGuest(eventID, user, tempView);
                     }
-                    break;
 
+                    break;
                 case DialogInterface.BUTTON_NEGATIVE:
                     //No button clicked
                     break;
             }
         }
     };
+
     public void removeGuest(String eventId, String user, final View view) {
         CollectionReference colRef = db.collection("tickets");
         Query query = colRef.whereEqualTo("eventId", eventId).whereEqualTo("userId", user);

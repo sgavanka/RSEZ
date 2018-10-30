@@ -2,11 +2,13 @@ package app.rsez.features.events;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -15,7 +17,10 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Calendar;
@@ -23,6 +28,8 @@ import java.util.Calendar;
 import app.rsez.R;
 import app.rsez.features.home.HomeActivity;
 import app.rsez.models.Event;
+import app.rsez.models.Host;
+import app.rsez.utils.FirebaseUtils;
 
 import static android.support.constraint.Constraints.TAG;
 
@@ -33,6 +40,7 @@ public class EventEditFragment extends AppCompatActivity implements View.OnClick
     private TextView chooseTime;
     private TextView mEventName;
     private TextView mDescription;
+    private TextView mEmail;
     private FirebaseAuth mAuth;
     private Event event;
 
@@ -42,19 +50,23 @@ public class EventEditFragment extends AppCompatActivity implements View.OnClick
     private int currentMinute;
     private String docID;
     private Event mainEvent;
+    private Context context;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_edit);
 
+        context = this;
         mAuth = FirebaseAuth.getInstance();
         mEventName = findViewById(R.id.eventEdit);
         mDescription = findViewById(R.id.descriptionEdit);
-        mDisplayDate = (TextView) findViewById(R.id.dateEdit);
+        mDisplayDate = findViewById(R.id.dateEdit);
         chooseTime = findViewById(R.id.timeEdit);
         docID = getIntent().getStringExtra("Id");
         findViewById(R.id.editButton).setOnClickListener(this);
+        mEmail = findViewById(R.id.hostEditText);
+        findViewById(R.id.addHostButton).setOnClickListener(this);
 
         mEventName.setText(getIntent().getStringExtra("Title"));
         mDescription.setText(getIntent().getStringExtra("Description"));
@@ -70,8 +82,7 @@ public class EventEditFragment extends AppCompatActivity implements View.OnClick
                 int month = cal.get(Calendar.MONTH);
                 int day = cal.get(Calendar.DAY_OF_MONTH);
 
-                DatePickerDialog dialog = new DatePickerDialog(EventEditFragment.this, android.R.style.Theme_Holo_Light, mDateSetListner, year, month, day);
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                DatePickerDialog dialog = new DatePickerDialog(EventEditFragment.this, mDateSetListner, year, month, day);
 
                 dialog.getDatePicker().setMinDate(cal.getTimeInMillis());
                 dialog.show();
@@ -194,6 +205,21 @@ public class EventEditFragment extends AppCompatActivity implements View.OnClick
             String description = mDescription.getText().toString();
 
             eventIn(event, description, date, time);
+        } else if (v.getId() == R.id.addHostButton) {
+            String host = mEmail.getText().toString();
+            String id = FirebaseUtils.generateDocumentId();
+            Host newHost = new Host(id, host, getIntent().getStringExtra("Id"));
+            newHost.write(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    onBackPressed();
+                }
+            }, new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(context, "ERROR: Host not added", Toast.LENGTH_SHORT);
+                }
+            });
         }
     }
 }

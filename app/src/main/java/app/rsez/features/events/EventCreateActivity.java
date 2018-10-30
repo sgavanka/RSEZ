@@ -2,10 +2,12 @@ package app.rsez.features.events;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,13 +19,18 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Calendar;
 
 import app.rsez.R;
 import app.rsez.models.Event;
+import app.rsez.models.Host;
+import app.rsez.utils.FirebaseUtils;
 
 import static android.support.constraint.Constraints.TAG;
 
@@ -36,6 +43,7 @@ public class EventCreateActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private Event event;
     private Calendar cal;
+    private Context context;
 
     private int currentHour;
     private int currentMinute;
@@ -54,6 +62,8 @@ public class EventCreateActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
+        context = this;
+
         mAuth = FirebaseAuth.getInstance();
         mEventName = findViewById(R.id.event);
         mDescription = findViewById(R.id.description);
@@ -68,7 +78,6 @@ public class EventCreateActivity extends AppCompatActivity {
                 int day = cal.get(Calendar.DAY_OF_MONTH);
 
                 DatePickerDialog dialog = new DatePickerDialog(EventCreateActivity.this, mDateSetListner, year, month, day);
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
                 dialog.getDatePicker().setMinDate(cal.getTimeInMillis());
                 dialog.show();
@@ -187,10 +196,36 @@ public class EventCreateActivity extends AppCompatActivity {
         Log.d(TAG, "Event:" + name);
         if (validateForm()) {
             String email = mAuth.getCurrentUser().getEmail();
-            event = new Event(email, name, description, date, time, email);
-            event.write();
+            String id = FirebaseUtils.generateDocumentId();
+            event = new Event(id, name, description, date, time, email);
+            event.write(new OnSuccessListener<Void>() {
+            @Override
+                public void onSuccess(Void aVoid) {
+                    String id = event.getDocumentId();
+                    String docId = FirebaseUtils.generateDocumentId();
+                    Host host = new Host(docId, event.getHostUserId(), id);
+                    host.write(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            onBackPressed();
+                        }
+                    }, new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(context, "Something went wrong creating the event", Toast.LENGTH_SHORT).show();
+                            System.out.println("Something went wrong creating the host object. Event was successfully created");
+                        }
+                    });
 
-            onBackPressed();
+                }
+            }, new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(context, "Something went wrong creating the event", Toast.LENGTH_SHORT).show();
+                    System.out.println("Something went wrong creating the event");
+                }
+            });
+
         }
     }
 }

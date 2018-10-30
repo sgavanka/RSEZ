@@ -11,11 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-
 public class TabsFragment extends Fragment  {
-   private SectionsPageAdapter sectionsPageAdapter;
-   private ViewPager viewPager;
-
+    private SectionsPageAdapter sectionsPageAdapter;
+    private ViewPager viewPager;
 
     @Nullable
     @Override
@@ -35,17 +33,17 @@ public class TabsFragment extends Fragment  {
     }
     private void setupViewPager(final ViewPager viewPager) {
         final SectionsPageAdapter adapter = new SectionsPageAdapter(getChildFragmentManager());
-        adapter.addFragment(new TabFragment1(), "Hosting");
-        adapter.addFragment(new TabFragment2(), " My Events");
+        adapter.addFragment(new HostingTabFragment(), "Hosting");
+        adapter.addFragment(new AttendingTabFragment(), " Attending");
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             public void onPageScrollStateChanged(int state) {}
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
             @Override
             public void onPageSelected(int position) {
-                Fragment frag = adapter.getItem(position);
-                System.out.println("reload");
-                setFragment(frag);
+//                Fragment frag = adapter.getItem(position);
+//                System.out.println("reload");
+//                setFragment(frag);
             }
         });
     }
