@@ -21,17 +21,20 @@ import android.widget.TextView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
+
+import java.util.List;
+
+import javax.annotation.Nullable;
+
 
 import app.rsez.QRScanFragment;
 import app.rsez.R;
@@ -161,7 +164,43 @@ public class EventDetailsActivity extends AppCompatActivity {
     }
 
     public void ticketQuery(String eventID, final Context context) {
-        db.collection("tickets").whereEqualTo("eventId", eventID)
+        CollectionReference colRef = db.collection("tickets");
+        Query query = colRef.whereEqualTo("eventId", eventID);
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()) {
+                    System.out.println("task is succesfull");
+                    List<DocumentSnapshot> tasks = task.getResult().getDocuments();
+                    System.out.println("tasks size: "+ tasks.size());
+                    for(int i = 0; i < tasks.size(); i++) {
+                        final TextView temp = new TextView(context);
+                        String userName = tasks.get(i).getString("userId");
+                        temp.setText(userName);
+                        temp.setTextSize(15);
+                        temp.setTextColor(Color.BLACK);
+                        temp.setPadding(10,0,0, 20);
+                        temp.setClickable(true);
+                        mLinearLayout.addView(temp);
+                        temp.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if(userIsEventOwner == true) {
+                                    selected = temp.getText().toString();
+                                    user = temp.getText().toString();
+                                    tempView = v;
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                                    builder.setMessage("Remove User?").setPositiveButton("Yes", dialogClickListener)
+                                            .setNegativeButton("No", dialogClickListener).show();
+                                }
+                            }
+                        });
+
+                    }
+                }
+            }
+        });
+        /*db.collection("tickets").whereEqualTo("eventId", eventID)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
@@ -201,7 +240,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                         }
 
                     }
-                });
+                });*/
 
     }
 
@@ -223,15 +262,21 @@ public class EventDetailsActivity extends AppCompatActivity {
     };
 
     public void removeGuest(String eventId, String user, final View view) {
-        db.collection("tickets").whereEqualTo("eventId", eventId).whereEqualTo("userId", user)
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
-                        for (QueryDocumentSnapshot doc : value) {
-                            doc.getReference().delete();
-                            mLinearLayout.removeView(view);
-                        }
+        CollectionReference colRef = db.collection("tickets");
+        Query query = colRef.whereEqualTo("eventId", eventId).whereEqualTo("userId", user);
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()) {
+                    List<DocumentSnapshot> tasks = task.getResult().getDocuments();
+                    for(int i = 0; i < tasks.size(); i++) {
+                        tasks.get(i).getReference().delete();
+                        mLinearLayout.removeView(view);
+
                     }
-                });
+                }
+            }
+        });
+
     }
 }
