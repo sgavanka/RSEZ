@@ -67,6 +67,7 @@ public class InviteActivity extends Activity implements View.OnClickListener {
     private Context context;
     private LinearLayout mLinearLayout;
     private User user;
+    private String curUser;
     private ArrayList<String> hostIds;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +111,8 @@ public class InviteActivity extends Activity implements View.OnClickListener {
         public void onClick(DialogInterface dialog, int which) {
             switch (which){
                 case DialogInterface.BUTTON_POSITIVE:
+                    Ticket ticket = new Ticket(FirebaseUtils.generateDocumentId(),eventID, curUser , null );
+                    ticket.write();
                     sendEmail(context, email);
                     break;
 
@@ -241,6 +244,7 @@ public class InviteActivity extends Activity implements View.OnClickListener {
                    else {
                        System.out.println("User not found");
                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                       curUser = email;
                        builder.setMessage("User does not exist would you like to send an Email?").setPositiveButton("Yes", dialogClickListener)
                                .setNegativeButton("No", dialogClickListener).show();
 
