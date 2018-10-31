@@ -73,7 +73,16 @@ public class CheckInListActivity extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     final User user = new User(task.getResult().getId(), task.getResult().getString("email"), task.getResult().getString("firstName"), task.getResult().getString("lastName"));
                                     TextView temp;
-                                    String name = user.getFirstName() + " " + user.getLastName();
+                                    String name = null;
+                                    String email = null;
+                                    if(user.getFirstName() == null) {
+                                        name = "[Unregistered Email!]";
+                                        email = ticket.getUserId();
+                                    }
+                                    else {
+                                       name = user.getFirstName() + " " + user.getLastName();
+                                       email = user.getEmail();
+                                    }
                                     final String checkedIn;
 
                                     if (ticket.getCheckInDateTime() != null) {
@@ -81,7 +90,7 @@ public class CheckInListActivity extends AppCompatActivity {
                                     } else {
                                         checkedIn = "Not Checked In";
                                     }
-                                    String combined = name + "\n" + user.getEmail() + "\n" + checkedIn;
+                                   String combined = name + "\n" + email + "\n" + checkedIn;
 
                                     temp = new TextView(context);
                                     temp.setText(combined);
