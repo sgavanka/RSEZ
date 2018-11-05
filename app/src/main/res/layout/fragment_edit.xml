@@ -6,138 +6,104 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".features.events.EventEditFragment"
-    android:paddingLeft="18dp"
-    android:paddingRight="18dp"
-    android:background="@android:color/background_light"
-    >
+    android:background="@android:color/background_light">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:title="Edit Event"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:titleTextColor="#ffff" />
+
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-
+        android:layout_height="wrap_content"
+        android:paddingLeft="18dp"
+        android:paddingRight="18dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/master_item_2"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:textSize="25dp"
-                android:text="Edit An Event"
-                android:textColor="@color/indigo"
-                android:layout_marginTop="50dp"/>
-
-
-
-                <LinearLayout
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <android.support.design.widget.TextInputLayout
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    app:boxBackgroundMode="filled"
+                    app:hintTextAppearance="@style/MyHintText">
+                    <EditText
+                        android:id="@+id/eventEdit"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        app:boxBackgroundMode="filled"
-                        app:hintTextAppearance="@style/MyHintText"
-                        >
+                        android:hint="Event Name"
+                        android:inputType="textEmailAddress"
+                        android:maxLength="30"
+                        android:maxLines="1"
+                        android:theme="@style/MyEditText"
+                        android:drawablePadding="12dp"
+                        android:drawableLeft="@drawable/redcarpet" />
+                </android.support.design.widget.TextInputLayout>
 
-                        <EditText
-                            android:id="@+id/eventEdit"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Event Name"
-                            android:inputType="textEmailAddress"
-                            android:maxLength="30"
-                            android:maxLines="1"
-                            android:textColorHint="@color/indigo"
-                            android:theme="@style/MyEditText"
-                            app:hintEnabled="true"
-                            android:drawablePadding="12dp"
-                            android:drawableLeft="@drawable/redcarpet"
-
-                            />
-                    </android.support.design.widget.TextInputLayout>
-
-                    <android.support.design.widget.TextInputLayout
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    app:hintTextAppearance="@style/MyHintText">
+                    <EditText
+                        android:id="@+id/descriptionEdit"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        app:hintTextAppearance="@style/MyHintText">
+                        android:hint="Description"
+                        android:theme="@style/MyEditText"
+                        android:inputType="textEmailAddress"
+                        android:drawablePadding="12dp"
+                        android:maxLines="1"
+                        android:maxLength="100"
+                        android:drawableLeft="@drawable/descriptionicon" />
+                </android.support.design.widget.TextInputLayout>
 
-                        <EditText
-                            android:id="@+id/descriptionEdit"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            app:hintEnabled="true"
-                            android:hint="Description"
-                            android:textColorHint="@color/indigo"
-                            android:theme="@style/MyEditText"
-                            android:inputType="textEmailAddress"
-                            app:counterEnabled="true"
-                            app:counterMaxLength="100"
-                            android:drawablePadding="12dp"
-                            android:maxLines="1"
-                            android:maxLength="100"
-                            android:drawableLeft="@drawable/descriptionicon"
-                            />
-
-                    </android.support.design.widget.TextInputLayout>
-
-                    <android.support.design.widget.TextInputLayout
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    app:hintTextAppearance="@style/MyHintText">
+                    <EditText
+                        android:id="@+id/dateEdit"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        app:hintTextAppearance="@style/MyHintText">
+                        android:hint="Select Date"
+                        android:theme="@style/MyEditText"
+                        android:inputType="date"
+                        android:drawablePadding="12dp"
+                        android:maxLines="1"
+                        android:maxLength="100"
+                        android:drawableLeft="@drawable/calendericon" />
+                </android.support.design.widget.TextInputLayout>
 
-                        <EditText
-                            android:id="@+id/dateEdit"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            app:hintEnabled="true"
-                            android:hint="Select Date"
-                            android:textColorHint="@color/indigo"
-                            android:theme="@style/MyEditText"
-                            android:inputType="date"
-                            app:counterEnabled="true"
-                            app:counterMaxLength="100"
-                            android:drawablePadding="12dp"
-                            android:maxLines="1"
-                            android:maxLength="100"
-                            android:drawableLeft="@drawable/calendericon"
-                            />
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    app:hintTextAppearance="@style/MyHintText">
 
-                    </android.support.design.widget.TextInputLayout>
-
-                    <android.support.design.widget.TextInputLayout
+                    <EditText
+                        android:id="@+id/timeEdit"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        app:hintTextAppearance="@style/MyHintText">
+                        android:hint="Select Time"
+                        android:theme="@style/MyEditText"
+                        android:inputType="date"
+                        android:drawablePadding="12dp"
+                        android:maxLines="1"
+                        android:maxLength="100"
+                        android:drawableLeft="@drawable/timeicon" />
+                </android.support.design.widget.TextInputLayout>
+            </LinearLayout>
 
-                        <EditText
-                            android:id="@+id/timeEdit"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            app:hintEnabled="true"
-                            android:hint="Select Time"
-                            android:textColorHint="@color/indigo"
-                            android:theme="@style/MyEditText"
-                            android:inputType="date"
-                            android:drawablePadding="12dp"
-                            app:counterEnabled="true"
-                            app:counterMaxLength="100"
-                            android:maxLines="1"
-                            android:maxLength="100"
-                            android:drawableLeft="@drawable/timeicon"
-                            />
-
-                    </android.support.design.widget.TextInputLayout>
-
-                </LinearLayout>
             <Button
                 android:id="@+id/editButton"
                 android:layout_width="match_parent"
@@ -148,10 +114,7 @@
                 android:textAllCaps="false"
                 android:padding="16dp"
                 android:clickable="true"
-                android:layout_marginTop="15dp"
-                />
-
-
+                android:layout_marginTop="15dp" />
         </LinearLayout>
     </ScrollView>
 
@@ -159,7 +122,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -172,7 +134,5 @@
             android:layout_height="wrap_content"
             android:id="@+id/addHostButton"
             android:text="Add Host"/>
-
     </LinearLayout>
-
 </LinearLayout>

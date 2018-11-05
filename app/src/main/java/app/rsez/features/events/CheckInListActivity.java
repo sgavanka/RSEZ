@@ -1,7 +1,6 @@
 package app.rsez.features.events;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,7 +9,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.Space;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,7 +45,7 @@ public class CheckInListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check_in_list);
         context = this;
-        mLinearLayout = findViewById(R.id.linearLayout);
+        mLinearLayout = findViewById(R.id.checkInListContainer);
         eventId = getIntent().getStringExtra("eventId");
         addUsers();
     }
@@ -137,9 +135,6 @@ public class CheckInListActivity extends AppCompatActivity {
             public void onSuccess(Void aVoid) {
                 System.out.println("Checked in Successfully");
                 Toast.makeText(getApplicationContext(), "Check in Successful", Toast.LENGTH_SHORT).show();
-//                Intent refresh = new Intent(context, CheckInListActivity.class);
-//                refresh.putExtra("eventId", eventId);
-//                startActivity(refresh);
                 mLinearLayout.removeAllViews();
                 addUsers();
 

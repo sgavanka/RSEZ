@@ -1,80 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:layout_editor_absoluteX="8dp"
+    tools:layout_editor_absoluteY="8dp">
 
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/guideline"
         android:orientation="vertical"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="8dp">
+        app:layout_constraintGuide_percent="0.5"/>
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:title="Invite Guests"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:titleTextColor="#ffff" />
 
-        <TextView
-            android:id="@+id/editText2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:textSize="25dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginBottom="25dp"
-            android:gravity="center_horizontal"
-            android:text="Invite People to Event" />
-
-    <LinearLayout
+    <EditText
+        android:id="@+id/emailEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@drawable/customborder">
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:layout_marginHorizontal="100dp"
+        android:layout_marginVertical="100dp"
+        android:hint="Invite by email..."
+        android:ems="10"
+        android:inputType="textEmailAddress"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Invite user by email:"/>
+    <Button
+        android:id="@+id/inviteButton"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:text="Invite"
+        app:layout_constraintTop_toBottomOf="@id/emailEditText"
+        app:layout_constraintLeft_toLeftOf="@id/guideline"
+        app:layout_constraintRight_toRightOf="@id/guideline" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="15dp" >
-
-            <TextView
-                android:id="@+id/emailTextview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:text="Email:"
-                android:textSize="15dp" />
-
-            <EditText
-                android:id="@+id/emailEditText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="10"
-                android:inputType="textEmailAddress" />
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/inviteButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="Invite" />
-
-    </LinearLayout>
-
-    <Space
+    <TextView
+        android:id="@+id/orTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp" />
+        android:textSize="26sp"
+        android:text="OR"
+        android:gravity="center_horizontal"
+        android:layout_marginVertical="50dp"
+        app:layout_constraintTop_toBottomOf="@id/inviteButton"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@drawable/customborder">
-
+        android:background="@drawable/customborder"
+        android:layout_marginTop="50dp"
+        app:layout_constraintTop_toBottomOf="@id/orTextView">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -83,16 +74,11 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:id="@+id/usersList">
-
-            </LinearLayout>
+                android:id="@+id/usersList" />
         </ScrollView>
-
     </LinearLayout>
-
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

@@ -8,11 +8,9 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,22 +24,15 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
-
-//import javax.annotation.Nullable;
-
 
 import app.rsez.QRScanFragment;
 import app.rsez.R;
@@ -87,8 +78,6 @@ public class EventDetailsActivity extends AppCompatActivity {
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_back);
-
-        final FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
         context = this;
         eventID = getIntent().getStringExtra("eventID");
@@ -142,9 +131,6 @@ public class EventDetailsActivity extends AppCompatActivity {
                 hostEmailTextView.setText("Hosted by " + email);
             }
         });
-
-
-
     }
 
     @Override
@@ -232,48 +218,6 @@ public class EventDetailsActivity extends AppCompatActivity {
                 }
             }
         });
-        /*db.collection("tickets").whereEqualTo("eventId", eventID)
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
-                        if (e != null) {
-                            Log.w(TAG, "Listen failed.", e);
-                            return;
-                        }
-
-                        for (QueryDocumentSnapshot doc : value) {
-                            if(doc.getString("eventId") != null) {
-                                String email = doc.getString("userId");
-
-                                final TextView guestTextView = new TextView(context);
-
-                                guestTextView.setText(email);
-                                guestTextView.setTextSize(16);
-                                guestTextView.setTextColor(Color.BLACK);
-                                guestTextView.setClickable(true);
-                                guestTextView.setPadding(0, 2, 0, 2);
-
-                                guestTextView.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        if(isHost) {
-                                            selected = guestTextView.getText().toString();
-                                            user = guestTextView.getText().toString();
-                                            tempView = v;
-                                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                                            builder.setMessage("Remove User?").setPositiveButton("Yes", dialogClickListener)
-                                                    .setNegativeButton("No", dialogClickListener).show();
-                                        }
-                                    }
-                                });
-
-                                mLinearLayout.addView(guestTextView);
-                            }
-                        }
-
-                    }
-                });*/
-
     }
 
     DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
@@ -287,7 +231,6 @@ public class EventDetailsActivity extends AppCompatActivity {
 
                     break;
                 case DialogInterface.BUTTON_NEGATIVE:
-                    //No button clicked
                     break;
             }
         }
@@ -309,6 +252,5 @@ public class EventDetailsActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 }
