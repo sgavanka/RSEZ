@@ -1,6 +1,8 @@
 package app.rsez.features.events;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -108,7 +110,9 @@ public class CheckInListActivity extends AppCompatActivity {
                                             if (!checkedIn.equals("Checked In")) {
                                                 checkIn(ticket);
                                             } else {
-                                                Toast.makeText(context, "User is already checked in", Toast.LENGTH_SHORT).show();
+                                                //Toast.makeText(context, "User is already checked in", Toast.LENGTH_SHORT).show();
+                                                //Uncheck in user
+                                                uncheckIn(ticket);
                                             }
                                         }
                                     });
@@ -137,13 +141,32 @@ public class CheckInListActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Check in Successful", Toast.LENGTH_SHORT).show();
                 mLinearLayout.removeAllViews();
                 addUsers();
-
             }
         }, new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 System.out.println("Checked in Failed");
                 Toast.makeText(getApplicationContext(), "Failed to check in properly", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void uncheckIn(Ticket ticket){
+
+        Ticket newTicket = new Ticket(ticket.getDocumentId(), ticket.getEventId(), ticket.getUserId(), null);
+        newTicket.write(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                System.out.println("Unchecked in User");
+                Toast.makeText(getApplicationContext(), "User checked out", Toast.LENGTH_SHORT).show();
+                mLinearLayout.removeAllViews();
+                addUsers();
+            }
+        }, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                System.out.println("Uncheck in failed");
+                Toast.makeText(getApplicationContext(), "Failed to uncheck in properly", Toast.LENGTH_SHORT).show();
             }
         });
     }
