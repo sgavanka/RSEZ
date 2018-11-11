@@ -203,13 +203,12 @@ public class EventDetailsActivity extends AppCompatActivity {
                         temp.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                if(userIsEventOwner == true) {
+                                if(userIsEventOwner) {
                                     selected = temp.getText().toString();
                                     user = temp.getText().toString();
                                     tempView = v;
                                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                                    builder.setMessage("Remove User?").setPositiveButton("Yes", dialogClickListener)
-                                            .setNegativeButton("No", dialogClickListener).show();
+                                    builder.setMessage("Remove User?").setPositiveButton("Yes", dialogClickListener).setNegativeButton("No", dialogClickListener).show();
                                 }
                             }
                         });
