@@ -21,4 +21,9 @@
         android:icon="@drawable/ic_edit"
         app:showAsAction="always"
         android:title="Edit" />
+    <item
+        android:id="@+id/remove_button"
+        android:icon="@drawable/ic_remove"
+        app:showAsAction="always"
+        android:title="Delete Event"/>
 </menu>

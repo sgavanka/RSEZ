@@ -19,10 +19,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -31,13 +34,17 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import app.rsez.QRScanFragment;
 import app.rsez.R;
 import app.rsez.models.Event;
+import app.rsez.models.Host;
 import app.rsez.models.QRCode;
+import app.rsez.models.Ticket;
+import app.rsez.utils.FirebaseUtils;
 
 public class EventDetailsActivity extends AppCompatActivity {
     private static final String TAG = "EventDetails";
@@ -176,6 +183,10 @@ public class EventDetailsActivity extends AppCompatActivity {
                 checkInListIntent.putExtra("eventId", eventID);
                 startActivity(checkInListIntent);
                 break;
+            case R.id.remove_button:
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage("Delete event?").setPositiveButton("Yes", deleteEventListener).setNegativeButton("No", deleteEventListener).show();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -252,4 +263,78 @@ public class EventDetailsActivity extends AppCompatActivity {
             }
         });
     }
+
+    public void deleteEvent(){
+        //Remove all tickets and hosts
+        //Delete event
+        CollectionReference tickets = db.collection("tickets");
+        CollectionReference hosts = db.collection("hosts");
+
+        Query ticketQuery = tickets.whereEqualTo("eventId", eventID);
+        ticketQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    List<DocumentSnapshot> tasks = task.getResult().getDocuments();
+                    for(int i = 0; i < tasks.size(); i++){
+                        Ticket.delete(tasks.get(i).getId(), new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                            }
+                        }, new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                            }
+                        });
+                    }
+                }
+            }
+        });
+
+        Query hostsQuery = hosts.whereEqualTo("eventId", eventID);
+        hostsQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    List<DocumentSnapshot> tasks = task.getResult().getDocuments();
+                    for(int i = 0; i < tasks.size(); i++){
+                        Host.delete(tasks.get(i).getId(), new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                            }
+                        }, new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                            }
+                        });
+                    }
+                }
+            }
+        });
+
+        Event.delete(eventID, new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+            }
+        }, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+            }
+        });
+    }
+
+    DialogInterface.OnClickListener deleteEventListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which){
+                case DialogInterface.BUTTON_POSITIVE:
+                    deleteEvent();
+                    break;
+
+                case DialogInterface.BUTTON_NEGATIVE:
+                    //No button clicked
+                    break;
+            }
+        }
+    };
 }
