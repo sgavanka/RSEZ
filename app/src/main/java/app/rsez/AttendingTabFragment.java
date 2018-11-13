@@ -30,8 +30,10 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import app.rsez.features.events.EventDetailsActivity;
 import app.rsez.models.Event;
@@ -101,41 +103,66 @@ public class AttendingTabFragment extends Fragment implements View.OnClickListen
                                         DocumentSnapshot doc = task.getResult();
                                         Event event = new Event(doc.getId(), doc.getString("title"),
                                                 doc.getString("description"),
-                                                doc.getString("startDate"),
-                                                doc.getString("startTime"),
+                                                (Date) doc.get("date"),
+                                                doc.getString("timezone"),
                                                 doc.getString("hostEmail"));
+                                        if(event.getEventDate() != null) {
 
-                                        View child = getLayoutInflater().inflate(R.layout.list_view_event_info, null);
+                                            View child = getLayoutInflater().inflate(R.layout.list_view_event_info, null);
 
-                                        final String id = event.getDocumentId();
-                                        String name = event.getTitle();
-                                        String description = event.getDescription();
-                                        String date = event.getStartDate();
-                                        String time = event.getStartTime();
+                                            final String id = event.getDocumentId();
+                                            String name = event.getTitle();
+                                            String description = event.getDescription();
+                                            //String date = event.getStartDate();
+                                            //String time = event.getStartTime();
+                                            Date date = event.getEventDate();
+                                            String dateString = date.toString();
+                                            String[] dateSplit = dateString.split(" ");
+                                            String actualDate = dateSplit[1] + " " + dateSplit[2] + ", " + dateSplit[5];
+                                            System.out.println("DATEINHOSTING: " + date.toString());
 
-                                        try {
+                                            String stringTime = dateSplit[3];
+                                            String[] timeSplit = stringTime.split(":");
+                                            String hour = timeSplit[0];
+                                            String amPM = null;
+                                            int hours = Integer.parseInt(hour);
+                                            if (hours >= 12 && hours < 24) {
+                                                amPM = "PM";
+                                                if (hours - 12 != 0)
+                                                    hours = Integer.parseInt(hour) - 12;
+                                            } else {
+                                                if (hours == 24 || hours == 0)
+                                                    hours = 12;
+                                                amPM = "AM";
+                                            }
+                                            hour = String.valueOf(hours);
+                                            String timeString = hour + ":" + timeSplit[1] + " " + amPM;
+
+                                     /*   try {
                                             DateFormat readFormat = new SimpleDateFormat("MM/dd/yy");
                                             date = new SimpleDateFormat("MMM d", Locale.ENGLISH).format(readFormat.parse(date));
                                         } catch (ParseException e1) {
                                             e1.printStackTrace();
+                                        }*/
+
+                                            ((TextView) child.findViewById(R.id.title)).setText(name);
+                                            ((TextView) child.findViewById(R.id.description)).setText(description);
+                                            ((TextView) child.findViewById(R.id.date)).setText(actualDate);
+                                            ((TextView) child.findViewById(R.id.time)).setText(timeString);
+
+                                            child.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
+                                                    intent.putExtra("eventID", id);
+                                                    startActivity(intent);
+                                                }
+                                            });
+
+                                            ids.add(id);
+                                            mLinearLayout.addView(child);
+                                            //}
                                         }
-
-                                        ((TextView) child.findViewById(R.id.title)).setText(name);
-                                        ((TextView) child.findViewById(R.id.description)).setText(description);
-                                        ((TextView) child.findViewById(R.id.date)).setText(date);
-                                        ((TextView) child.findViewById(R.id.time)).setText(time);
-
-                                        child.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
-                                                intent.putExtra("eventID", id);
-                                                startActivity(intent);
-                                            }
-                                        });
-
-                                        ids.add(id);
-                                        mLinearLayout.addView(child);
                                     }
                                 });
 

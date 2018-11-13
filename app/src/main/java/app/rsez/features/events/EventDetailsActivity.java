@@ -31,6 +31,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -46,8 +47,9 @@ public class EventDetailsActivity extends AppCompatActivity {
     private String eventID;
     private String title;
     private String description;
-    private String date;
-    private String time;
+    //private String date;
+    //private String time;
+    private Date date;
     private String email;
     private boolean isHost;
     private Context context;
@@ -97,16 +99,17 @@ public class EventDetailsActivity extends AppCompatActivity {
 
                 title = document.getString("title");
                 description = document.getString("description");
-                date = document.getString("startDate");
-                time = document.getString("startTime");
+                //date = document.getString("startDate");
+                //time = document.getString("startTime");
+                date = (Date) document.get("date");
                 email = document.getString("hostEmail");
 
-                try {
+                /*try {
                     DateFormat readFormat = new SimpleDateFormat("MM/dd/yy");
                     date = new SimpleDateFormat("MMMM d, YYYY", Locale.ENGLISH).format(readFormat.parse(date));
                 } catch (ParseException e1) {
                     e1.printStackTrace();
-                }
+                }*/
 
                 if (isHost) {
                     guests.setVisibility(View.VISIBLE);
@@ -127,7 +130,7 @@ public class EventDetailsActivity extends AppCompatActivity {
 
                 titleTextView.setText(title);
                 descriptionTextView.setText(description);
-                dateTimeTextView.setText(date + " at " + time);
+                dateTimeTextView.setText(date.toString());
                 hostEmailTextView.setText("Hosted by " + email);
             }
         });
@@ -153,8 +156,8 @@ public class EventDetailsActivity extends AppCompatActivity {
                 editIntent.putExtra("Id", eventID);
                 editIntent.putExtra("Title", title);
                 editIntent.putExtra("Description", description);
-                editIntent.putExtra("Date", date);
-                editIntent.putExtra("Time", time);
+                editIntent.putExtra("Date", date.toString());
+                //editIntent.putExtra("Time", time);
                 editIntent.putExtra("Email", email);
 
                 startActivity(editIntent);

@@ -42,6 +42,7 @@ public class CheckInListActivity extends AppCompatActivity {
     private LinearLayout mLinearLayout;
     private List<DocumentSnapshot> attendees;
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +50,9 @@ public class CheckInListActivity extends AppCompatActivity {
         context = this;
         mLinearLayout = findViewById(R.id.checkInListContainer);
         eventId = getIntent().getStringExtra("eventId");
+        Calendar cal = Calendar.getInstance();
+        Date currentDate = cal.getTime();
+        System.out.println("Date: " + currentDate.toString());
         addUsers();
     }
 
