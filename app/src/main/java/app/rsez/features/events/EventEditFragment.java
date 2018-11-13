@@ -197,7 +197,7 @@ public class EventEditFragment extends AppCompatActivity implements View.OnClick
         Log.d(TAG, "Event:" + name);
         if (validateForm()) {
             String email = mAuth.getCurrentUser().getEmail();
-            event = new Event(email, name, description, date, timeZone.getDisplayName(), email);
+            event = new Event(email, name, description, date, timeZone.getID(), email);
             event.writeId(docID);
 
             Intent myIntent = new Intent(EventEditFragment.this, HomeActivity.class);
