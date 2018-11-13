@@ -11,6 +11,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class Event extends ModelBase  {
     private static String COLLECTION_NAME = "events";
@@ -22,7 +23,8 @@ public class Event extends ModelBase  {
 
    // private String startDate;
    // private String startTime;
-    private Date date; //this will replace start time and start date
+    private Date date;//this will replace start time and start date
+    private String timeZone;
 
     private String hostEmail;
 
@@ -36,7 +38,7 @@ public class Event extends ModelBase  {
         this.date = null;
         this.hostEmail = null;
     }
-    public Event(String documentId, String title, String description, Date date, String hostEmail) {
+    public Event(String documentId, String title, String description, Date date, String timeZone,  String hostEmail) {
         super(documentId);
 
         this.title = title;
@@ -44,6 +46,7 @@ public class Event extends ModelBase  {
         //this.startDate = startDate;
        // this.startTime = startTime;
         this.hostEmail = hostEmail;
+        this.timeZone = timeZone;
         this.date = date;
          //document id should always be email
     }
@@ -90,6 +93,10 @@ public class Event extends ModelBase  {
 
     public Date getEventDate() { return date;}
 
+    public String getTimeZone() {
+        return timeZone;
+    }
+
     @Override
     public void write(OnSuccessListener<Void> onSuccessListener, OnFailureListener onFailureListener) {
         Map<String, Object> event = new HashMap<>();
@@ -98,6 +105,7 @@ public class Event extends ModelBase  {
         //event.put("startDate", startDate);
         //event.put("startTime", startTime);
         event.put("date", date);
+        event.put("timezone", timeZone.toString());
         event.put("hostEmail", hostEmail);
 
         db.collection("events").document(getDocumentId()).set(event)
@@ -113,6 +121,7 @@ public class Event extends ModelBase  {
         //event.put("startDate", startDate);
         //event.put("startTime", startTime);
         event.put("date", date);
+        event.put("timezone", timeZone.toString());
         event.put("hostEmail", hostEmail);
 
         db.collection("events").document().set(event);
@@ -125,6 +134,7 @@ public class Event extends ModelBase  {
         //event.put("startDate", startDate);
         //event.put("startTime", startTime);
         event.put("date", date);
+        event.put("timezone", timeZone.toString());
         event.put("hostEmail", hostEmail);
 
         db.collection("events").document(documentId).set(event);

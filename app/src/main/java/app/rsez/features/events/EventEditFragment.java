@@ -23,7 +23,14 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.text.DateFormat;
+import java.text.DateFormatSymbols;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import app.rsez.R;
 import app.rsez.features.home.HomeActivity;
@@ -51,6 +58,7 @@ public class EventEditFragment extends AppCompatActivity implements View.OnClick
     private String docID;
     private Event mainEvent;
     private Context context;
+    private DateFormat fmt = new SimpleDateFormat("MMMM dd, yyyy hh:mm a", Locale.US);
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -101,13 +109,14 @@ public class EventEditFragment extends AppCompatActivity implements View.OnClick
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 month = month + 1;
+                String months = getMonth(month);
                 Log.d(TAG, "onDataSet: date:" + month + "/" + dayOfMonth + "/" + year);
-                String date = month + "/" + dayOfMonth + "/" + year;
+                String date = months + " " + dayOfMonth + ", " + year + " ";
                 mDisplayDate.setText(date);
             }
         };
 
-        mDateSetListner = new DatePickerDialog.OnDateSetListener() {
+       /* mDateSetListner = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 month = month + 1;
@@ -115,7 +124,7 @@ public class EventEditFragment extends AppCompatActivity implements View.OnClick
                 String date = month + "/" + dayOfMonth + "/" + year;
                 mDisplayDate.setText(date);
             }
-        };
+        }; */
 
         chooseTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,7 +144,7 @@ public class EventEditFragment extends AppCompatActivity implements View.OnClick
                         if (hourOfDay > 12) {
                             hourOfDay = hourOfDay -12;
                         }
-                        chooseTime.setText(String.format("%02d:%02d", hourOfDay, minutes) + amPm);
+                        chooseTime.setText(String.format("%02d:%02d", hourOfDay, minutes) + " " + amPm);
 
                     }
                 }, currentHour, currentMinute, false);
@@ -184,11 +193,11 @@ public class EventEditFragment extends AppCompatActivity implements View.OnClick
         return valid;
     }
 
-    private void eventIn(String name, String description, String date, String time) {
+    private void eventIn(String name, String description, Date date, TimeZone timeZone) {
         Log.d(TAG, "Event:" + name);
         if (validateForm()) {
             String email = mAuth.getCurrentUser().getEmail();
-            event = new Event(email, name, description, date, time, email);
+            event = new Event(email, name, description, date, timeZone.toString(), email);
             event.writeId(docID);
 
             Intent myIntent = new Intent(EventEditFragment.this, HomeActivity.class);
@@ -202,9 +211,16 @@ public class EventEditFragment extends AppCompatActivity implements View.OnClick
             String event = mEventName.getText().toString();
             String date = mDisplayDate.getText().toString();
             String time = chooseTime.getText().toString();
+            Date tDate = null;
+            try {
+                tDate = fmt.parse(date+time);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            TimeZone timeZone = TimeZone.getDefault();
             String description = mDescription.getText().toString();
 
-            eventIn(event, description, date, time);
+            eventIn(event, description, tDate, timeZone);
         } else if (v.getId() == R.id.addHostButton) {
             System.out.println("Host button clicked");
             String host = mEmail.getText().toString();
@@ -222,5 +238,8 @@ public class EventEditFragment extends AppCompatActivity implements View.OnClick
                 }
             });
         }
+    }
+    public String getMonth(int month) {
+        return new DateFormatSymbols().getMonths()[month-1];
     }
 }

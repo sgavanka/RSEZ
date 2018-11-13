@@ -26,8 +26,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.DateFormat;
+import java.text.DateFormatSymbols;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -51,7 +54,7 @@ public class EventCreateActivity extends AppCompatActivity {
 
     private int currentHour;
     private int currentMinute;
-    private DateFormat fmt = new SimpleDateFormat("MM dd, yyyy hh:mm", Locale.US);
+    private DateFormat fmt = new SimpleDateFormat("MMMM dd, yyyy hh:mm a", Locale.US);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,9 +104,10 @@ public class EventCreateActivity extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 month = month + 1;
-                Log.d(TAG, "onDataSet: date:" + month + "/" + dayOfMonth + "/" + year);
+                String months = getMonth(month);
+                Log.d(TAG, "onDataSet: date:" + months + "/" + dayOfMonth + "/" + year);
 
-                String date = month + "/" + dayOfMonth + "/" + year;
+                String date = months + " " + dayOfMonth + ", " + year + " ";
                 mDisplayDate.setText(date);
             }
         };
@@ -127,7 +131,7 @@ public class EventCreateActivity extends AppCompatActivity {
                             hourOfDay = hourOfDay -12;
                         }
 
-                        chooseTime.setText(String.format("%02d:%02d", hourOfDay, minutes) + amPm);
+                        chooseTime.setText(String.format("%02d:%02d", hourOfDay, minutes) + " " + amPm);
                     }
                 }, currentHour, currentMinute, false);
                 timePickerDialog.show();
@@ -148,7 +152,11 @@ public class EventCreateActivity extends AppCompatActivity {
                 onBackPressed();
                 break;
             case R.id.save_button:
-                saveEvent();
+                try {
+                    saveEvent();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
                 break;
 
         }
@@ -194,17 +202,19 @@ public class EventCreateActivity extends AppCompatActivity {
         return valid;
     }
 
-    private void saveEvent() {
+    private void saveEvent() throws ParseException {
         String name = mEventName.getText().toString();
         String description = mDescription.getText().toString();
         String date = mDisplayDate.getText().toString();
         String time = chooseTime.getText().toString();
+        Date tDate = fmt.parse(date+time);
+        TimeZone timeZone = TimeZone.getDefault();
 
         Log.d(TAG, "Event:" + name);
         if (validateForm()) {
             String email = mAuth.getCurrentUser().getEmail();
             String id = FirebaseUtils.generateDocumentId();
-            event = new Event(id, name, description, date, time, email);
+            event = new Event(id, name, description, tDate, timeZone.toString(), email);
             event.write(new OnSuccessListener<Void>() {
             @Override
                 public void onSuccess(Void aVoid) {
@@ -234,5 +244,8 @@ public class EventCreateActivity extends AppCompatActivity {
             });
 
         }
+    }
+    public String getMonth(int month) {
+        return new DateFormatSymbols().getMonths()[month-1];
     }
 }
