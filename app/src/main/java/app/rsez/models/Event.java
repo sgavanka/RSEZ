@@ -20,8 +20,9 @@ public class Event extends ModelBase  {
 
     private Date startDateTime;
 
-    private String startDate;
-    private String startTime;
+   // private String startDate;
+   // private String startTime;
+    private Date date; //this will replace start time and start date
 
     private String hostEmail;
 
@@ -30,18 +31,20 @@ public class Event extends ModelBase  {
 
         this.title = null;
         this.description = null;
-        this.startDate = null;
-        this.startTime = null;
+        //this.startDate = null;
+        //this.startTime = null;
+        this.date = null;
         this.hostEmail = null;
     }
-    public Event(String documentId, String title, String description, String startDate, String startTime, String hostEmail) {
+    public Event(String documentId, String title, String description, Date date, String hostEmail) {
         super(documentId);
 
         this.title = title;
         this.description = description;
-        this.startDate = startDate;
-        this.startTime = startTime;
+        //this.startDate = startDate;
+       // this.startTime = startTime;
         this.hostEmail = hostEmail;
+        this.date = date;
          //document id should always be email
     }
 
@@ -77,22 +80,24 @@ public class Event extends ModelBase  {
     public void setHostUserId(String hostUserId) {
         this.hostEmail = hostUserId;
     }
-
-    public String getStartDate() {
+    /*public String getStartDate() {
         return startDate;
     }
 
     public String getStartTime() {
         return startTime;
-    }
+    } */
+
+    public Date getEventDate() { return date;}
 
     @Override
     public void write(OnSuccessListener<Void> onSuccessListener, OnFailureListener onFailureListener) {
         Map<String, Object> event = new HashMap<>();
         event.put("title", title);
         event.put("description", description);
-        event.put("startDate", startDate);
-        event.put("startTime", startTime);
+        //event.put("startDate", startDate);
+        //event.put("startTime", startTime);
+        event.put("date", date);
         event.put("hostEmail", hostEmail);
 
         db.collection("events").document(getDocumentId()).set(event)
@@ -105,8 +110,9 @@ public class Event extends ModelBase  {
         Map<String, Object> event = new HashMap<>();
         event.put("title", title);
         event.put("description", description);
-        event.put("startDate", startDate);
-        event.put("startTime", startTime);
+        //event.put("startDate", startDate);
+        //event.put("startTime", startTime);
+        event.put("date", date);
         event.put("hostEmail", hostEmail);
 
         db.collection("events").document().set(event);
@@ -116,8 +122,9 @@ public class Event extends ModelBase  {
         Map<String, Object> event = new HashMap<>();
         event.put("title", title);
         event.put("description", description);
-        event.put("startDate", startDate);
-        event.put("startTime", startTime);
+        //event.put("startDate", startDate);
+        //event.put("startTime", startTime);
+        event.put("date", date);
         event.put("hostEmail", hostEmail);
 
         db.collection("events").document(documentId).set(event);

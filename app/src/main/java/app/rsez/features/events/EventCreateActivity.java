@@ -25,7 +25,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import app.rsez.R;
 import app.rsez.models.Event;
@@ -47,6 +51,7 @@ public class EventCreateActivity extends AppCompatActivity {
 
     private int currentHour;
     private int currentMinute;
+    private DateFormat fmt = new SimpleDateFormat("MM dd, yyyy hh:mm", Locale.US);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +75,7 @@ public class EventCreateActivity extends AppCompatActivity {
         mDisplayDate = findViewById(R.id.date);
 
         cal = Calendar.getInstance();
+        cal.setTimeZone(TimeZone.getDefault());
         mDisplayDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,6 +102,7 @@ public class EventCreateActivity extends AppCompatActivity {
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 month = month + 1;
                 Log.d(TAG, "onDataSet: date:" + month + "/" + dayOfMonth + "/" + year);
+
                 String date = month + "/" + dayOfMonth + "/" + year;
                 mDisplayDate.setText(date);
             }
