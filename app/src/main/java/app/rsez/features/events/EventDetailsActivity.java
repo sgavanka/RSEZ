@@ -345,13 +345,11 @@ public class EventDetailsActivity extends AppCompatActivity {
                         if (!task.isSuccessful()) {
                             return;
                         }
-
                         List<DocumentSnapshot> tickets = task.getResult().getDocuments();
                         System.out.println("Found " + tickets.size() + " tickets with eventID: " + eventID + " and userId: " + mUser.getEmail());
                         if (tickets.size() != 1){
                             return;
                         }
-                        Ticket ticket = new Ticket(tickets.get(0).getId(), tickets.get(0).getString("eventId"), tickets.get(0).getString("userId"), (Date) tickets.get(0).get("checkInDateTime"));
                         Ticket.delete(tickets.get(0).getId(), new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
