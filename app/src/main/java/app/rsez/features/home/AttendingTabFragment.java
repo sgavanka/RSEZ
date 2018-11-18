@@ -68,6 +68,7 @@ public class AttendingTabFragment extends Fragment  {
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
                         if (e != null) {
                             Log.w(TAG, "Listen failed.", e);
+                            pullToRefresh.setRefreshing(false);
                             return;
                         }
 
@@ -85,7 +86,6 @@ public class AttendingTabFragment extends Fragment  {
                                                 doc.getString("timezone"),
                                                 doc.getString("hostEmail"));
                                         if(event.getEventDate() != null) {
-
                                             View child = getLayoutInflater().inflate(R.layout.list_view_event_info, null);
 
                                             final String id = event.getDocumentId();

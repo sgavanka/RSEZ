@@ -39,6 +39,7 @@ import java.util.List;
 
 import app.rsez.R;
 import app.rsez.models.Event;
+import app.rsez.models.Host;
 import app.rsez.models.QRCode;
 import app.rsez.models.Ticket;
 
@@ -60,8 +61,6 @@ public class EventDetailsActivity extends AppCompatActivity {
     private LinearLayout guestsInformation;
     private TextView guestsHeader;
     private LinearLayout guestsContainer;
-
-    AppCompatActivity thisActivity = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +98,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         findViewById(R.id.guest_add_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent inviteIntent = new Intent(thisActivity, InviteActivity.class);
+                Intent inviteIntent = new Intent(EventDetailsActivity.this, InviteActivity.class);
                 inviteIntent.putExtra("eventID",eventID);
                 inviteIntent.putExtra("eventName", title);
 
@@ -123,6 +122,7 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
@@ -143,11 +143,9 @@ public class EventDetailsActivity extends AppCompatActivity {
                 startActivity(checkInIntent);
                 break;
             case R.id.remove_button:
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setMessage("Delete event?").setPositiveButton("Yes", deleteEventListener).setNegativeButton("No", deleteEventListener).show();
                 break;
             case R.id.leave_button:
-                AlertDialog.Builder builder = new AlertDialog.Builder(thisActivity);
                 builder.setMessage("Are you sure you want to leave this event?")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
@@ -185,7 +183,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                     invalidateOptionsMenu();
                 } else {
                     try {
-                        Bitmap qrcode = QRCode.generateQRCode(thisActivity, eventID + " - " + mUser.getEmail());
+                        Bitmap qrcode = QRCode.generateQRCode(EventDetailsActivity.this, eventID + " - " + mUser.getEmail());
                         qrcodeView.setImageBitmap(qrcode);
                         qrcodeView.setVisibility(View.VISIBLE);
                         qrcodeView.setVisibility(View.VISIBLE);
@@ -252,7 +250,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                             view.findViewById(R.id.remove).setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(final View v) {
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(thisActivity);
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(EventDetailsActivity.this);
                                     builder.setMessage("Are you sure you want to remove " + userName + " from the guest list?")
                                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                                 @Override
