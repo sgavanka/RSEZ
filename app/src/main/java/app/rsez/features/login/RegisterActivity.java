@@ -97,8 +97,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                             Intent myIntent = new Intent(RegisterActivity.this,
                                     HomeActivity.class);
                             startActivity(myIntent);
-                        } else
-                        {
+                        } else {
                             try
                             {
                                 throw task.getException();

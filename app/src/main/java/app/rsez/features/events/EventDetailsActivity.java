@@ -69,17 +69,17 @@ public class EventDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
-        mLinearLayout = this.findViewById(R.id.guests_container);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mAuth = FirebaseAuth.getInstance();
-        mUser = mAuth.getCurrentUser();
-
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_back);
+
+        mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
+        mLinearLayout = this.findViewById(R.id.guests_container);
 
         context = this;
         eventID = getIntent().getStringExtra("eventID");
@@ -157,7 +157,6 @@ public class EventDetailsActivity extends AppCompatActivity {
                 editIntent.putExtra("Title", title);
                 editIntent.putExtra("Description", description);
                 editIntent.putExtra("Date", date.toString());
-                //editIntent.putExtra("Time", time);
                 editIntent.putExtra("Email", email);
 
                 startActivity(editIntent);
