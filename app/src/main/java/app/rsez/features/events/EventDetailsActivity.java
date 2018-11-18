@@ -140,6 +140,10 @@ public class EventDetailsActivity extends AppCompatActivity {
                 checkInIntent.putExtra("eventId", eventID);
                 startActivity(checkInIntent);
                 break;
+            case R.id.remove_button:
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage("Delete event?").setPositiveButton("Yes", deleteEventListener).setNegativeButton("No", deleteEventListener).show();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -320,4 +324,78 @@ public class EventDetailsActivity extends AppCompatActivity {
             }
         });
     }
+
+    public void deleteEvent(){
+        //Remove all tickets and hosts
+        //Delete event
+        CollectionReference tickets = db.collection("tickets");
+        CollectionReference hosts = db.collection("hosts");
+
+        Query ticketQuery = tickets.whereEqualTo("eventId", eventID);
+        ticketQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    List<DocumentSnapshot> tasks = task.getResult().getDocuments();
+                    for(int i = 0; i < tasks.size(); i++){
+                        Ticket.delete(tasks.get(i).getId(), new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                            }
+                        }, new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                            }
+                        });
+                    }
+                }
+            }
+        });
+
+        Query hostsQuery = hosts.whereEqualTo("eventId", eventID);
+        hostsQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    List<DocumentSnapshot> tasks = task.getResult().getDocuments();
+                    for(int i = 0; i < tasks.size(); i++){
+                        Host.delete(tasks.get(i).getId(), new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                            }
+                        }, new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                            }
+                        });
+                    }
+                }
+            }
+        });
+
+        Event.delete(eventID, new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+            }
+        }, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+            }
+        });
+    }
+
+    DialogInterface.OnClickListener deleteEventListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which){
+                case DialogInterface.BUTTON_POSITIVE:
+                    deleteEvent();
+                    break;
+
+                case DialogInterface.BUTTON_NEGATIVE:
+                    //No button clicked
+                    break;
+            }
+        }
+    };
 }
