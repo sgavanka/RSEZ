@@ -114,7 +114,9 @@ public class EventDetailsActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (isHost) {
-            getMenuInflater().inflate(R.menu.event_details_menu, menu);
+            getMenuInflater().inflate(R.menu.event_details_menu_host, menu);
+        } else {
+            getMenuInflater().inflate(R.menu.event_details_menu_guest, menu);
         }
 
         return super.onCreateOptionsMenu(menu);
@@ -140,6 +142,19 @@ public class EventDetailsActivity extends AppCompatActivity {
                 Intent checkInIntent = new Intent(this, QRScanFragment.class);
                 checkInIntent.putExtra("eventId", eventID);
                 startActivity(checkInIntent);
+                break;
+            case R.id.leave_button:
+                AlertDialog.Builder builder = new AlertDialog.Builder(thisActivity);
+                builder.setMessage("Are you sure you want to leave this event?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (which == DialogInterface.BUTTON_POSITIVE) {
+                                    leaveEvent();
+                                }
+                            }
+                        })
+                        .setNegativeButton("No", null).show();
                 break;
         }
 
@@ -320,5 +335,38 @@ public class EventDetailsActivity extends AppCompatActivity {
                 checkInButton.setColorFilter(Color.rgb(39, 158, 0), PorterDuff.Mode.SRC_ATOP);
             }
         });
+    }
+
+    private void leaveEvent() {
+        db.collection("tickets").whereEqualTo("eventId", eventID).whereEqualTo("userId", mUser.getEmail()).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (!task.isSuccessful()) {
+                            return;
+                        }
+
+                        List<DocumentSnapshot> tickets = task.getResult().getDocuments();
+                        System.out.println("Found " + tickets.size() + " tickets with eventID: " + eventID + " and userId: " + mUser.getEmail());
+                        if (tickets.size() != 1){
+                            return;
+                        }
+                        Ticket ticket = new Ticket(tickets.get(0).getId(), tickets.get(0).getString("eventId"), tickets.get(0).getString("userId"), (Date) tickets.get(0).get("checkInDateTime"));
+                        Ticket.delete(tickets.get(0).getId(), new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Toast.makeText(getApplicationContext(), "Successfully left event", Toast.LENGTH_SHORT).show();
+                                System.out.println("Successfully left event");
+                                onBackPressed();
+                            }
+                        }, new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(getApplicationContext(), "Could not leave event", Toast.LENGTH_SHORT).show();
+                                System.out.println("Failed to leave event");
+                            }
+                        });
+                    }
+                });
     }
 }
