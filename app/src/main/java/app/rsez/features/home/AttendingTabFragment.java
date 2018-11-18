@@ -24,6 +24,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import app.rsez.R;
@@ -115,22 +116,24 @@ public class AttendingTabFragment extends Fragment  {
 
                                             hour = String.valueOf(hours);
                                             String timeString = hour + ":" + timeSplit[1] + " " + amPM;
+                                            if (date.compareTo(Calendar.getInstance().getTime()) >= 0) {
+                                                //Event is in the past. Do not add
+                                                ((TextView) child.findViewById(R.id.title)).setText(name);
+                                                ((TextView) child.findViewById(R.id.description)).setText(description);
+                                                ((TextView) child.findViewById(R.id.date)).setText(actualDate);
+                                                ((TextView) child.findViewById(R.id.time)).setText(timeString);
 
-                                            ((TextView) child.findViewById(R.id.title)).setText(name);
-                                            ((TextView) child.findViewById(R.id.description)).setText(description);
-                                            ((TextView) child.findViewById(R.id.date)).setText(actualDate);
-                                            ((TextView) child.findViewById(R.id.time)).setText(timeString);
+                                                child.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
+                                                        intent.putExtra("eventID", id);
+                                                        startActivity(intent);
+                                                    }
+                                                });
 
-                                            child.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View v) {
-                                                    Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
-                                                    intent.putExtra("eventID", id);
-                                                    startActivity(intent);
-                                                }
-                                            });
-
-                                            eventsContainer.addView(child);
+                                                eventsContainer.addView(child);
+                                            }
                                         }
 
                                         pullToRefresh.setRefreshing(false);

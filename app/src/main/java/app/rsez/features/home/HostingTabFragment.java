@@ -25,6 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import app.rsez.R;
@@ -95,7 +96,6 @@ public class HostingTabFragment extends Fragment {
                                         String dateString = date.toString();
                                         String[] dateSplit = dateString.split(" ");
                                         String actualDate = dateSplit[1] + " " + dateSplit[2];
-
                                         String stringTime = dateSplit[3];
                                         String[] timeSplit = stringTime.split(":");
                                         String hour = timeSplit[0];
@@ -114,22 +114,25 @@ public class HostingTabFragment extends Fragment {
                                         hour = String.valueOf(hours);
                                         String timeString = hour + ":" + timeSplit[1] + " " + amPM;
 
-                                        ((TextView) eventView.findViewById(R.id.title)).setText(name);
-                                        ((TextView) eventView.findViewById(R.id.description)).setText(description);
-                                        ((TextView) eventView.findViewById(R.id.date)).setText(actualDate);
-                                        ((TextView) eventView.findViewById(R.id.time)).setText(timeString);
+                                        if (date.compareTo(Calendar.getInstance().getTime()) >= 0) {
+                                            //Event is in the past. Do not add
+                                            ((TextView) eventView.findViewById(R.id.title)).setText(name);
+                                            ((TextView) eventView.findViewById(R.id.description)).setText(description);
+                                            ((TextView) eventView.findViewById(R.id.date)).setText(actualDate);
+                                            ((TextView) eventView.findViewById(R.id.time)).setText(timeString);
 
-                                        eventView.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
-                                                intent.putExtra("eventID", id);
-                                                intent.putExtra("isHost", true);
-                                                startActivity(intent);
-                                            }
-                                        });
+                                            eventView.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
+                                                    intent.putExtra("eventID", id);
+                                                    intent.putExtra("isHost", true);
+                                                    startActivity(intent);
+                                                }
+                                            });
 
-                                        eventsContainer.addView(eventView);
+                                            eventsContainer.addView(eventView);
+                                        }
                                     }
                                 }
 
