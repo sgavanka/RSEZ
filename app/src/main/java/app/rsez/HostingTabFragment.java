@@ -1,6 +1,5 @@
 package app.rsez;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,15 +10,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -28,69 +25,53 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import app.rsez.features.events.EventDetailsActivity;
 import app.rsez.models.Event;
 
-public class HostingTabFragment extends Fragment implements View.OnClickListener {
+public class HostingTabFragment extends Fragment {
     private static final String TAG = "HostingTabFragment";
-    private static FirebaseAuth mAuth;
-    private static FirebaseUser user;
-    private Context context;
-    private int numTextViews;
-    private DateFormat fmt = new SimpleDateFormat("MMMM dd, yyyy hh:mm a", Locale.US);
-    private List<String> ids = new ArrayList<>();
-    protected static FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private LinearLayout mLinearLayout;
+
+    private LinearLayout eventsContainer;
+    SwipeRefreshLayout pullToRefresh;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-       View view = inflater.inflate(R.layout.events_tab_fragment, container, false);
-
-        mAuth = FirebaseAuth.getInstance();
-        user = mAuth.getCurrentUser();
-
-        mLinearLayout = view.findViewById(R.id.guests_container);
-
-        final SwipeRefreshLayout pullToRefresh = view.findViewById(R.id.swipe_refresh_layout);
-        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                query();
-                pullToRefresh.setRefreshing(false);
-            }
-        });
-
-        query();
-
-       return view;
+        return inflater.inflate(R.layout.events_tab_fragment, container, false);
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        this.context = context;
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        eventsContainer = view.findViewById(R.id.events_container);
+
+        (pullToRefresh = view.findViewById(R.id.swipe_refresh_layout)).setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                eventsQuery();
+            }
+        });
+
+        eventsQuery();
     }
 
-    public void query() {
-        db.collection("hosts").whereEqualTo("userId", user.getEmail()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+    public void eventsQuery() {
+        pullToRefresh.setRefreshing(true);
+        eventsContainer.animate().alpha(0).setInterpolator(new DecelerateInterpolator()).start();
+
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("hosts").whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getEmail()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
                 if (e != null) {
                     Log.w(TAG, "Listen failed.", e);
+                    pullToRefresh.setRefreshing(false);
                     return;
                 }
 
-                mLinearLayout.removeAllViews();
-
+                eventsContainer.removeAllViews();
                 for (QueryDocumentSnapshot doc : value) {
                     System.out.println("Inside Hosting loop");
                     if (doc.get("eventId") != null) {
@@ -103,24 +84,21 @@ public class HostingTabFragment extends Fragment implements View.OnClickListener
 
                                     Event event = new Event(docSnap.getId(), docSnap.getString("title"), docSnap.getString("description"), (Date) docSnap.get("date"), docSnap.getString("timezone"), docSnap.getString("hostEmail"));
                                     if (event.getEventDate() != null) {
-                                        View child = getLayoutInflater().inflate(R.layout.list_view_event_info, null);
+                                        View eventView = getLayoutInflater().inflate(R.layout.list_view_event_info, null);
 
                                         final String id = event.getDocumentId();
                                         String name = event.getTitle();
                                         String description = event.getDescription();
-                                        // String date = event.getStartDate();
-                                        //String time = event.getStartTime();
 
                                         Date date = (Date) docSnap.get("date");
                                         String dateString = date.toString();
                                         String[] dateSplit = dateString.split(" ");
-                                        String actualDate = dateSplit[1] + " " + dateSplit[2] + ", " + dateSplit[5];
-                                        System.out.println("DATEINHOSTING: " + date.toString());
+                                        String actualDate = dateSplit[1] + " " + dateSplit[2];
 
                                         String stringTime = dateSplit[3];
                                         String[] timeSplit = stringTime.split(":");
                                         String hour = timeSplit[0];
-                                        String amPM = null;
+                                        String amPM;
                                         int hours = Integer.parseInt(hour);
                                         if (hours >= 12 && hours < 24) {
                                             amPM = "PM";
@@ -131,24 +109,16 @@ public class HostingTabFragment extends Fragment implements View.OnClickListener
                                                 hours = 12;
                                             amPM = "AM";
                                         }
+
                                         hour = String.valueOf(hours);
                                         String timeString = hour + ":" + timeSplit[1] + " " + amPM;
 
+                                        ((TextView) eventView.findViewById(R.id.title)).setText(name);
+                                        ((TextView) eventView.findViewById(R.id.description)).setText(description);
+                                        ((TextView) eventView.findViewById(R.id.date)).setText(actualDate);
+                                        ((TextView) eventView.findViewById(R.id.time)).setText(timeString);
 
-
-                                   /* try {
-                                        DateFormat readFormat = new SimpleDateFormat("MM/dd/yy");
-                                        date = new SimpleDateFormat("MMM d", Locale.ENGLISH).format(readFormat.parse(date));
-                                    } catch (ParseException e1) {
-                                        e1.printStackTrace();
-                                    }*/
-
-                                        ((TextView) child.findViewById(R.id.title)).setText(name);
-                                        ((TextView) child.findViewById(R.id.description)).setText(description);
-                                        ((TextView) child.findViewById(R.id.date)).setText(actualDate);
-                                        ((TextView) child.findViewById(R.id.time)).setText(timeString);
-
-                                        child.setOnClickListener(new View.OnClickListener() {
+                                        eventView.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
                                                 Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
@@ -158,11 +128,12 @@ public class HostingTabFragment extends Fragment implements View.OnClickListener
                                             }
                                         });
 
-                                        ids.add(id);
-                                        mLinearLayout.addView(child);
+                                        eventsContainer.addView(eventView);
                                     }
-                                    //
                                 }
+
+                                pullToRefresh.setRefreshing(false);
+                                eventsContainer.animate().alpha(1).setInterpolator(new DecelerateInterpolator()).start();
                             }
                         });
                     }
@@ -170,16 +141,4 @@ public class HostingTabFragment extends Fragment implements View.OnClickListener
             }
         });
     }
-
-    @Override
-    public void onClick(View v) {
-        String tag = (String) v.getTag();
-        for(String tags : ids){
-            if(tag.equals(tags)) {
-                Toast.makeText(getContext(), tags,
-                        Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
 }

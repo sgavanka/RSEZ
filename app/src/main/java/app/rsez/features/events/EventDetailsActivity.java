@@ -1,24 +1,29 @@
 package app.rsez.features.events;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,42 +33,36 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import app.rsez.QRScanFragment;
 import app.rsez.R;
 import app.rsez.models.Event;
 import app.rsez.models.QRCode;
+import app.rsez.models.Ticket;
 
 public class EventDetailsActivity extends AppCompatActivity {
     private static final String TAG = "EventDetails";
-    private boolean userIsEventOwner = false;
 
     private String eventID;
     private String title;
     private String description;
-    //private String date;
-    //private String time;
     private Date date;
     private String email;
     private boolean isHost;
-    private Context context;
 
     protected static FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
-    private String selected = null;
-    private String user = null;
-    private View tempView = null;
-    private TextView guests;
     private ImageView qrcodeView;
 
-    private LinearLayout mLinearLayout;
+    private LinearLayout guestsInformation;
+    private TextView guestsHeader;
+    private LinearLayout guestsContainer;
+
+    AppCompatActivity thisActivity = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,61 +78,37 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
-        mLinearLayout = this.findViewById(R.id.guests_container);
 
-        context = this;
+        guestsInformation = findViewById(R.id.guests_information);
+        guestsContainer = findViewById(R.id.guests_container);
+
         eventID = getIntent().getStringExtra("eventID");
         isHost = getIntent().getBooleanExtra("isHost", false);
-        guests = findViewById(R.id.guests);
+
+        guestsHeader = findViewById(R.id.guests_header_text_view);
         qrcodeView = findViewById(R.id.qrcodeView);
 
-        Event.read(eventID, new OnCompleteListener<DocumentSnapshot>() {
+        final SwipeRefreshLayout pullToRefresh = findViewById(R.id.swipe_refresh_layout);
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                TextView titleTextView = findViewById(R.id.title);
-                TextView descriptionTextView = findViewById(R.id.description);
-                TextView dateTimeTextView = findViewById(R.id.date_time);
-                TextView hostEmailTextView = findViewById(R.id.host_email);
-
-                DocumentSnapshot document = task.getResult();
-
-                title = document.getString("title");
-                description = document.getString("description");
-                //date = document.getString("startDate");
-                //time = document.getString("startTime");
-                date = (Date) document.get("date");
-                email = document.getString("hostEmail");
-
-                /*try {
-                    DateFormat readFormat = new SimpleDateFormat("MM/dd/yy");
-                    date = new SimpleDateFormat("MMMM d, YYYY", Locale.ENGLISH).format(readFormat.parse(date));
-                } catch (ParseException e1) {
-                    e1.printStackTrace();
-                }*/
-
-                if (isHost) {
-                    guests.setVisibility(View.VISIBLE);
-                    ticketQuery(eventID, context);
-                    invalidateOptionsMenu();
-                } else {
-                    //Show QR Code
-
-                    try{
-                        Bitmap qrcode = QRCode.generateQRCode(context, eventID + " - " + mUser.getEmail());
-                        qrcodeView.setImageBitmap(qrcode);
-                        qrcodeView.setVisibility(View.VISIBLE);
-                        qrcodeView.setVisibility(View.VISIBLE);
-                    } catch (Exception e){
-
-                    }
-                }
-
-                titleTextView.setText(title);
-                descriptionTextView.setText(description);
-                dateTimeTextView.setText(date.toString());
-                hostEmailTextView.setText("Hosted by " + email);
+            public void onRefresh() {
+                refresh();
+                pullToRefresh.setRefreshing(false);
             }
         });
+
+        findViewById(R.id.guest_add_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent inviteIntent = new Intent(thisActivity, InviteActivity.class);
+                inviteIntent.putExtra("eventID",eventID);
+                inviteIntent.putExtra("eventName", title);
+
+                startActivity(inviteIntent);
+            }
+        });
+
+        refresh();
     }
 
     @Override
@@ -152,7 +127,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                 onBackPressed();
                 break;
             case R.id.edit_button:
-                Intent editIntent = new Intent( this, EventEditFragment.class);
+                Intent editIntent = new Intent( this, EventEditActivity.class);
                 editIntent.putExtra("Id", eventID);
                 editIntent.putExtra("Title", title);
                 editIntent.putExtra("Description", description);
@@ -161,85 +136,128 @@ public class EventDetailsActivity extends AppCompatActivity {
 
                 startActivity(editIntent);
                 break;
-            case R.id.invite_button:
-                Intent inviteIntent = new Intent(this, InviteActivity.class);
-                inviteIntent.putExtra("eventID",eventID);
-                inviteIntent.putExtra("eventName", title);
-
-                startActivity(inviteIntent);
-                break;
             case R.id.checkIn_button:
                 Intent checkInIntent = new Intent(this, QRScanFragment.class);
                 checkInIntent.putExtra("eventId", eventID);
                 startActivity(checkInIntent);
-                break;
-            case R.id.checkIn_list_button:
-                Intent checkInListIntent = new Intent(this, CheckInListActivity.class);
-                checkInListIntent.putExtra("eventId", eventID);
-                startActivity(checkInListIntent);
                 break;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    public void ticketQuery(String eventID, final Context context) {
-        CollectionReference colRef = db.collection("tickets");
-        Query query = colRef.whereEqualTo("eventId", eventID);
-        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+    private void refresh() {
+        Event.read(eventID, new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()) {
-                    System.out.println("task is succesfull");
-                    List<DocumentSnapshot> tasks = task.getResult().getDocuments();
-                    System.out.println("tasks size: "+ tasks.size());
-                    for(int i = 0; i < tasks.size(); i++) {
-                        final TextView temp = new TextView(context);
-                        String userName = tasks.get(i).getString("userId");
-                        temp.setText(userName);
-                        temp.setTextSize(15);
-                        temp.setTextColor(Color.BLACK);
-                        temp.setPadding(10,0,0, 20);
-                        temp.setClickable(true);
-                        mLinearLayout.addView(temp);
-                        temp.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                if(userIsEventOwner) {
-                                    selected = temp.getText().toString();
-                                    user = temp.getText().toString();
-                                    tempView = v;
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                                    builder.setMessage("Remove User?").setPositiveButton("Yes", dialogClickListener).setNegativeButton("No", dialogClickListener).show();
-                                }
-                            }
-                        });
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                TextView titleTextView = findViewById(R.id.title);
+                TextView descriptionTextView = findViewById(R.id.description);
+                TextView dateTimeTextView = findViewById(R.id.date_time);
+                TextView hostEmailTextView = findViewById(R.id.host_email);
 
-                    }
+                DocumentSnapshot document = task.getResult();
+
+                title = document.getString("title");
+                description = document.getString("description");
+                date = (Date) document.get("date");
+                email = document.getString("hostEmail");
+
+                if (isHost) {
+                    guestsQuery();
+                    invalidateOptionsMenu();
+                } else {
+                    try {
+                        Bitmap qrcode = QRCode.generateQRCode(thisActivity, eventID + " - " + mUser.getEmail());
+                        qrcodeView.setImageBitmap(qrcode);
+                        qrcodeView.setVisibility(View.VISIBLE);
+                        qrcodeView.setVisibility(View.VISIBLE);
+                    } catch (Exception ignored){ }
                 }
+
+                titleTextView.setText(title);
+                descriptionTextView.setText(description);
+                dateTimeTextView.setText(date.toString());
+                hostEmailTextView.setText("Hosted by " + email);
             }
         });
     }
 
-    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            switch (which){
-                case DialogInterface.BUTTON_POSITIVE:
-                    if(selected != null) {
-                        removeGuest(eventID, user, tempView);
+    public void guestsQuery() {
+        guestsInformation.animate().alpha(0).setInterpolator(new DecelerateInterpolator()).start();
+
+        db.collection("tickets").whereEqualTo("eventId", eventID).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (!task.isSuccessful()) {
+                            return;
+                        }
+
+                        List<DocumentSnapshot> tickets = task.getResult().getDocuments();
+                        guestsHeader.setText(tickets.size() + " guest" + (tickets.size() != 1 ? "s" : ""));
+
+                        guestsContainer.removeAllViews();
+                        for (int i = 0; i < tickets.size(); i++) {
+                            final Ticket ticket = new Ticket(tickets.get(i).getId(), tickets.get(i).getString("eventId"), tickets.get(i).getString("userId"), (Date) tickets.get(i).get("checkInDateTime"));
+
+                            final View view = getLayoutInflater().inflate(R.layout.view_guest_info, null);
+                            view.setPadding(0, 20, 0, 0);
+
+                            final TextView guestInfo = view.findViewById(R.id.guest);
+
+                            final String userName = tickets.get(i).getString("userId");
+                            guestInfo.setText((i + 1) + ") " + userName);
+
+                            guestsContainer.addView(view);
+                            if (!isHost) {
+                                continue;
+                            }
+
+                            final ImageView checkInButton = view.findViewById(R.id.check_in);
+                            if (ticket.getCheckInDateTime() != null) {
+                                checkInButton.setColorFilter(Color.rgb(39, 158, 0), PorterDuff.Mode.SRC_ATOP);
+                            }
+
+                            checkInButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(final View v) {
+                                    if (ticket.getCheckInDateTime() == null) {
+                                        checkInButton.setColorFilter(Color.rgb(39, 158, 0), PorterDuff.Mode.SRC_ATOP);
+                                        checkIn(ticket, checkInButton);
+                                    } else {
+                                        checkInButton.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+                                        checkOut(ticket, checkInButton);
+                                    }
+                                }
+                            });
+
+                            view.findViewById(R.id.remove).setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(final View v) {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(thisActivity);
+                                    builder.setMessage("Are you sure you want to remove " + userName + " from the guest list?")
+                                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    if (which == DialogInterface.BUTTON_POSITIVE) {
+                                                        removeGuest(eventID, userName, v);
+                                                    }
+                                                }
+                                            })
+                                            .setNegativeButton("No", null)
+                                            .show();
+                                }
+                            });
+                        }
+
+                        guestsInformation.animate().alpha(1).setInterpolator(new DecelerateInterpolator()).start();
                     }
+        });
+    }
 
-                    break;
-                case DialogInterface.BUTTON_NEGATIVE:
-                    break;
-            }
-        }
-    };
-
-    public void removeGuest(String eventId, String user, final View view) {
+    private void removeGuest(String eventId, String userId, final View view) {
         CollectionReference colRef = db.collection("tickets");
-        Query query = colRef.whereEqualTo("eventId", eventId).whereEqualTo("userId", user);
+        Query query = colRef.whereEqualTo("eventId", eventId).whereEqualTo("userId", userId);
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -247,10 +265,59 @@ public class EventDetailsActivity extends AppCompatActivity {
                     List<DocumentSnapshot> tasks = task.getResult().getDocuments();
                     for(int i = 0; i < tasks.size(); i++) {
                         tasks.get(i).getReference().delete();
-                        mLinearLayout.removeView(view);
 
+                        view.animate().alpha(0).setInterpolator(new DecelerateInterpolator()).withEndAction(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        guestsContainer.removeView(view);
+                                    }
+                                }
+                        ).start();
                     }
                 }
+            }
+        });
+    }
+
+    private void checkIn(final Ticket ticket, final ImageView checkInButton) {
+        if (ticket.getCheckInDateTime() != null) {
+            return;
+        }
+
+        final Ticket newTicket = new Ticket(ticket.getDocumentId(), ticket.getEventId(), ticket.getUserId(), Calendar.getInstance().getTime());
+        newTicket.write(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(getApplicationContext(), "Check in successful", Toast.LENGTH_SHORT).show();
+                ticket.setCheckInDateTime(newTicket.getCheckInDateTime());
+            }
+        }, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getApplicationContext(), "Failed to check in properly", Toast.LENGTH_SHORT).show();
+                checkInButton.clearColorFilter();
+            }
+        });
+    }
+
+    private void checkOut(final Ticket ticket, final ImageView checkInButton) {
+        if (ticket.getCheckInDateTime() == null) {
+            return;
+        }
+
+        final Ticket newTicket = new Ticket(ticket.getDocumentId(), ticket.getEventId(), ticket.getUserId(), null);
+        newTicket.write(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(getApplicationContext(), "Check out successful", Toast.LENGTH_SHORT).show();
+                ticket.setCheckInDateTime(null);
+            }
+        }, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getApplicationContext(), "Failed to check out properly", Toast.LENGTH_SHORT).show();
+                checkInButton.setColorFilter(Color.rgb(39, 158, 0), PorterDuff.Mode.SRC_ATOP);
             }
         });
     }
