@@ -105,7 +105,11 @@ public class EventDetailsActivity extends AppCompatActivity {
                 startActivity(inviteIntent);
             }
         });
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
         refresh();
     }
 

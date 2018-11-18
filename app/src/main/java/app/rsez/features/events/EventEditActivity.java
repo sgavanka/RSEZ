@@ -21,9 +21,14 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.DateFormat;
 import java.text.DateFormatSymbols;
@@ -31,6 +36,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -38,12 +44,14 @@ import app.rsez.R;
 import app.rsez.features.home.HomeActivity;
 import app.rsez.models.Event;
 import app.rsez.models.Host;
+import app.rsez.models.Ticket;
 import app.rsez.utils.FirebaseUtils;
 
 import static android.support.constraint.Constraints.TAG;
 
 public class EventEditActivity extends AppCompatActivity implements View.OnClickListener {
     private DatePickerDialog.OnDateSetListener mDateSetListner;
+    protected static FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static TextView mDisplayDate;
     private TextView chooseTime;
     private TextView mEventName;
@@ -228,7 +236,34 @@ public class EventEditActivity extends AppCompatActivity implements View.OnClick
             newHost.write(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
-                    onBackPressed();
+                    //Remove ticket of new host to event
+                    db.collection("tickets").whereEqualTo("eventId", docID).whereEqualTo("userId", mEmail.getText().toString()).get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if(!task.isSuccessful()){
+                                return;
+                            }
+                            List<DocumentSnapshot> tickets = task.getResult().getDocuments();
+                            if (tickets.size() != 1){
+                                return;
+                            }
+                            Ticket.delete(tickets.get(0).getId(), new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    //Deleted ticket
+                                    onBackPressed();
+                                }
+                            }, new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    //Could not find ticket
+                                    onBackPressed();
+                                }
+                            });
+                        }
+                    });
+
                 }
             }, new OnFailureListener() {
                 @Override

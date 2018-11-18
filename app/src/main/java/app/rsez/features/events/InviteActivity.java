@@ -68,7 +68,7 @@ public class InviteActivity extends Activity implements View.OnClickListener {
     private LinearLayout mLinearLayout;
     private User user;
     private String curUser;
-    private ArrayList<String> hostIds;
+    private ArrayList<String> hostIds, guestIds;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +78,7 @@ public class InviteActivity extends Activity implements View.OnClickListener {
         eventID = getIntent().getStringExtra("eventID");
         eventName = getIntent().getStringExtra("eventName");
         hostIds = new ArrayList<String>();
+        guestIds = new ArrayList<String>();
         context = this;
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
@@ -137,9 +138,27 @@ public class InviteActivity extends Activity implements View.OnClickListener {
                 } else {
                     System.out.println("Hosts task failed");
                 }
-                getUserList();
+                getGuestList();
             }
         });
+    }
+
+    public void getGuestList(){
+        db.collection("tickets").whereEqualTo("eventId", eventID).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()){
+                            List<DocumentSnapshot> docSnap = task.getResult().getDocuments();
+                            for (DocumentSnapshot doc :docSnap){
+                                guestIds.add(doc.getString("userId"));
+                            }
+                        } else {
+                            System.out.println("Guest list failed");
+                        }
+                        getUserList();
+                    }
+                });
     }
 
     public void getUserList() {
@@ -154,6 +173,12 @@ public class InviteActivity extends Activity implements View.OnClickListener {
                         //System.out.println("User " + i + ": " + docSnap.get("firstName"));
                         boolean isHost = false;
                         for (String id: hostIds) {
+                            if (docSnap.getString("email").equals(id)){
+                                isHost = true;
+                                break;
+                            }
+                        }
+                        for (String id: guestIds) {
                             if (docSnap.getString("email").equals(id)){
                                 isHost = true;
                                 break;
