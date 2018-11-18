@@ -1,4 +1,4 @@
-package app.rsez;
+package app.rsez.features.home;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,6 +26,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Date;
 
+import app.rsez.R;
 import app.rsez.features.events.EventDetailsActivity;
 import app.rsez.models.Event;
 

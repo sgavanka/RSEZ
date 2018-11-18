@@ -41,7 +41,7 @@
             android:name=".features.events.EventDetailsActivity"
             android:label="RSEZ" />
         <activity
-            android:name=".QRScanFragment"
+            android:name=".features.events.QRScanFragment"
             android:label="RSEZ" />
     </application>
 

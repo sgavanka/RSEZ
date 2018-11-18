@@ -1,4 +1,4 @@
-package app.rsez;
+package app.rsez.features.events;
 
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -23,6 +23,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import app.rsez.R;
 import app.rsez.models.Ticket;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
@@ -44,8 +45,7 @@ public class QRScanFragment extends AppCompatActivity implements ZXingScannerVie
         setContentView(zXingScannerView);
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             // Permission is not granted
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    android.Manifest.permission.CAMERA)) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.CAMERA)) {
                 ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, MY_PERMISSIONS_REQUEST_CAMERA);
             } else {
                 ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, MY_PERMISSIONS_REQUEST_CAMERA);
@@ -54,12 +54,9 @@ public class QRScanFragment extends AppCompatActivity implements ZXingScannerVie
             zXingScannerView.setResultHandler(this);
             zXingScannerView.startCamera();
         }
-        //qrScan();
     }
 
     public void qrScan(){
-
-
         if (cameraEnabled == 1) {
 
         }
@@ -73,7 +70,6 @@ public class QRScanFragment extends AppCompatActivity implements ZXingScannerVie
 
     @Override
     public void handleResult(Result result) {
-        //Toast.makeText(getApplicationContext(), result.getText(), Toast.LENGTH_SHORT).show();
         String res = result.getText();
         if (res.contains(" - ")) {
             String event = res.substring(0, res.indexOf('-') - 1);
@@ -86,7 +82,6 @@ public class QRScanFragment extends AppCompatActivity implements ZXingScannerVie
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             List<DocumentSnapshot> tickets = task.getResult().getDocuments();
-                            //System.out.println("Number of results: " + tickets.size());
                             if (tickets.size() == 1) {
                                 Toast.makeText(getApplicationContext(), "Ticket is a valid ticket", Toast.LENGTH_SHORT).show();
                                 System.out.println("Valid Ticket");
@@ -124,8 +119,6 @@ public class QRScanFragment extends AppCompatActivity implements ZXingScannerVie
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
-                    //zXingScannerView.setResultHandler(this);
-                    //zXingScannerView.startCamera();
                     cameraEnabled = 1;
                     zXingScannerView.setResultHandler(this);
                     zXingScannerView.startCamera();

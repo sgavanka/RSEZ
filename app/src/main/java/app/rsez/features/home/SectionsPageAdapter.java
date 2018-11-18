@@ -1,4 +1,4 @@
-package app.rsez;
+package app.rsez.features.home;
 
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;

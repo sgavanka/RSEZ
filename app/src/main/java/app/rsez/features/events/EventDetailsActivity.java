@@ -37,7 +37,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import app.rsez.QRScanFragment;
 import app.rsez.R;
 import app.rsez.models.Event;
 import app.rsez.models.QRCode;

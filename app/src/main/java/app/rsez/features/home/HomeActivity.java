@@ -19,9 +19,8 @@ import android.view.View;
 import com.google.firebase.auth.FirebaseAuth;
 
 import app.rsez.features.events.EventCreateActivity;
-import app.rsez.QRScanFragment;
+import app.rsez.features.events.QRScanFragment;
 import app.rsez.R;
-import app.rsez.TabsFragment;
 import app.rsez.features.login.LoginActivity;
 
 public  class HomeActivity extends AppCompatActivity {
