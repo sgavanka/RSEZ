@@ -97,11 +97,6 @@ public class Event extends ModelBase  {
         return timeZone;
     }
 
-    public static int compare(Event e1, Event e2){
-
-        return 0;
-    }
-
     @Override
     public void write(OnSuccessListener<Void> onSuccessListener, OnFailureListener onFailureListener) {
         Map<String, Object> event = new HashMap<>();
