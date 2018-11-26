@@ -12,6 +12,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,19 +30,26 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import app.rsez.R;
 import app.rsez.models.Event;
 import app.rsez.models.Host;
 import app.rsez.models.QRCode;
 import app.rsez.models.Ticket;
+
+import static android.support.constraint.Constraints.TAG;
 
 public class EventDetailsActivity extends AppCompatActivity {
     private static final String TAG = "EventDetails";
@@ -201,15 +209,16 @@ public class EventDetailsActivity extends AppCompatActivity {
     public void guestsQuery() {
         guestsInformation.animate().alpha(0).setInterpolator(new DecelerateInterpolator()).start();
 
-        db.collection("tickets").whereEqualTo("eventId", eventID).get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        db.collection("tickets").whereEqualTo("eventId", eventID)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (!task.isSuccessful()) {
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.w(TAG, "Listen failed.", e);
                             return;
                         }
+                        List<DocumentSnapshot> tickets = value.getDocuments();
 
-                        List<DocumentSnapshot> tickets = task.getResult().getDocuments();
                         guestsHeader.setText(tickets.size() + " guest" + (tickets.size() != 1 ? "s" : ""));
 
                         guestsContainer.removeAllViews();
@@ -268,8 +277,11 @@ public class EventDetailsActivity extends AppCompatActivity {
 
                         guestsInformation.animate().alpha(1).setInterpolator(new DecelerateInterpolator()).start();
                     }
-        });
-    }
+                });
+                    }
+
+
+
 
     private void removeGuest(String eventId, String userId, final View view) {
         CollectionReference colRef = db.collection("tickets");
