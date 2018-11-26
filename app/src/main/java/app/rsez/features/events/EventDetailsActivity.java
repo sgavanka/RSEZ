@@ -137,10 +137,30 @@ public class EventDetailsActivity extends AppCompatActivity {
                 break;
             case R.id.edit_button:
                 Intent editIntent = new Intent( this, EventEditActivity.class);
+                String[] split = date.toString().split(" ");
+                String rawTime = split[3];
+                System.out.println("RAWTIME: " + rawTime);
+                String[] timeSplit = rawTime.split(":");
+                String hour = timeSplit[0];
+                String amPM;
+                int hours = Integer.parseInt(hour);
+                if (hours >= 12 && hours < 24) {
+                    amPM = "PM";
+                    if (hours - 12 != 0)
+                        hours = Integer.parseInt(hour) - 12;
+                } else {
+                    if (hours == 24 || hours == 0)
+                        hours = 12;
+                    amPM = "AM";
+                }
+               String strTime = hours + ":"+ timeSplit[1] + " " + amPM;
+                String year = split[5];
+                String newDate = split[1] + " " + split[2] + ", " + year + " ";
                 editIntent.putExtra("Id", eventID);
                 editIntent.putExtra("Title", title);
                 editIntent.putExtra("Description", description);
-                editIntent.putExtra("Date", date.toString());
+                editIntent.putExtra("Date", newDate);
+                editIntent.putExtra("Time",strTime);
                 editIntent.putExtra("Email", email);
 
                 startActivity(editIntent);

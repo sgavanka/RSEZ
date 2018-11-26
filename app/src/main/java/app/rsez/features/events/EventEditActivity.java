@@ -161,7 +161,11 @@ public class EventEditActivity extends AppCompatActivity implements View.OnClick
                 onBackPressed();
                 break;
             case R.id.save_button:
-                saveEvent();
+                try {
+                    saveEvent();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
                 break;
         }
 
@@ -239,12 +243,11 @@ public class EventEditActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
-    private void saveEvent() {
+    private void saveEvent() throws ParseException {
         String event = mEventName.getText().toString();
         String date = mDisplayDate.getText().toString();
         String time = chooseTime.getText().toString();
-        Date tDate = null;
-
+        Date tDate = fmt.parse(date+time);
         try {
             tDate = fmt.parse(date+time);
         } catch (ParseException e) {
