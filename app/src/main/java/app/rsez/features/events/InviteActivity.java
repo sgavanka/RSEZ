@@ -138,7 +138,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     public void getUserList() {
-        mLinearLayout.removeAllViews();
+        usersListLinearLayout.removeAllViews();
         CollectionReference colRef = db.collection("users");
         colRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
