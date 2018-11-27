@@ -102,6 +102,17 @@ public class EventDetailsActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.host_add_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                Intent inviteIntent = new Intent(EventDetailsActivity.this, InviteActivity.class);
+//                inviteIntent.putExtra("eventID",eventID);
+//                inviteIntent.putExtra("eventName", title);
+//
+//                startActivity(inviteIntent);
+            }
+        });
+
         findViewById(R.id.guest_add_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

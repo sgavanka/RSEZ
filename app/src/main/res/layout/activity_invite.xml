@@ -71,26 +71,16 @@
         android:layout_marginVertical="50dp"
         app:layout_constraintTop_toBottomOf="@id/invite_view_container" />
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@drawable/customborder"
         android:layout_marginTop="50dp"
         app:layout_constraintTop_toBottomOf="@id/orTextView">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Invite user by account:" />
-
-        <ScrollView
+        <LinearLayout
+            android:id="@+id/usersList"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:id="@+id/usersList" />
-        </ScrollView>
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp"/>
+    </ScrollView>
 </android.support.constraint.ConstraintLayout>

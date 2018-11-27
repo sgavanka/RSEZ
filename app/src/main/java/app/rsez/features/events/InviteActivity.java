@@ -5,12 +5,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -19,7 +17,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Space;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,7 +57,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
     private String eventID;
     private String eventName;
     private String email;
-    private LinearLayout mLinearLayout;
+    private LinearLayout usersListLinearLayout;
     private String curUser;
     private ArrayList<String> hostIds;
 
@@ -76,7 +73,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_back);
 
-        mLinearLayout = findViewById(R.id.usersList);
+        usersListLinearLayout = findViewById(R.id.usersList);
 
         eventID = getIntent().getStringExtra("eventID");
         eventName = getIntent().getStringExtra("eventName");
@@ -85,7 +82,6 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
 
         findViewById(R.id.inviteButton).setOnClickListener(this);
 
-        //Calls getHostList to ensure we have a list of hosts for event before we populate the user list
         getHostList();
     }
 
@@ -98,7 +94,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
             String email = emailText.getText().toString();
             this.email = email;
             if (isEmailValid(email)) {
-                getUserFromEmail(email, this, qrcode);
+                inviteUser(email, this, qrcode);
             } else {
                 emailText.setError("Malformed Email");
             }
@@ -169,26 +165,17 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                                     }
 
                                     if (value.isEmpty()) {
-                                        TextView tempText = new TextView(InviteActivity.this);
-                                        String Username = user.getFirstName() + " " + user.getLastName() + "\n" + user.getEmail();
-                                        tempText.setText(Username);
-                                        tempText.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                                        tempText.setTextSize(17);
-                                        tempText.setBackground(ContextCompat.getDrawable(InviteActivity.this, R.drawable.customborder2));
-                                        tempText.setTextColor(Color.BLACK);
-                                        tempText.setPadding(10, 10, 0, 20);
-                                        tempText.setClickable(true);
-                                        tempText.setOnClickListener(new View.OnClickListener() {
+                                        View userInviteView = getLayoutInflater().inflate(R.layout.view_user_invite, null);
+                                        ((TextView) userInviteView.findViewById(R.id.user_name)).setText(user.getFirstName() + " " + user.getLastName());
+                                        ((TextView) userInviteView.findViewById(R.id.user_email)).setText(user.getEmail());
+                                        userInviteView.findViewById(R.id.invite_button).setOnClickListener(new View.OnClickListener() {
                                             @Override
-                                            public void onClick(View v) {
-                                                getUserFromEmail(user.getEmail(), InviteActivity.this, null);
+                                            public void onClick(View view) {
+                                                inviteUser(user.getEmail(), InviteActivity.this, null);
                                             }
                                         });
 
-                                        mLinearLayout.addView(tempText);
-                                        Space tempSpace = new Space(InviteActivity.this);
-                                        tempSpace.setMinimumHeight(5);
-                                        mLinearLayout.addView(tempSpace);
+                                        usersListLinearLayout.addView(userInviteView);
                                     }
                                 }
                             });
@@ -199,7 +186,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
         });
     }
 
-    public void getUserFromEmail(final String email, final Context context, Bitmap qrcode) {
+    public void inviteUser(final String email, final Context context, Bitmap qrcode) {
         final User[] user = {null};
         DocumentReference docRef = db.collection("users").document(email);
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -219,12 +206,13 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                                 if (users.size() == 0) {
                                     Ticket ticket = new Ticket(FirebaseUtils.generateDocumentId(), eventID, user[0].getEmail(), null);
                                     ticket.write();
-                                    Toast toast = Toast.makeText(getApplicationContext(),
-                                            "Invite Sent, Make sure to send an Email too", Toast.LENGTH_LONG);
+
+                                    onBackPressed();
+
+                                    Toast toast = Toast.makeText(getApplicationContext(), "Invite Sent, Make sure to send an Email too", Toast.LENGTH_LONG);
                                     toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 50);
                                     toast.show();
-                                    // user[0].addEvent(eventID);
-                                    //  user[0].write();
+
                                     sendEmail(context, email);
                                 } else {
                                     Toast toast = Toast.makeText(getApplicationContext(),
@@ -236,7 +224,6 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                         }
                     });
                 } else {
-                    System.out.println("User not found");
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     curUser = email;
                     builder.setMessage("User does not exist would you like to send an Email?").setPositiveButton("Yes", dialogClickListener)
@@ -248,7 +235,6 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                System.out.println("User not found");
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setMessage("User does not exist would you like to send an Email?").setPositiveButton("Yes", dialogClickListener)
                         .setNegativeButton("No", dialogClickListener).show();
