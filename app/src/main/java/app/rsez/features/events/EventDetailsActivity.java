@@ -50,8 +50,6 @@ import app.rsez.models.Host;
 import app.rsez.models.QRCode;
 import app.rsez.models.Ticket;
 
-import static android.support.constraint.Constraints.TAG;
-
 public class EventDetailsActivity extends AppCompatActivity {
     private static final String TAG = "EventDetails";
 
@@ -114,7 +112,11 @@ public class EventDetailsActivity extends AppCompatActivity {
                 startActivity(inviteIntent);
             }
         });
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
         refresh();
     }
 
