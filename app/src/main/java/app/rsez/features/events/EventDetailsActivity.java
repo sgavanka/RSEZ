@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -171,7 +172,13 @@ public class EventDetailsActivity extends AppCompatActivity {
                 startActivity(checkInIntent);
                 break;
             case R.id.remove_button:
-                builder.setMessage("Delete event?").setPositiveButton("Yes", deleteEventListener).setNegativeButton("No", deleteEventListener).show();
+                Snackbar.make(findViewById(R.id.root), "Delete event?", Snackbar.LENGTH_LONG)
+                        .setAction("Yes", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                deleteEvent();
+                            }
+                        }).show();
                 break;
             case R.id.leave_button:
                 builder.setMessage("Are you sure you want to leave this event?")
@@ -371,8 +378,6 @@ public class EventDetailsActivity extends AppCompatActivity {
     }
 
     public void deleteEvent(){
-        //Remove all tickets and hosts
-        //Delete event
         CollectionReference tickets = db.collection("tickets");
         CollectionReference hosts = db.collection("hosts");
 
@@ -421,6 +426,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         Event.delete(eventID, new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
+                onBackPressed();
             }
         }, new OnFailureListener() {
             @Override
@@ -428,21 +434,6 @@ public class EventDetailsActivity extends AppCompatActivity {
             }
         });
     }
-
-    DialogInterface.OnClickListener deleteEventListener = new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            switch (which){
-                case DialogInterface.BUTTON_POSITIVE:
-                    deleteEvent();
-                    break;
-
-                case DialogInterface.BUTTON_NEGATIVE:
-                    //No button clicked
-                    break;
-            }
-        }
-    };
 
     private void leaveEvent() {
         db.collection("tickets").whereEqualTo("eventId", eventID).whereEqualTo("userId", mUser.getEmail()).get()

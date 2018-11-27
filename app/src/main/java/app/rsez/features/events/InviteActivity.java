@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Space;
@@ -81,7 +82,7 @@ public class InviteActivity extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_invite);
-        Button invite = findViewById(R.id.inviteButton);
+        ImageView invite = findViewById(R.id.inviteButton);
         mLinearLayout = findViewById(R.id.usersList);
         eventID = getIntent().getStringExtra("eventID");
         eventName = getIntent().getStringExtra("eventName");

@@ -22,4 +22,12 @@
         <item name="colorControlActivated">@color/black</item>
     </style>
 
+    <style name="MaterialEditText">
+        <item name="android:background">@drawable/material_edit_text</item>
+        <item name="android:drawableTint">@color/black</item>
+        <item name="android:drawablePadding">10dp</item>
+        <item name="android:textColorHint">#777</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:padding">10dp</item>
+    </style>
 </resources>

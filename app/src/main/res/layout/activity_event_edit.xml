@@ -19,7 +19,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingHorizontal="18dp"
+        android:padding="10dp"
         android:fillViewport="true">
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -28,101 +28,50 @@
                 android:id="@+id/event"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                style="@style/MaterialEditText"
+                android:drawableStart="@drawable/redcarpet"
                 android:hint="What's the occasion?"
-                android:maxLength="30"
-                android:maxLines="1"
-                android:theme="@style/MyEditText"
-                android:textColorHint="#444"
-                android:background="@android:color/transparent"
-                android:paddingVertical="10dp"
-                android:drawablePadding="12dp"
-                android:drawableLeft="@drawable/redcarpet"
-                android:layout_marginTop="10dp"
+                android:inputType="textEmailAddress"
                 app:layout_constraintTop_toTopOf="parent" />
-
-            <View
-                android:id="@+id/eventSpacer"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#f9d7db"
-                app:layout_constraintTop_toBottomOf="@id/event" />
 
             <EditText
                 android:id="@+id/description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                style="@style/MaterialEditText"
+                android:drawableStart="@drawable/descriptionicon"
                 android:hint="Describe it a little..."
-                android:theme="@style/MyEditText"
-                android:textColorHint="#444"
-                android:drawablePadding="12dp"
-                android:background="@android:color/transparent"
-                android:paddingVertical="10dp"
-                android:maxLines="5"
-                android:maxLength="100"
-                android:drawableLeft="@drawable/descriptionicon"
-                android:ems="10"
                 android:layout_marginTop="10dp"
                 app:layout_constraintTop_toBottomOf="@id/event" />
-
-            <View
-                android:id="@+id/descriptionSpacer"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#f9d7db"
-                app:layout_constraintTop_toBottomOf="@id/description" />
 
             <EditText
                 android:id="@+id/date"
                 android:layout_width="match_parent"
-                android:textColorHint="#444"
                 android:layout_height="wrap_content"
-                android:paddingVertical="10dp"
+                style="@style/MaterialEditText"
+                android:drawableStart="@drawable/calendericon"
                 android:hint="What day is it?"
-                android:theme="@style/MyEditText"
-                android:drawablePadding="12dp"
-                android:background="@android:color/transparent"
                 android:focusable="false"
-                android:drawableLeft="@drawable/calendericon"
                 android:layout_marginTop="10dp"
-                app:layout_constraintTop_toBottomOf="@id/descriptionSpacer" />
-
-            <View
-                android:id="@+id/dateSpacer"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#f9d7db"
-                app:layout_constraintTop_toBottomOf="@id/date" />
+                app:layout_constraintTop_toBottomOf="@id/description" />
 
             <EditText
                 android:id="@+id/time"
                 android:layout_width="match_parent"
-                android:paddingVertical="10dp"
                 android:layout_height="wrap_content"
-                android:textColorHint="#444"
+                style="@style/MaterialEditText"
+                android:drawableStart="@drawable/timeicon"
                 android:hint="When does it start?"
-                android:theme="@style/MyEditText"
                 android:focusable="false"
-                android:drawablePadding="12dp"
-                android:background="@android:color/transparent"
-                android:maxLines="1"
-                android:maxLength="100"
-                android:drawableLeft="@drawable/timeicon"
                 android:layout_marginTop="10dp"
-                app:layout_constraintTop_toBottomOf="@id/dateSpacer" />
-
-            <View
-                android:id="@+id/timeSpacer"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#f9d7db"
-                app:layout_constraintTop_toBottomOf="@id/time" />
+                app:layout_constraintTop_toBottomOf="@id/date" />
 
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:paddingVertical="10dp"
-                app:layout_constraintTop_toBottomOf="@id/timeSpacer"
+                app:layout_constraintTop_toBottomOf="@id/time"
                 android:inputType="textEmailAddress"
                 android:id="@+id/hostEditText"
                 android:hint="Email address"/>
