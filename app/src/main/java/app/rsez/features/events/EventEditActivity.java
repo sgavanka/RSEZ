@@ -21,9 +21,15 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.DateFormat;
 import java.text.DateFormatSymbols;
@@ -31,6 +37,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -57,7 +64,10 @@ public class EventEditActivity extends AppCompatActivity implements View.OnClick
     private int currentMinute;
     private String docID;
     private Context context;
+
     private DateFormat fmt = new SimpleDateFormat("MMMM dd, yyyy hh:mm a", Locale.US);
+
+    protected static FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -238,6 +248,19 @@ public class EventEditActivity extends AppCompatActivity implements View.OnClick
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     Toast.makeText(context, "ERROR: Host not added", Toast.LENGTH_SHORT);
+                }
+            });
+            //
+            Query query = db.collection("tickets").whereEqualTo("userId", host).whereEqualTo("eventId", docID );
+            query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if(task.isSuccessful()) {
+                        List<DocumentSnapshot> docSnap = task.getResult().getDocuments();
+                        for(DocumentSnapshot doc : docSnap) {
+                            doc.getReference().delete();
+                        }
+                    }
                 }
             });
         }
