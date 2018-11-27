@@ -87,7 +87,13 @@ public class AttendingTabFragment extends Fragment  {
                                                 doc.getString("timezone"),
                                                 doc.getString("hostEmail"));
                                         if(event.getEventDate() != null) {
-                                            View child = getLayoutInflater().inflate(R.layout.list_view_event_info, null);
+                                            View child = null;
+                                            try {
+                                                child = getLayoutInflater().inflate(R.layout.list_view_event_info, null);
+                                            }
+                                            catch(IllegalStateException e) {
+                                                e.getMessage();
+                                            }
 
                                             final String id = event.getDocumentId();
                                             String name = event.getTitle();
@@ -116,7 +122,7 @@ public class AttendingTabFragment extends Fragment  {
 
                                             hour = String.valueOf(hours);
                                             String timeString = hour + ":" + timeSplit[1] + " " + amPM;
-                                            if (date.compareTo(Calendar.getInstance().getTime()) >= 0) {
+                                            if (date.compareTo(Calendar.getInstance().getTime()) >= 0 && child != null) {
                                                 //Event is in the past. Do not add
                                                 ((TextView) child.findViewById(R.id.title)).setText(name);
                                                 ((TextView) child.findViewById(R.id.description)).setText(description);

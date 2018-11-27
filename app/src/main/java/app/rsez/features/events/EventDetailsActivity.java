@@ -427,6 +427,8 @@ public class EventDetailsActivity extends AppCompatActivity {
             public void onFailure(@NonNull Exception e) {
             }
         });
+
+        super.onBackPressed();
     }
 
     DialogInterface.OnClickListener deleteEventListener = new DialogInterface.OnClickListener() {

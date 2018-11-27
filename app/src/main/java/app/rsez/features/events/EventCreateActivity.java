@@ -130,6 +130,9 @@ public class EventCreateActivity extends AppCompatActivity {
                         if (hourOfDay > 12) {
                             hourOfDay = hourOfDay -12;
                         }
+                        if(hourOfDay == 0) {
+                            hourOfDay = 12;
+                        }
 
                         chooseTime.setText(String.format("%02d:%02d", hourOfDay, minutes) + " " + amPm);
                     }
