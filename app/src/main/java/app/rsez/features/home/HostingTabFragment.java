@@ -86,7 +86,13 @@ public class HostingTabFragment extends Fragment {
 
                                     Event event = new Event(docSnap.getId(), docSnap.getString("title"), docSnap.getString("description"), (Date) docSnap.get("date"), docSnap.getString("timezone"), docSnap.getString("hostEmail"));
                                     if (event.getEventDate() != null) {
-                                        View eventView = getLayoutInflater().inflate(R.layout.list_view_event_info, null);
+                                        View eventView = null;
+                                        try {
+                                           eventView = getLayoutInflater().inflate(R.layout.list_view_event_info, null);
+                                        }
+                                        catch (IllegalStateException e) {
+                                            e.getMessage();
+                                        }
 
                                         final String id = event.getDocumentId();
                                         String name = event.getTitle();
@@ -114,7 +120,7 @@ public class HostingTabFragment extends Fragment {
                                         hour = String.valueOf(hours);
                                         String timeString = hour + ":" + timeSplit[1] + " " + amPM;
 
-                                        if (date.compareTo(Calendar.getInstance().getTime()) >= 0) {
+                                        if (date.compareTo(Calendar.getInstance().getTime()) >= 0 && eventView != null) {
                                             //Event is in the past. Do not add
                                             ((TextView) eventView.findViewById(R.id.title)).setText(name);
                                             ((TextView) eventView.findViewById(R.id.description)).setText(description);

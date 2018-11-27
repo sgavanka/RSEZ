@@ -138,6 +138,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     public void getUserList() {
+        mLinearLayout.removeAllViews();
         CollectionReference colRef = db.collection("users");
         colRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -271,5 +272,9 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
         } catch (WriterException | IOException e) {
             e.printStackTrace();
         }
+
+        getUserList();
+
+
     }
 }
