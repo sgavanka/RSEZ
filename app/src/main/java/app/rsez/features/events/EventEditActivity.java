@@ -223,18 +223,6 @@ public class EventEditActivity extends AppCompatActivity implements View.OnClick
         return valid;
     }
 
-    private void eventIn(String name, String description, Date date, TimeZone timeZone) {
-        Log.d(TAG, "Event:" + name);
-        if (validateForm()) {
-            String email = mAuth.getCurrentUser().getEmail();
-            event = new Event(email, name, description, date, timeZone.getID(), email);
-            event.writeId(docID);
-
-            Intent myIntent = new Intent(EventEditActivity.this, HomeActivity.class);
-            startActivity(myIntent);
-        }
-    }
-
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.addHostButton) {
@@ -270,12 +258,12 @@ public class EventEditActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void saveEvent() throws ParseException {
-        String event = mEventName.getText().toString();
+        String name = mEventName.getText().toString();
         String date = mDisplayDate.getText().toString();
         String time = chooseTime.getText().toString();
-        Date tDate = fmt.parse(date+time);
+        Date tDate = fmt.parse(date + time);
         try {
-            tDate = fmt.parse(date+time);
+            tDate = fmt.parse(date + time);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -283,7 +271,13 @@ public class EventEditActivity extends AppCompatActivity implements View.OnClick
         TimeZone timeZone = TimeZone.getDefault();
         String description = mDescription.getText().toString();
 
-        eventIn(event, description, tDate, timeZone);
+        if (validateForm()) {
+            String email = mAuth.getCurrentUser().getEmail();
+            event = new Event(email, name, description, tDate, timeZone.getID(), email);
+            event.writeId(docID);
+
+            onBackPressed();
+        }
     }
 
     public String getMonth(int month) {

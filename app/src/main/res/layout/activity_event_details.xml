@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:fitsSystemWindows="true"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:id="@+id/root">
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -44,22 +45,37 @@
                 android:layout_marginBottom="18dp"/>
 
             <TextView
-                android:id="@+id/host_email"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="Hosted by mpalin@purdue.edu"
-                android:textColor="@android:color/black"
-                android:textSize="16sp"
-                android:layout_marginBottom="18dp" />
-
-            <TextView
                 android:id="@+id/date_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:text="July 4, 2018 at 6:30 PM"
                 android:textColor="@android:color/black"
                 android:textSize="20sp"
-                android:layout_marginBottom="24dp" />
+                android:layout_marginBottom="18dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="24dp">
+                <TextView
+                    android:id="@+id/host_email"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    tools:text="Hosted by mpalin@purdue.edu"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp" />
+                <TextView
+                    android:id="@+id/host_add_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/pill_button"
+                    android:text="Add host"
+                    android:visibility="gone"
+                    android:textColor="@color/white"/>
+            </LinearLayout>
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
