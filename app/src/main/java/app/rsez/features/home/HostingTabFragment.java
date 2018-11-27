@@ -22,7 +22,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -99,14 +98,39 @@ public class HostingTabFragment extends Fragment {
                                 }
                                 if (eventList.size() == value.size()) {
                                     //Sort events
-                                    System.out.println("Event List Size: " + eventList.size());
-                                    Collections.sort(eventList, new Comparator<Event>() {
-                                        @Override
-                                        public int compare(Event o1, Event o2) {
-                                            //Sort by name
-                                            return -1 * o1.getTitle().compareToIgnoreCase(o2.getTitle());
-                                        }
-                                    });
+                                    if (HomeActivity.sortType == 1) {
+                                        Collections.sort(eventList, new Comparator<Event>() {
+                                            @Override
+                                            public int compare(Event o1, Event o2) {
+                                                //Sort by name A-Z
+                                                return -1 * o1.getTitle().compareToIgnoreCase(o2.getTitle());
+                                            }
+                                        });
+                                    } else if (HomeActivity.sortType == 2){
+                                        Collections.sort(eventList, new Comparator<Event>() {
+                                            @Override
+                                            public int compare(Event o1, Event o2) {
+                                                //Sort by name Z-A
+                                                return 1 * o1.getTitle().compareToIgnoreCase(o2.getTitle());
+                                            }
+                                        });
+                                    } else if (HomeActivity.sortType == 3){
+                                        Collections.sort(eventList, new Comparator<Event>() {
+                                            @Override
+                                            public int compare(Event o1, Event o2) {
+                                                //Sort by Date closest to farthest
+                                                return -1 * o1.getDate().compareTo(o2.getDate());
+                                            }
+                                        });
+                                    } else if (HomeActivity.sortType == 4){
+                                        Collections.sort(eventList, new Comparator<Event>() {
+                                            @Override
+                                            public int compare(Event o1, Event o2) {
+                                                //Sort by Date farthest to closest
+                                                return 1 * o1.getDate().compareTo(o2.getDate());
+                                            }
+                                        });
+                                    }
                                     writeEvents();
                                 }
                             }
@@ -120,13 +144,13 @@ public class HostingTabFragment extends Fragment {
     private void writeEvents() {
         eventsContainer.removeAllViews();
         for (Event event : eventList) {
-            if (event.getEventDate() != null) {
+            if (event.getDate() != null) {
                 View child = getLayoutInflater().inflate(R.layout.list_view_event_info, null);
 
                 final String id = event.getDocumentId();
                 String name = event.getTitle();
                 String description = event.getDescription();
-                Date date = event.getEventDate();
+                Date date = event.getDate();
                 String dateString = date.toString();
                 String[] dateSplit = dateString.split(" ");
                 String actualDate = dateSplit[1] + " " + dateSplit[2];
@@ -161,6 +185,7 @@ public class HostingTabFragment extends Fragment {
                     public void onClick(View v) {
                         Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
                         intent.putExtra("eventID", id);
+                        intent.putExtra("isHost", true);
                         startActivity(intent);
                     }
                 });
@@ -170,5 +195,9 @@ public class HostingTabFragment extends Fragment {
         }
         pullToRefresh.setRefreshing(false);
         eventsContainer.animate().alpha(1).setInterpolator(new DecelerateInterpolator()).start();
+    }
+
+    public void refreshList(){
+        eventsQuery();
     }
 }

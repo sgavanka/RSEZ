@@ -91,7 +91,7 @@ public class Event extends ModelBase  {
         return startTime;
     } */
 
-    public Date getEventDate() { return date;}
+    public Date getDate() { return date;}
 
     public String getTimeZone() {
         return timeZone;
