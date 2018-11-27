@@ -72,6 +72,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/pill_button"
                     android:text="Add host"
+                    android:visibility="gone"
                     android:textColor="@color/white"/>
             </LinearLayout>
 
