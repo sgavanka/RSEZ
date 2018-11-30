@@ -175,23 +175,25 @@ public class HostingTabFragment extends Fragment {
 
                 hour = String.valueOf(hours);
                 String timeString = hour + ":" + timeSplit[1] + " " + amPM;
+                if (date.compareTo(Calendar.getInstance().getTime()) >= 0 && child != null) {
+                    //Event is in the past. Do not add
+                    ((TextView) child.findViewById(R.id.title)).setText(name);
+                    ((TextView) child.findViewById(R.id.description)).setText(description);
+                    ((TextView) child.findViewById(R.id.date)).setText(actualDate);
+                    ((TextView) child.findViewById(R.id.time)).setText(timeString);
 
-                ((TextView) child.findViewById(R.id.title)).setText(name);
-                ((TextView) child.findViewById(R.id.description)).setText(description);
-                ((TextView) child.findViewById(R.id.date)).setText(actualDate);
-                ((TextView) child.findViewById(R.id.time)).setText(timeString);
+                    child.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
+                            intent.putExtra("eventID", id);
+                            intent.putExtra("isHost", true);
+                            startActivity(intent);
+                        }
+                    });
 
-                child.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
-                        intent.putExtra("eventID", id);
-                        intent.putExtra("isHost", true);
-                        startActivity(intent);
-                    }
-                });
-
-                eventsContainer.addView(child, 0);
+                    eventsContainer.addView(child, 0);
+                }
             }
         }
         pullToRefresh.setRefreshing(false);
