@@ -43,6 +43,9 @@
         <activity
             android:name=".features.events.QRScanFragment"
             android:label="RSEZ" />
+        <activity
+            android:name=".features.home.EditAccount"
+            android:label="RSEZ" />
     </application>
 
 

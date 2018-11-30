@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -158,6 +159,10 @@ public class EventCreateActivity extends AppCompatActivity {
                 try {
                     saveEvent();
                 } catch (ParseException e) {
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            "Fields are Missing", Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 500);
+                    toast.show();
                     e.printStackTrace();
                 }
                 break;
