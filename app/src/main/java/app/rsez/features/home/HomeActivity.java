@@ -13,8 +13,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -28,6 +30,7 @@ public  class HomeActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
     final int MY_PERMISSIONS_REQUEST_STORAGE = 2;
+    public static int sortType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +46,9 @@ public  class HomeActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         mDrawerLayout = findViewById(R.id.drawer_layout);
+        sortType = 1;
+
+
 
         String[] PERMISSIONS = {
                 android.Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -96,10 +102,41 @@ public  class HomeActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.home_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             mDrawerLayout.openDrawer(GravityCompat.START);
             return true;
+        } else if (item.getItemId() == R.id.sort_button) {
+            sortType++;
+            switch(sortType){
+                case 1:
+                    Toast.makeText(this, "Sorting by Name: A-Z",Toast.LENGTH_SHORT).show();
+                    break;
+                case 2:
+                    Toast.makeText(this, "Sorting by Name: Z-A",Toast.LENGTH_SHORT).show();
+                    break;
+                case 3:
+                    Toast.makeText(this, "Sorting by Date: Closest to Farthest",Toast.LENGTH_SHORT).show();
+                    break;
+                case 4:
+                    Toast.makeText(this, "Sorting by Date: Farthest to Closest",Toast.LENGTH_SHORT).show();
+                    break;
+                default:
+                    sortType = 1;
+                    Toast.makeText(this, "Sorting by Name: A-Z",Toast.LENGTH_SHORT).show();
+                    break;
+            }
+            try {
+                setFragment(TabsFragment.class.newInstance());
+            } catch (Exception e){
+
+            }
         }
 
         return super.onOptionsItemSelected(item);

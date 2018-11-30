@@ -21,10 +21,12 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Calendar;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 
 import app.rsez.R;
@@ -33,9 +35,10 @@ import app.rsez.models.Event;
 
 import static android.support.constraint.Constraints.TAG;
 
-public class AttendingTabFragment extends Fragment  {
+public class AttendingTabFragment extends Fragment {
     private LinearLayout eventsContainer;
     SwipeRefreshLayout pullToRefresh;
+    private ArrayList<Event> eventList;
 
     @Nullable
     @Override
@@ -47,7 +50,7 @@ public class AttendingTabFragment extends Fragment  {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         eventsContainer = view.findViewById(R.id.events_container);
-
+        eventList = new ArrayList<>();
         (pullToRefresh = view.findViewById(R.id.swipe_refresh_layout)).setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -65,60 +68,109 @@ public class AttendingTabFragment extends Fragment  {
 
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("tickets").whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getEmail()).addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
-                        if (e != null) {
-                            Log.w(TAG, "Listen failed.", e);
-                            pullToRefresh.setRefreshing(false);
-                            return;
-                        }
+            @Override
+            public void onEvent(@Nullable final QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w(TAG, "Listen failed.", e);
+                    pullToRefresh.setRefreshing(false);
+                    return;
+                }
+                eventsContainer.removeAllViews();
+                eventList.clear();
 
-                        eventsContainer.removeAllViews();
+                for (DocumentSnapshot doc : value) {
+                    if (doc.get("eventId") != null) {
+                        DocumentReference docRef = db.collection("events").document(doc.get("eventId").toString());
+                        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot docSnap = task.getResult();
+                                    Event temp = new Event(docSnap.getId(), docSnap.getString("title"),
+                                            docSnap.getString("description"),
+                                            (Date) docSnap.get("date"),
+                                            docSnap.getString("timezone"),
+                                            docSnap.getString("hostEmail"));
+                                    System.out.println("Adding event");
+                                    eventList.add(temp);
 
-                        for (QueryDocumentSnapshot doc : value) {
-                            if (doc.get("eventId") != null) {
-                                Event.read(doc.getString("eventId"), new OnCompleteListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                        DocumentSnapshot doc = task.getResult();
-                                        Event event = new Event(doc.getId(), doc.getString("title"),
-                                                doc.getString("description"),
-                                                (Date) doc.get("date"),
-                                                doc.getString("timezone"),
-                                                doc.getString("hostEmail"));
-                                        if(event.getEventDate() != null) {
-                                            View child = null;
-                                            try {
-                                                child = getLayoutInflater().inflate(R.layout.list_view_event_info, null);
+
+                                }
+                                if (eventList.size() == value.size()) {
+                                    //Sort events
+                                    if (HomeActivity.sortType == 1) {
+                                        Collections.sort(eventList, new Comparator<Event>() {
+                                            @Override
+                                            public int compare(Event o1, Event o2) {
+                                                //Sort by name A-Z
+                                                return -1 * o1.getTitle().compareToIgnoreCase(o2.getTitle());
                                             }
-                                            catch(IllegalStateException e) {
-                                                e.getMessage();
+                                        });
+                                    } else if (HomeActivity.sortType == 2){
+                                        Collections.sort(eventList, new Comparator<Event>() {
+                                            @Override
+                                            public int compare(Event o1, Event o2) {
+                                                //Sort by name Z-A
+                                                return 1 * o1.getTitle().compareToIgnoreCase(o2.getTitle());
                                             }
-
-                                            final String id = event.getDocumentId();
-                                            String name = event.getTitle();
-                                            String description = event.getDescription();
-                                            Date date = event.getEventDate();
-                                            String dateString = date.toString();
-                                            String[] dateSplit = dateString.split(" ");
-                                            String actualDate = dateSplit[1] + " " + dateSplit[2];
-
-                                            String stringTime = dateSplit[3];
-                                            String[] timeSplit = stringTime.split(":");
-                                            String hour = timeSplit[0];
-                                            String amPM;
-                                            int hours = Integer.parseInt(hour);
-                                            if (hours >= 12 && hours < 24) {
-                                                amPM = "PM";
-                                                if (hours - 12 != 0) {
-                                                    hours = Integer.parseInt(hour) - 12;
-                                                }
-                                            } else {
-                                                amPM = "AM";
-                                                if (hours == 24 || hours == 0) {
-                                                    hours = 12;
-                                                }
+                                        });
+                                    } else if (HomeActivity.sortType == 3){
+                                        Collections.sort(eventList, new Comparator<Event>() {
+                                            @Override
+                                            public int compare(Event o1, Event o2) {
+                                                //Sort by Date closest to farthest
+                                                return -1 * o1.getDate().compareTo(o2.getDate());
                                             }
+                                        });
+                                    } else if (HomeActivity.sortType == 4){
+                                        Collections.sort(eventList, new Comparator<Event>() {
+                                            @Override
+                                            public int compare(Event o1, Event o2) {
+                                                //Sort by Date farthest to closest
+                                                return 1 * o1.getDate().compareTo(o2.getDate());
+                                            }
+                                        });
+                                    }
+                                    writeEvents();
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        });
+    }
+
+    private void writeEvents() {
+        eventsContainer.removeAllViews();
+        for (Event event : eventList) {
+            if (event.getDate() != null) {
+                View child = getLayoutInflater().inflate(R.layout.list_view_event_info, null);
+
+                final String id = event.getDocumentId();
+                String name = event.getTitle();
+                String description = event.getDescription();
+                Date date = event.getDate();
+                String dateString = date.toString();
+                String[] dateSplit = dateString.split(" ");
+                String actualDate = dateSplit[1] + " " + dateSplit[2];
+
+                String stringTime = dateSplit[3];
+                String[] timeSplit = stringTime.split(":");
+                String hour = timeSplit[0];
+                String amPM;
+                int hours = Integer.parseInt(hour);
+                if (hours >= 12 && hours < 24) {
+                    amPM = "PM";
+                    if (hours - 12 != 0) {
+                        hours = Integer.parseInt(hour) - 12;
+                    }
+                } else {
+                    amPM = "AM";
+                    if (hours == 24 || hours == 0) {
+                        hours = 12;
+                    }
+                }
 
                                             hour = String.valueOf(hours);
                                             String timeString = hour + ":" + timeSplit[1] + " " + amPM;
