@@ -175,7 +175,12 @@ public class HostingTabFragment extends Fragment {
 
                 hour = String.valueOf(hours);
                 String timeString = hour + ":" + timeSplit[1] + " " + amPM;
-                if (date.compareTo(Calendar.getInstance().getTime()) >= 0 && child != null) {
+
+                Calendar cal = Calendar.getInstance(); // creates calendar
+                cal.setTime(new Date()); // sets calendar time/date
+                cal.add(Calendar.DAY_OF_MONTH, -1); // adds one day
+
+                if (date.compareTo(cal.getTime()) >= 0 && child != null) {
                     //Event is in the past. Do not add
                     ((TextView) child.findViewById(R.id.title)).setText(name);
                     ((TextView) child.findViewById(R.id.description)).setText(description);
