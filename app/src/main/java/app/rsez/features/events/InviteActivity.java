@@ -189,60 +189,60 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
 
     public void inviteUser(final String email, final Context context, Bitmap qrcode) {
         final User[] user = {null};
-        DocumentReference docRef = db.collection("users").document(email);
-        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        Query docRef = db.collection("users").whereEqualTo("email", email);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                user[0] = new User(documentSnapshot.getString("UserId"), documentSnapshot.getString("email"),
-                        documentSnapshot.getString("firstName"), documentSnapshot.getString("lastName"));
-                System.out.println("USER[0]: " + documentSnapshot.getString("firstName"));
-                if (documentSnapshot.getString("firstName") != null) {
-                    CollectionReference colRef = db.collection("tickets");
-                    Query query = colRef.whereEqualTo("userId", email).whereEqualTo("eventId", eventID);
-                    query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                List<DocumentSnapshot> users = task.getResult().getDocuments();
-                                if (users.size() == 0) {
-                                    Ticket ticket = new Ticket(FirebaseUtils.generateDocumentId(), eventID, user[0].getEmail(), null);
-                                    ticket.write();
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    List<DocumentSnapshot> docSnap = task.getResult().getDocuments();
+                    user[0] = new User(docSnap.get(0).getString("UserId"), docSnap.get(0).getString("email"),
+                            docSnap.get(0).getString("firstName"), docSnap.get(0).getString("lastName"));
+                    System.out.println("USER[0]: " + docSnap.get(0).getString("firstName"));
+                    if (docSnap.get(0).getString("firstName") != null) {
+                        CollectionReference colRef = db.collection("tickets");
+                        Query query = colRef.whereEqualTo("userId", email).whereEqualTo("eventId", eventID);
+                        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    List<DocumentSnapshot> users = task.getResult().getDocuments();
+                                    if (users.size() == 0) {
+                                        Ticket ticket = new Ticket(FirebaseUtils.generateDocumentId(), eventID, user[0].getEmail(), null);
+                                        ticket.write();
 
-                                    onBackPressed();
+                                        onBackPressed();
 
-                                    Toast toast = Toast.makeText(getApplicationContext(), "Invite Sent, Make sure to send an Email too", Toast.LENGTH_LONG);
-                                    toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 50);
-                                    toast.show();
+                                        Toast toast = Toast.makeText(getApplicationContext(), "Invite Sent, Make sure to send an Email too", Toast.LENGTH_LONG);
+                                        toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 50);
+                                        toast.show();
 
-                                    sendEmail(context, email);
-                                } else {
-                                    Toast toast = Toast.makeText(getApplicationContext(),
-                                            "User has already been invited", Toast.LENGTH_LONG);
-                                    toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 50);
-                                    toast.show();
+                                        sendEmail(context, email);
+                                    } else {
+                                        Toast toast = Toast.makeText(getApplicationContext(),
+                                                "User has already been invited", Toast.LENGTH_LONG);
+                                        toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 50);
+                                        toast.show();
+                                    }
                                 }
                             }
-                        }
-                    });
-                } else {
+                        });
+                    } else {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        curUser = email;
+                        builder.setMessage("User does not exist would you like to send an Email?").setPositiveButton("Yes", dialogClickListener)
+                                .setNegativeButton("No", dialogClickListener).show();
+
+                    }
+                }
+                else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    curUser = email;
                     builder.setMessage("User does not exist would you like to send an Email?").setPositiveButton("Yes", dialogClickListener)
                             .setNegativeButton("No", dialogClickListener).show();
 
                 }
             }
-
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setMessage("User does not exist would you like to send an Email?").setPositiveButton("Yes", dialogClickListener)
-                        .setNegativeButton("No", dialogClickListener).show();
-
-
-            }
         });
+
     }
 
     public static boolean isEmailValid(String email) {
