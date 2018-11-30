@@ -19,10 +19,6 @@ public class Event extends ModelBase  {
     private String title;
     private String description;
 
-    private Date startDateTime;
-
-   // private String startDate;
-   // private String startTime;
     private Date date;//this will replace start time and start date
     private String timeZone;
 
@@ -68,14 +64,6 @@ public class Event extends ModelBase  {
         this.description = description;
     }
 
-    public Date getStartDateTime() {
-        return startDateTime;
-    }
-
-    public void setStartDateTime(Date startDateTime) {
-        this.startDateTime = startDateTime;
-    }
-
     public String getHostUserId() {
         return hostEmail;
     }
@@ -83,13 +71,6 @@ public class Event extends ModelBase  {
     public void setHostUserId(String hostUserId) {
         this.hostEmail = hostUserId;
     }
-    /*public String getStartDate() {
-        return startDate;
-    }
-
-    public String getStartTime() {
-        return startTime;
-    } */
 
     public Date getDate() { return date;}
 
