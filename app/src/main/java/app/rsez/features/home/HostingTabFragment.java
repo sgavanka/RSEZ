@@ -146,7 +146,13 @@ public class HostingTabFragment extends Fragment {
         eventsContainer.removeAllViews();
         for (Event event : eventList) {
             if (event.getDate() != null) {
-                View child = getLayoutInflater().inflate(R.layout.list_view_event_info, null);
+                View child = null;
+                try {
+                    child = getLayoutInflater().inflate(R.layout.list_view_event_info, null);
+                }
+                catch(IllegalStateException e) {
+                    e.getMessage();
+                }
 
                 final String id = event.getDocumentId();
                 String name = event.getTitle();
