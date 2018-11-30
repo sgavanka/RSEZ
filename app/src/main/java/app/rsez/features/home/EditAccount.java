@@ -233,6 +233,8 @@ public class EditAccount extends AppCompatActivity {
                         for(DocumentSnapshot docs : docSnap) {
                             docs.getReference().update("firstName", firstName);
                             docs.getReference().update("lastName", lastName);
+                            Intent intent = new Intent(EditAccount.this, HomeActivity.class);
+                            startActivity(intent);
 
                         }
                     }
