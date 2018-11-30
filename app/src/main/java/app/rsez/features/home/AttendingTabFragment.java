@@ -104,7 +104,7 @@ public class AttendingTabFragment extends Fragment {
                                             @Override
                                             public int compare(Event o1, Event o2) {
                                                 //Sort by name A-Z
-                                                return -1 * o1.getTitle().compareToIgnoreCase(o2.getTitle());
+                                                return 1 * o1.getTitle().compareToIgnoreCase(o2.getTitle());
                                             }
                                         });
                                     } else if (HomeActivity.sortType == 2) {
@@ -112,7 +112,7 @@ public class AttendingTabFragment extends Fragment {
                                             @Override
                                             public int compare(Event o1, Event o2) {
                                                 //Sort by name Z-A
-                                                return 1 * o1.getTitle().compareToIgnoreCase(o2.getTitle());
+                                                return -1 * o1.getTitle().compareToIgnoreCase(o2.getTitle());
                                             }
                                         });
                                     } else if (HomeActivity.sortType == 3) {
