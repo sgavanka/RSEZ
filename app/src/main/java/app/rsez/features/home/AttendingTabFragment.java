@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -106,7 +107,7 @@ public class AttendingTabFragment extends Fragment {
                                                 return -1 * o1.getTitle().compareToIgnoreCase(o2.getTitle());
                                             }
                                         });
-                                    } else if (HomeActivity.sortType == 2){
+                                    } else if (HomeActivity.sortType == 2) {
                                         Collections.sort(eventList, new Comparator<Event>() {
                                             @Override
                                             public int compare(Event o1, Event o2) {
@@ -114,7 +115,7 @@ public class AttendingTabFragment extends Fragment {
                                                 return 1 * o1.getTitle().compareToIgnoreCase(o2.getTitle());
                                             }
                                         });
-                                    } else if (HomeActivity.sortType == 3){
+                                    } else if (HomeActivity.sortType == 3) {
                                         Collections.sort(eventList, new Comparator<Event>() {
                                             @Override
                                             public int compare(Event o1, Event o2) {
@@ -122,7 +123,7 @@ public class AttendingTabFragment extends Fragment {
                                                 return -1 * o1.getDate().compareTo(o2.getDate());
                                             }
                                         });
-                                    } else if (HomeActivity.sortType == 4){
+                                    } else if (HomeActivity.sortType == 4) {
                                         Collections.sort(eventList, new Comparator<Event>() {
                                             @Override
                                             public int compare(Event o1, Event o2) {
@@ -172,35 +173,30 @@ public class AttendingTabFragment extends Fragment {
                     }
                 }
 
-                                            hour = String.valueOf(hours);
-                                            String timeString = hour + ":" + timeSplit[1] + " " + amPM;
-                                            if (date.compareTo(Calendar.getInstance().getTime()) >= 0 && child != null) {
-                                                //Event is in the past. Do not add
-                                                ((TextView) child.findViewById(R.id.title)).setText(name);
-                                                ((TextView) child.findViewById(R.id.description)).setText(description);
-                                                ((TextView) child.findViewById(R.id.date)).setText(actualDate);
-                                                ((TextView) child.findViewById(R.id.time)).setText(timeString);
+                hour = String.valueOf(hours);
+                String timeString = hour + ":" + timeSplit[1] + " " + amPM;
+                if (date.compareTo(Calendar.getInstance().getTime()) >= 0 && child != null) {
+                    //Event is in the past. Do not add
+                    ((TextView) child.findViewById(R.id.title)).setText(name);
+                    ((TextView) child.findViewById(R.id.description)).setText(description);
+                    ((TextView) child.findViewById(R.id.date)).setText(actualDate);
+                    ((TextView) child.findViewById(R.id.time)).setText(timeString);
 
-                                                child.setOnClickListener(new View.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(View v) {
-                                                        Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
-                                                        intent.putExtra("eventID", id);
-                                                        startActivity(intent);
-                                                    }
-                                                });
-
-                                                eventsContainer.addView(child);
-                                            }
-                                        }
-
-                                        pullToRefresh.setRefreshing(false);
-                                        eventsContainer.animate().alpha(1).setInterpolator(new DecelerateInterpolator()).start();
-                                    }
-                                });
-                            }
+                    child.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
+                            intent.putExtra("eventID", id);
+                            startActivity(intent);
                         }
-                    }
-                });
+                    });
+
+                    eventsContainer.addView(child);
+                }
+            }
+
+            pullToRefresh.setRefreshing(false);
+            eventsContainer.animate().alpha(1).setInterpolator(new DecelerateInterpolator()).start();
+        }
     }
 }
