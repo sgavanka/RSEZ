@@ -185,13 +185,20 @@ public class EventDetailsActivity extends AppCompatActivity {
                 startActivity(checkInIntent);
                 break;
             case R.id.remove_button:
-                Snackbar.make(findViewById(R.id.root), "Delete event?", Snackbar.LENGTH_LONG)
-                        .setAction("Yes", new View.OnClickListener() {
+                builder.setMessage("Are you sure you want to delete this event?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(View view) {
-                                deleteEvent();
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which){
+                                    case DialogInterface.BUTTON_POSITIVE:
+                                        deleteEvent();
+                                        break;
+                                    case DialogInterface.BUTTON_NEGATIVE:
+                                        //No button clicked
+                                        break;
+                                }
                             }
-                        }).show();
+                        }).setNegativeButton("No", null).show();
                 break;
             case R.id.leave_button:
                 builder.setMessage("Are you sure you want to leave this event?")
@@ -318,10 +325,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                         guestsInformation.animate().alpha(1).setInterpolator(new DecelerateInterpolator()).start();
                     }
                 });
-                    }
-
-
-
+    }
 
     private void removeGuest(String eventId, String userId, final View view) {
         CollectionReference colRef = db.collection("tickets");
