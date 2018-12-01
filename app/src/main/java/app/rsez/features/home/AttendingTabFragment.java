@@ -40,6 +40,7 @@ public class AttendingTabFragment extends Fragment {
     private LinearLayout eventsContainer;
     SwipeRefreshLayout pullToRefresh;
     private ArrayList<Event> eventList;
+    private boolean firstResumeDone = false;
 
     @Nullable
     @Override
@@ -120,7 +121,7 @@ public class AttendingTabFragment extends Fragment {
                                             @Override
                                             public int compare(Event o1, Event o2) {
                                                 //Sort by Date closest to farthest
-                                                return -1 * o1.getDate().compareTo(o2.getDate());
+                                                return 1 * o1.getDate().compareTo(o2.getDate());
                                             }
                                         });
                                     } else if (HomeActivity.sortType == 4) {
@@ -128,7 +129,7 @@ public class AttendingTabFragment extends Fragment {
                                             @Override
                                             public int compare(Event o1, Event o2) {
                                                 //Sort by Date farthest to closest
-                                                return 1 * o1.getDate().compareTo(o2.getDate());
+                                                return -1 * o1.getDate().compareTo(o2.getDate());
                                             }
                                         });
                                     }
@@ -208,5 +209,18 @@ public class AttendingTabFragment extends Fragment {
             pullToRefresh.setRefreshing(false);
             eventsContainer.animate().alpha(1).setInterpolator(new DecelerateInterpolator()).start();
         }
+    }
+
+    public void refreshList(){
+        eventsQuery();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (firstResumeDone) {
+            refreshList();
+        }
+        firstResumeDone = true;
     }
 }

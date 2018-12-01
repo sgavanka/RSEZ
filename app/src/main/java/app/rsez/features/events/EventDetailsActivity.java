@@ -439,7 +439,11 @@ public class EventDetailsActivity extends AppCompatActivity {
         Event.delete(eventID, new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                onBackPressed();
+                try {
+                    onBackPressed();
+                } catch(Exception e){
+
+                }
             }
         }, new OnFailureListener() {
             @Override
@@ -482,4 +486,5 @@ public class EventDetailsActivity extends AppCompatActivity {
                     }
                 });
     }
+
 }

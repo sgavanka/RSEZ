@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
 import app.rsez.R;
 import app.rsez.features.events.EventDetailsActivity;
@@ -40,6 +41,7 @@ public class HostingTabFragment extends Fragment {
     private LinearLayout eventsContainer;
     SwipeRefreshLayout pullToRefresh;
     private ArrayList<Event> eventList;
+    private boolean firstResumeDone = false;
 
     @Nullable
     @Override
@@ -67,79 +69,80 @@ public class HostingTabFragment extends Fragment {
         eventsContainer.animate().alpha(0).setInterpolator(new DecelerateInterpolator()).start();
 
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("hosts").whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getEmail()).addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable final QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
-                if (e != null) {
-                    Log.w(TAG, "Listen failed.", e);
-                    pullToRefresh.setRefreshing(false);
-                    return;
-                }
+        db.collection("hosts").whereEqualTo("userId", FirebaseAuth.getInstance().getCurrentUser().getEmail()).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (!task.isSuccessful()) {
+                            pullToRefresh.setRefreshing(false);
+                            return;
+                        }
+                        eventsContainer.removeAllViews();
+                        eventList.clear();
 
-                eventsContainer.removeAllViews();
-                eventList.clear();
-
-                for (DocumentSnapshot doc : value) {
-                    if (doc.get("eventId") != null) {
-                        DocumentReference docRef = db.collection("events").document(doc.get("eventId").toString());
-                        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    DocumentSnapshot docSnap = task.getResult();
-                                    Event temp = new Event(docSnap.getId(), docSnap.getString("title"),
-                                            docSnap.getString("description"),
-                                            (Date) docSnap.get("date"),
-                                            docSnap.getString("timezone"),
-                                            docSnap.getString("hostEmail"));
-                                    System.out.println("Adding event");
-                                    eventList.add(temp);
+                        final List<DocumentSnapshot> events = task.getResult().getDocuments();
+                        for (DocumentSnapshot doc : events) {
+                            if (doc.get("eventId") != null) {
+                                DocumentReference docRef = db.collection("events").document(doc.get("eventId").toString());
+                                docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            DocumentSnapshot docSnap = task.getResult();
+                                            Event temp = new Event(docSnap.getId(), docSnap.getString("title"),
+                                                    docSnap.getString("description"),
+                                                    (Date) docSnap.get("date"),
+                                                    docSnap.getString("timezone"),
+                                                    docSnap.getString("hostEmail"));
+                                            System.out.println("Adding event");
+                                            eventList.add(temp);
 
 
-                                }
-                                if (eventList.size() == value.size()) {
-                                    //Sort events
-                                    if (HomeActivity.sortType == 1) {
-                                        Collections.sort(eventList, new Comparator<Event>() {
-                                            @Override
-                                            public int compare(Event o1, Event o2) {
-                                                //Sort by name A-Z
-                                                return -1 * o1.getTitle().compareToIgnoreCase(o2.getTitle());
+                                        }
+                                        if (eventList.size() == events.size()) {
+                                            //Sort events
+                                            if (HomeActivity.sortType == 1) {
+                                                Collections.sort(eventList, new Comparator<Event>() {
+                                                    @Override
+                                                    public int compare(Event o1, Event o2) {
+                                                        //Sort by name A-Z
+                                                        return -1 * o1.getTitle().compareToIgnoreCase(o2.getTitle());
+                                                    }
+                                                });
+                                            } else if (HomeActivity.sortType == 2) {
+                                                Collections.sort(eventList, new Comparator<Event>() {
+                                                    @Override
+                                                    public int compare(Event o1, Event o2) {
+                                                        //Sort by name Z-A
+                                                        return 1 * o1.getTitle().compareToIgnoreCase(o2.getTitle());
+                                                    }
+                                                });
+                                            } else if (HomeActivity.sortType == 3) {
+                                                Collections.sort(eventList, new Comparator<Event>() {
+                                                    @Override
+                                                    public int compare(Event o1, Event o2) {
+                                                        //Sort by Date closest to farthest
+                                                        return -1 * o1.getDate().compareTo(o2.getDate());
+                                                    }
+                                                });
+                                            } else if (HomeActivity.sortType == 4) {
+                                                Collections.sort(eventList, new Comparator<Event>() {
+                                                    @Override
+                                                    public int compare(Event o1, Event o2) {
+                                                        //Sort by Date farthest to closest
+                                                        return 1 * o1.getDate().compareTo(o2.getDate());
+                                                    }
+                                                });
                                             }
-                                        });
-                                    } else if (HomeActivity.sortType == 2){
-                                        Collections.sort(eventList, new Comparator<Event>() {
-                                            @Override
-                                            public int compare(Event o1, Event o2) {
-                                                //Sort by name Z-A
-                                                return 1 * o1.getTitle().compareToIgnoreCase(o2.getTitle());
-                                            }
-                                        });
-                                    } else if (HomeActivity.sortType == 3){
-                                        Collections.sort(eventList, new Comparator<Event>() {
-                                            @Override
-                                            public int compare(Event o1, Event o2) {
-                                                //Sort by Date closest to farthest
-                                                return -1 * o1.getDate().compareTo(o2.getDate());
-                                            }
-                                        });
-                                    } else if (HomeActivity.sortType == 4){
-                                        Collections.sort(eventList, new Comparator<Event>() {
-                                            @Override
-                                            public int compare(Event o1, Event o2) {
-                                                //Sort by Date farthest to closest
-                                                return 1 * o1.getDate().compareTo(o2.getDate());
-                                            }
-                                        });
+                                            writeEvents();
+                                        }
                                     }
-                                    writeEvents();
-                                }
+                                });
                             }
-                        });
+                        }
+
                     }
-                }
-            }
-        });
+                });
     }
 
     private void writeEvents() {
@@ -213,5 +216,14 @@ public class HostingTabFragment extends Fragment {
 
     public void refreshList(){
         eventsQuery();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (firstResumeDone) {
+            refreshList();
+        }
+        firstResumeDone = true;
     }
 }
