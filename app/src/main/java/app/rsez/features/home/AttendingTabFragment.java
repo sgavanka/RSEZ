@@ -86,19 +86,23 @@ public class AttendingTabFragment extends Fragment {
                         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                Event temp = null;
                                 if (task.isSuccessful()) {
                                     DocumentSnapshot docSnap = task.getResult();
-                                    Event temp = new Event(docSnap.getId(), docSnap.getString("title"),
+                                    temp = new Event(docSnap.getId(), docSnap.getString("title"),
                                             docSnap.getString("description"),
                                             (Date) docSnap.get("date"),
                                             docSnap.getString("timezone"),
                                             docSnap.getString("hostEmail"));
                                     System.out.println("Adding event");
+
                                     eventList.add(temp);
-
-
+                                    System.out.println("Adding event After");
                                 }
+                              System.out.println("Before Sorting");
+
                                 if (eventList.size() == value.size()) {
+                                    System.out.println("In Sorting");
                                     //Sort events
                                     if (HomeActivity.sortType == 1) {
                                         Collections.sort(eventList, new Comparator<Event>() {
@@ -132,18 +136,21 @@ public class AttendingTabFragment extends Fragment {
                                                 return -1 * o1.getDate().compareTo(o2.getDate());
                                             }
                                         });
-                                    }
+                                        System.out.println("SIZE OF EVENTS: " + eventList.size());    }
+
                                     writeEvents();
                                 }
                             }
                         });
                     }
+                    System.out.println("SIZE OF EVENTS: " + eventList.size());
                 }
             }
         });
     }
 
     private void writeEvents() {
+        System.out.println("Inside write");
         eventsContainer.removeAllViews();
         for (Event event : eventList) {
             if (event.getDate() != null) {
@@ -209,6 +216,7 @@ public class AttendingTabFragment extends Fragment {
             pullToRefresh.setRefreshing(false);
             eventsContainer.animate().alpha(1).setInterpolator(new DecelerateInterpolator()).start();
         }
+        System.out.println("outside loop");
     }
 
     public void refreshList(){

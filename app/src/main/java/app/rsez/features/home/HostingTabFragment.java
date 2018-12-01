@@ -65,6 +65,7 @@ public class HostingTabFragment extends Fragment {
     }
 
     public void eventsQuery() {
+         final int removeCount  = 0;
         pullToRefresh.setRefreshing(true);
         eventsContainer.animate().alpha(0).setInterpolator(new DecelerateInterpolator()).start();
 
@@ -81,31 +82,41 @@ public class HostingTabFragment extends Fragment {
                         eventList.clear();
 
                         final List<DocumentSnapshot> events = task.getResult().getDocuments();
-                        for (DocumentSnapshot doc : events) {
+                        for (final DocumentSnapshot doc : events) {
                             if (doc.get("eventId") != null) {
                                 DocumentReference docRef = db.collection("events").document(doc.get("eventId").toString());
                                 docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        Event temp = null;
                                         if (task.isSuccessful()) {
                                             DocumentSnapshot docSnap = task.getResult();
-                                            Event temp = new Event(docSnap.getId(), docSnap.getString("title"),
+                                            temp = new Event(docSnap.getId(), docSnap.getString("title"),
                                                     docSnap.getString("description"),
                                                     (Date) docSnap.get("date"),
                                                     docSnap.getString("timezone"),
                                                     docSnap.getString("hostEmail"));
                                             System.out.println("Adding event");
-                                            eventList.add(temp);
-
-
+                                            if(docSnap.getString("title") != null) {
+                                                eventList.add(temp);
+                                            }
+                                            else {
+                                                events.remove(doc);
+                                            }
                                         }
-                                        if (eventList.size() == events.size()) {
+
+                                        System.out.println("Size of events in hosting: " + eventList.size() + " " + events.size());
+                                        if (eventList.size() == events.size() && eventList != null) {
                                             //Sort events
+                                            System.out.println(eventList.size());
+                                            System.out.println("Just about to sort");
                                             if (HomeActivity.sortType == 1) {
                                                 Collections.sort(eventList, new Comparator<Event>() {
                                                     @Override
                                                     public int compare(Event o1, Event o2) {
                                                         //Sort by name A-Z
+                                                        System.out.println("Sort first event ID: " + o1.getHostUserId() + " second event ID: " + o2.getHostUserId());
+                                                        System.out.println("Sort first event ID: " + o1.getTitle() + " second event ID: " + o2.getTitle());
                                                         return -1 * o1.getTitle().compareToIgnoreCase(o2.getTitle());
                                                     }
                                                 });
@@ -146,6 +157,7 @@ public class HostingTabFragment extends Fragment {
     }
 
     private void writeEvents() {
+        System.out.println("Inside write hosting");
         eventsContainer.removeAllViews();
         for (Event event : eventList) {
             if (event.getDate() != null) {
@@ -209,7 +221,7 @@ public class HostingTabFragment extends Fragment {
                     eventsContainer.addView(child, 0);
                 }
             }
-        }
+        }   System.out.println("Outside loop write hosting");
         pullToRefresh.setRefreshing(false);
         eventsContainer.animate().alpha(1).setInterpolator(new DecelerateInterpolator()).start();
     }
